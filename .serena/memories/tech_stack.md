@@ -3,7 +3,7 @@
 ## Core Framework
 
 - **Expo**: 54 (with New Architecture enabled)
-- **React Native**: 0.81.4
+- **React Native**: 0.81.5
 - **React**: 19
 - **TypeScript**: Strict mode enabled
 
