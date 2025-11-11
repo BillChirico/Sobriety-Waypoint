@@ -62,12 +62,12 @@ export default function HomeScreen() {
   };
 
   const getMilestone = (days: number) => {
-    if (days >= 365) return { text: `${Math.floor(days / 365)} Year${Math.floor(days / 365) > 1 ? 's' : ''}`, color: '#10b981' };
-    if (days >= 180) return { text: '6 Months', color: '#10b981' };
-    if (days >= 90) return { text: '90 Days', color: '#10b981' };
-    if (days >= 30) return { text: '30 Days', color: '#10b981' };
-    if (days >= 7) return { text: '1 Week', color: '#10b981' };
-    if (days >= 1) return { text: '24 Hours', color: '#10b981' };
+    if (days >= 365) return { text: `${Math.floor(days / 365)} Year${Math.floor(days / 365) > 1 ? 's' : ''}`, color: '#007AFF' };
+    if (days >= 180) return { text: '6 Months', color: '#007AFF' };
+    if (days >= 90) return { text: '90 Days', color: '#007AFF' };
+    if (days >= 30) return { text: '30 Days', color: '#007AFF' };
+    if (days >= 7) return { text: '1 Week', color: '#007AFF' };
+    if (days >= 1) return { text: '24 Hours', color: '#007AFF' };
     return { text: 'Just Starting', color: '#6b7280' };
   };
 
@@ -87,7 +87,7 @@ export default function HomeScreen() {
 
       <View style={styles.sobrietyCard}>
         <View style={styles.sobrietyHeader}>
-          <Heart size={32} color="#10b981" fill="#10b981" />
+          <Heart size={32} color={theme.primary} fill={theme.primary} />
           <View style={styles.sobrietyInfo}>
             <Text style={styles.sobrietyTitle}>Your Sobriety Journey</Text>
             <Text style={styles.sobrietyDate}>
@@ -182,12 +182,12 @@ export default function HomeScreen() {
 
       <View style={styles.quickActions}>
         <TouchableOpacity style={styles.actionCard} onPress={() => router.push('/steps')}>
-          <BookOpen size={32} color="#10b981" />
+          <BookOpen size={32} color={theme.primary} />
           <Text style={styles.actionTitle}>12 Steps</Text>
           <Text style={styles.actionSubtitle}>Learn & Reflect</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionCard} onPress={() => router.push('/messages')}>
-          <MessageCircle size={32} color="#10b981" />
+          <MessageCircle size={32} color={theme.primary} />
           <Text style={styles.actionTitle}>Messages</Text>
           <Text style={styles.actionSubtitle}>Stay Connected</Text>
         </TouchableOpacity>
@@ -254,7 +254,7 @@ const createStyles = (theme: any) => StyleSheet.create({
   daysSoberCount: {
     fontSize: 64,
     fontWeight: '700',
-    color: '#10b981',
+    color: theme.primary,
   },
   daysSoberLabel: {
     fontSize: 16,
@@ -309,7 +309,7 @@ const createStyles = (theme: any) => StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#10b981',
+    backgroundColor: theme.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -359,7 +359,7 @@ const createStyles = (theme: any) => StyleSheet.create({
     marginTop: 2,
   },
   taskBadge: {
-    backgroundColor: '#10b981',
+    backgroundColor: theme.primary,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
@@ -377,7 +377,7 @@ const createStyles = (theme: any) => StyleSheet.create({
   viewAllText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#10b981',
+    color: theme.primary,
   },
   quickActions: {
     flexDirection: 'row',

@@ -39,19 +39,31 @@ export default function ProfileScreen() {
     });
 
     if (error) {
-      Alert.alert('Error', 'Failed to generate invite code');
+      if (Platform.OS === 'web') {
+        window.alert('Error: Failed to generate invite code');
+      } else {
+        Alert.alert('Error', 'Failed to generate invite code');
+      }
     } else {
-      Alert.alert(
-        'Invite Code Generated',
-        `Your invite code is: ${code}\n\nShare this with your sponsee to connect.`,
-        [
-          {
-            text: 'Share',
-            onPress: () => Share.share({ message: `Join me on Serenity Path! Use invite code: ${code}` }),
-          },
-          { text: 'OK' },
-        ]
-      );
+      if (Platform.OS === 'web') {
+        const shouldShare = window.confirm(`Your invite code is: ${code}\n\nShare this with your sponsee to connect.\n\nClick OK to copy to clipboard.`);
+        if (shouldShare) {
+          navigator.clipboard.writeText(code);
+          window.alert('Invite code copied to clipboard!');
+        }
+      } else {
+        Alert.alert(
+          'Invite Code Generated',
+          `Your invite code is: ${code}\n\nShare this with your sponsee to connect.`,
+          [
+            {
+              text: 'Share',
+              onPress: () => Share.share({ message: `Join me on 12-Step Tracker! Use invite code: ${code}` }),
+            },
+            { text: 'OK' },
+          ]
+        );
+      }
     }
   };
 
@@ -168,7 +180,7 @@ export default function ProfileScreen() {
 
       <View style={styles.sobrietyCard}>
         <View style={styles.sobrietyHeader}>
-          <Heart size={24} color="#10b981" fill="#10b981" />
+          <Heart size={24} color={theme.primary} fill={theme.primary} />
           <Text style={styles.sobrietyTitle}>Sobriety Journey</Text>
         </View>
         <Text style={styles.daysSober}>{getDaysSober()} Days</Text>
@@ -181,7 +193,7 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Sponsor Tools</Text>
           <TouchableOpacity style={styles.actionButton} onPress={generateInviteCode}>
-            <Share2 size={20} color="#10b981" />
+            <Share2 size={20} color={theme.primary} />
             <Text style={styles.actionButtonText}>Generate Invite Code</Text>
           </TouchableOpacity>
         </View>
@@ -192,7 +204,7 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>Connect with Sponsor</Text>
           {!showInviteInput ? (
             <TouchableOpacity style={styles.actionButton} onPress={() => setShowInviteInput(true)}>
-              <QrCode size={20} color="#10b981" />
+              <QrCode size={20} color={theme.primary} />
               <Text style={styles.actionButtonText}>Enter Invite Code</Text>
             </TouchableOpacity>
           ) : (
@@ -268,8 +280,8 @@ export default function ProfileScreen() {
             <Switch
               value={notificationSettings.tasks}
               onValueChange={(value) => updateNotificationSetting('tasks', value)}
-              trackColor={{ false: '#d1d5db', true: '#86efac' }}
-              thumbColor={notificationSettings.tasks ? '#10b981' : '#f3f4f6'}
+              trackColor={{ false: '#d1d5db', true: '#80c0ff' }}
+              thumbColor={notificationSettings.tasks ? theme.primary : '#f3f4f6'}
             />
           </View>
 
@@ -278,8 +290,8 @@ export default function ProfileScreen() {
             <Switch
               value={notificationSettings.messages}
               onValueChange={(value) => updateNotificationSetting('messages', value)}
-              trackColor={{ false: '#d1d5db', true: '#86efac' }}
-              thumbColor={notificationSettings.messages ? '#10b981' : '#f3f4f6'}
+              trackColor={{ false: '#d1d5db', true: '#80c0ff' }}
+              thumbColor={notificationSettings.messages ? theme.primary : '#f3f4f6'}
             />
           </View>
 
@@ -288,8 +300,8 @@ export default function ProfileScreen() {
             <Switch
               value={notificationSettings.milestones}
               onValueChange={(value) => updateNotificationSetting('milestones', value)}
-              trackColor={{ false: '#d1d5db', true: '#86efac' }}
-              thumbColor={notificationSettings.milestones ? '#10b981' : '#f3f4f6'}
+              trackColor={{ false: '#d1d5db', true: '#80c0ff' }}
+              thumbColor={notificationSettings.milestones ? theme.primary : '#f3f4f6'}
             />
           </View>
 
@@ -298,8 +310,8 @@ export default function ProfileScreen() {
             <Switch
               value={notificationSettings.daily}
               onValueChange={(value) => updateNotificationSetting('daily', value)}
-              trackColor={{ false: '#d1d5db', true: '#86efac' }}
-              thumbColor={notificationSettings.daily ? '#10b981' : '#f3f4f6'}
+              trackColor={{ false: '#d1d5db', true: '#80c0ff' }}
+              thumbColor={notificationSettings.daily ? theme.primary : '#f3f4f6'}
             />
           </View>
         </View>
@@ -336,7 +348,7 @@ const createStyles = (theme: any) => StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#10b981',
+    backgroundColor: theme.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
@@ -358,7 +370,7 @@ const createStyles = (theme: any) => StyleSheet.create({
     marginBottom: 12,
   },
   roleBadge: {
-    backgroundColor: '#f0fdf4',
+    backgroundColor: theme.primaryLight,
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 16,
@@ -366,7 +378,7 @@ const createStyles = (theme: any) => StyleSheet.create({
   roleText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#10b981',
+    color: theme.primary,
   },
   sobrietyCard: {
     backgroundColor: theme.card,
@@ -394,7 +406,7 @@ const createStyles = (theme: any) => StyleSheet.create({
   daysSober: {
     fontSize: 48,
     fontWeight: '700',
-    color: '#10b981',
+    color: theme.primary,
   },
   sobrietyDate: {
     fontSize: 14,
@@ -447,7 +459,7 @@ const createStyles = (theme: any) => StyleSheet.create({
     color: theme.text,
   },
   inviteSubmitButton: {
-    backgroundColor: '#10b981',
+    backgroundColor: theme.primary,
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
@@ -551,8 +563,8 @@ const createStyles = (theme: any) => StyleSheet.create({
     backgroundColor: theme.background,
   },
   themeOptionSelected: {
-    borderColor: '#10b981',
-    backgroundColor: '#f0fdf4',
+    borderColor: theme.primary,
+    backgroundColor: theme.primaryLight,
   },
   themeOptionText: {
     fontSize: 12,
@@ -561,6 +573,6 @@ const createStyles = (theme: any) => StyleSheet.create({
     marginTop: 6,
   },
   themeOptionTextSelected: {
-    color: '#10b981',
+    color: theme.primary,
   },
 });

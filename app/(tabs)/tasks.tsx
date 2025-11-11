@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { Task } from '@/types/database';
 import { CheckCircle, Circle, Clock } from 'lucide-react-native';
 
 export default function TasksScreen() {
   const { profile } = useAuth();
+  const { theme } = useTheme();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -48,6 +50,8 @@ export default function TasksScreen() {
 
   const getTasksByStatus = (status: string) => tasks.filter(t => t.status === status);
 
+  const styles = createStyles(theme);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -57,7 +61,7 @@ export default function TasksScreen() {
 
       <ScrollView
         style={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.primary} />}
       >
         {getTasksByStatus('assigned').length > 0 && (
           <View style={styles.section}>
@@ -124,26 +128,26 @@ export default function TasksScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: theme.background,
   },
   header: {
     padding: 24,
     paddingTop: 60,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: theme.border,
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#111827',
+    color: theme.text,
   },
   headerSubtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.textSecondary,
     marginTop: 4,
   },
   content: {
@@ -156,11 +160,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: theme.text,
     marginBottom: 12,
   },
   taskCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -192,17 +196,17 @@ const styles = StyleSheet.create({
   },
   taskDate: {
     fontSize: 12,
-    color: '#6b7280',
+    color: theme.textSecondary,
   },
   taskTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: theme.text,
     marginBottom: 8,
   },
   taskDescription: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.textSecondary,
     lineHeight: 20,
     marginBottom: 12,
   },
@@ -214,7 +218,7 @@ const styles = StyleSheet.create({
   },
   sponsorText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.textSecondary,
   },
   completeButton: {
     flexDirection: 'row',
@@ -243,12 +247,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#111827',
+    color: theme.text,
     marginTop: 16,
   },
   emptyText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.textSecondary,
     textAlign: 'center',
     marginTop: 8,
     paddingHorizontal: 32,

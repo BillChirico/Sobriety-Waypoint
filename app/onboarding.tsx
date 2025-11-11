@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { UserRole } from '@/types/database';
 import { Users, User, Calendar } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function OnboardingScreen() {
+  const { theme } = useTheme();
   const [step, setStep] = useState(1);
   const [role, setRole] = useState<UserRole>('sponsee');
   const [sobrietyDate, setSobrietyDate] = useState(new Date());
@@ -49,6 +51,8 @@ export default function OnboardingScreen() {
     }
   };
 
+  const styles = createStyles(theme);
+
   if (step === 1) {
     return (
       <ScrollView contentContainerStyle={styles.container}>
@@ -64,7 +68,7 @@ export default function OnboardingScreen() {
               onPress={() => setRole('sponsee')}
             >
               <View style={styles.roleIcon}>
-                <User size={32} color={role === 'sponsee' ? '#10b981' : '#6b7280'} />
+                <User size={32} color={role === 'sponsee' ? '#007AFF' : '#6b7280'} />
               </View>
               <View style={styles.roleContent}>
                 <Text style={[styles.roleTitle, role === 'sponsee' && styles.roleTextSelected]}>
@@ -81,7 +85,7 @@ export default function OnboardingScreen() {
               onPress={() => setRole('sponsor')}
             >
               <View style={styles.roleIcon}>
-                <Users size={32} color={role === 'sponsor' ? '#10b981' : '#6b7280'} />
+                <Users size={32} color={role === 'sponsor' ? '#007AFF' : '#6b7280'} />
               </View>
               <View style={styles.roleContent}>
                 <Text style={[styles.roleTitle, role === 'sponsor' && styles.roleTextSelected]}>
@@ -98,7 +102,7 @@ export default function OnboardingScreen() {
               onPress={() => setRole('both')}
             >
               <View style={styles.roleIcon}>
-                <Users size={32} color={role === 'both' ? '#10b981' : '#6b7280'} />
+                <Users size={32} color={role === 'both' ? '#007AFF' : '#6b7280'} />
               </View>
               <View style={styles.roleContent}>
                 <Text style={[styles.roleTitle, role === 'both' && styles.roleTextSelected]}>
@@ -133,7 +137,7 @@ export default function OnboardingScreen() {
             style={styles.dateButton}
             onPress={() => setShowDatePicker(true)}
           >
-            <Calendar size={24} color="#10b981" />
+            <Calendar size={24} color="#007AFF" />
             <Text style={styles.dateText}>
               {sobrietyDate.toLocaleDateString('en-US', {
                 month: 'long',
@@ -167,7 +171,7 @@ export default function OnboardingScreen() {
                   padding: '12px',
                   fontSize: '16px',
                   borderRadius: '8px',
-                  border: '2px solid #10b981',
+                  border: '2px solid #007AFF',
                   marginBottom: '16px',
                 }}
               />
@@ -206,10 +210,10 @@ export default function OnboardingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: theme.background,
   },
   content: {
     flex: 1,
@@ -219,13 +223,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#111827',
+    color: theme.text,
     marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: '#6b7280',
+    color: theme.textSecondary,
     textAlign: 'center',
     marginBottom: 40,
   },
@@ -240,15 +244,15 @@ const styles = StyleSheet.create({
   },
   roleCard: {
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderWidth: 2,
-    borderColor: '#e5e7eb',
+    borderColor: theme.border,
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
   },
   roleCardSelected: {
-    borderColor: '#10b981',
+    borderColor: '#007AFF',
     backgroundColor: '#f0fdf4',
   },
   roleIcon: {
@@ -264,11 +268,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   roleTextSelected: {
-    color: '#10b981',
+    color: '#007AFF',
   },
   roleDescription: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.textSecondary,
     lineHeight: 20,
   },
   dateContainer: {
@@ -278,9 +282,9 @@ const styles = StyleSheet.create({
   dateButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderWidth: 2,
-    borderColor: '#10b981',
+    borderColor: '#007AFF',
     borderRadius: 12,
     padding: 16,
     marginBottom: 32,
@@ -291,7 +295,7 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: theme.text,
     marginLeft: 12,
   },
   daysContainer: {
@@ -300,15 +304,15 @@ const styles = StyleSheet.create({
   daysCount: {
     fontSize: 64,
     fontWeight: '700',
-    color: '#10b981',
+    color: '#007AFF',
   },
   daysLabel: {
     fontSize: 18,
-    color: '#6b7280',
+    color: theme.textSecondary,
     marginTop: 8,
   },
   button: {
-    backgroundColor: '#10b981',
+    backgroundColor: '#007AFF',
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',

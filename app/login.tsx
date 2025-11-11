@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Heart } from 'lucide-react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -27,6 +28,7 @@ const GoogleLogo = ({ size = 20 }: { size?: number }) => (
 );
 
 export default function LoginScreen() {
+  const { theme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -73,6 +75,8 @@ export default function LoginScreen() {
     }
   };
 
+  const styles = createStyles(theme);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -81,7 +85,7 @@ export default function LoginScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <View style={styles.iconContainer}>
-            <Heart size={48} color="#10b981" fill="#10b981" />
+            <Heart size={48} color="#007AFF" fill="#007AFF" />
           </View>
           <Text style={styles.title}>12-Step Tracker</Text>
           <Text style={styles.subtitle}>Your journey to recovery</Text>
@@ -153,10 +157,10 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: theme.background,
   },
   scrollContent: {
     flexGrow: 1,
@@ -173,12 +177,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#111827',
+    color: theme.text,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#6b7280',
+    color: theme.textSecondary,
   },
   form: {
     width: '100%',
@@ -195,16 +199,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderWidth: 1,
     borderColor: '#d1d5db',
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: '#111827',
+    color: theme.text,
   },
   button: {
-    backgroundColor: '#10b981',
+    backgroundColor: '#007AFF',
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -234,7 +238,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   googleButton: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderWidth: 1,
     borderColor: '#d1d5db',
     borderRadius: 12,

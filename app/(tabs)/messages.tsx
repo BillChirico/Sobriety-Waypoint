@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { Message, SponsorSponseeRelationship } from '@/types/database';
 import { Send, MessageCircle } from 'lucide-react-native';
 
 export default function MessagesScreen() {
   const { profile } = useAuth();
+  const { theme } = useTheme();
   const [relationships, setRelationships] = useState<SponsorSponseeRelationship[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -73,6 +75,8 @@ export default function MessagesScreen() {
     if (!profile) return null;
     return rel.sponsor_id === profile.id ? rel.sponsee : rel.sponsor;
   };
+
+  const styles = createStyles(theme);
 
   if (!selectedChat) {
     return (
@@ -165,26 +169,26 @@ export default function MessagesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: theme.background,
   },
   header: {
     padding: 24,
     paddingTop: 60,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: theme.border,
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#111827',
+    color: theme.text,
   },
   headerSubtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.textSecondary,
     marginTop: 4,
   },
   chatList: {
@@ -194,7 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderBottomWidth: 1,
     borderBottomColor: '#f3f4f6',
   },
@@ -218,11 +222,11 @@ const styles = StyleSheet.create({
   chatName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111827',
+    color: theme.text,
   },
   chatRole: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.textSecondary,
     marginTop: 2,
   },
   emptyState: {
@@ -233,12 +237,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#111827',
+    color: theme.text,
     marginTop: 16,
   },
   emptyText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.textSecondary,
     textAlign: 'center',
     marginTop: 8,
     paddingHorizontal: 32,
@@ -246,9 +250,9 @@ const styles = StyleSheet.create({
   chatHeader: {
     padding: 16,
     paddingTop: 60,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: theme.border,
   },
   backButton: {
     marginBottom: 8,
@@ -261,7 +265,7 @@ const styles = StyleSheet.create({
   chatHeaderTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#111827',
+    color: theme.text,
   },
   messagesContainer: {
     flex: 1,
@@ -279,7 +283,7 @@ const styles = StyleSheet.create({
   },
   receivedMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
   },
   messageText: {
     fontSize: 16,
@@ -294,7 +298,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',
     alignItems: 'center',

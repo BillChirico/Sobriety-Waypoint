@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { StepContent } from '@/types/database';
 import { BookOpen, X } from 'lucide-react-native';
 
 export default function StepsScreen() {
+  const { theme } = useTheme();
   const [steps, setSteps] = useState<StepContent[]>([]);
   const [selectedStep, setSelectedStep] = useState<StepContent | null>(null);
 
@@ -19,6 +21,8 @@ export default function StepsScreen() {
       .order('step_number');
     setSteps(data || []);
   };
+
+  const styles = createStyles(theme);
 
   return (
     <View style={styles.container}>
@@ -89,26 +93,26 @@ export default function StepsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: theme.background,
   },
   header: {
     padding: 24,
     paddingTop: 60,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: theme.border,
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#111827',
+    color: theme.text,
   },
   headerSubtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.textSecondary,
     marginTop: 4,
   },
   content: {
@@ -117,7 +121,7 @@ const styles = StyleSheet.create({
   },
   stepCard: {
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -147,23 +151,23 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111827',
+    color: theme.text,
     marginBottom: 4,
   },
   stepDescription: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.textSecondary,
     lineHeight: 20,
   },
   modal: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.card,
   },
   modalHeader: {
     padding: 24,
     paddingTop: 60,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: theme.border,
   },
   modalHeaderContent: {
     flexDirection: 'row',
@@ -182,13 +186,13 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#111827',
+    color: theme.text,
     marginBottom: 12,
     lineHeight: 28,
   },
   modalDescription: {
     fontSize: 16,
-    color: '#6b7280',
+    color: theme.textSecondary,
     lineHeight: 24,
     marginBottom: 24,
   },
@@ -198,7 +202,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: theme.text,
     marginBottom: 12,
   },
   sectionContent: {
