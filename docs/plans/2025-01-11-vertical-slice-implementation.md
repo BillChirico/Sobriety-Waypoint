@@ -31,7 +31,7 @@ Expected output: Package installation success, ~15-20 additional packages added
 pnpm list jest-expo @testing-library/react-native @testing-library/jest-native
 ```
 
-Expected output: Shows installed versions (jest-expo should be ~52.0.0, RNTL ~12.x)
+Expected output: Shows installed versions (jest-expo should be ^54.0.13, RNTL ^13.3.3)
 
 **Step 3: Commit**
 
