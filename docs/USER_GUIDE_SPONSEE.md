@@ -73,12 +73,14 @@ Tasks are assignments from your sponsor to help you work through the 12 steps.
 ### Managing a Task
 
 #### Starting a Task
+
 1. Tap on a pending task to view details
 2. Read the title, description, and any notes from your sponsor
 3. Check the due date
 4. Tap "Start Task" to mark it as in-progress
 
 #### Completing a Task
+
 1. Open the in-progress task
 2. Complete the required work (reflection, writing, etc.)
 3. Tap "Mark Complete"
@@ -87,6 +89,7 @@ Tasks are assignments from your sponsor to help you work through the 12 steps.
 ### Task Details
 
 Each task includes:
+
 - **Title**: Brief description of the task
 - **Description**: Detailed instructions from your sponsor
 - **Step Number**: Which of the 12 steps this task relates to
@@ -182,24 +185,29 @@ Recovery is a journey with challenges. If you experience a slip-up:
 ### Profile Settings
 
 #### Personal Information
+
 - **Name**: Update your display name
 - **Bio**: Share information about yourself with your sponsor
 - **Sobriety Date**: Your original sobriety start date
 - **Current Step**: Updated by your sponsor as you progress
 
 #### Account Settings
+
 - **Email**: Change your email address
 - **Password**: Update your password
 - **Theme**: Switch between light, dark, or system theme
 
 #### Notification Preferences
+
 Control which notifications you receive:
+
 - **Task Assignments**: When your sponsor assigns new tasks
 - **Messages**: When you receive messages from your sponsor
 - **Step Milestones**: When you complete a step
 - **Reminders**: For upcoming task due dates
 
 #### Privacy
+
 - **Slip-Up History**: View your private slip-up log (only visible to you)
 - **Account Security**: Enable two-factor authentication (coming soon)
 
@@ -256,6 +264,7 @@ You'll receive notifications for:
 ### Getting Support
 
 If you're struggling:
+
 - Message your sponsor through the app
 - Attend AA meetings in your community
 - Reach out to your support network
@@ -297,6 +306,7 @@ The app works on web browsers! Visit the web version on any computer with intern
 ### Technical Support
 
 If you encounter technical issues:
+
 - Check for app updates in your app store
 - Try logging out and back in
 - Clear app cache (in Profile > Settings)
@@ -305,6 +315,7 @@ If you encounter technical issues:
 ### Recovery Support
 
 For immediate recovery support:
+
 - AA Hotline: 1-800-839-1686
 - National Suicide Prevention Lifeline: 988
 - SAMHSA Treatment Referral: 1-800-662-4357
@@ -321,5 +332,5 @@ Remember: Recovery is a journey, not a destination. Take it one day at a time, a
 
 ---
 
-*Last Updated: January 2025*
-*Version: 1.0*
+_Last Updated: January 2025_
+_Version: 1.0_

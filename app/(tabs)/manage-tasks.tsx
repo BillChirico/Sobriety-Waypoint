@@ -13,7 +13,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { Task, Profile } from '@/types/database';
-import { Plus, CheckCircle, Clock, Calendar, Trash2, Filter } from 'lucide-react-native';
+import {
+  Plus,
+  CheckCircle,
+  Clock,
+  Calendar,
+  Trash2,
+  Filter,
+} from 'lucide-react-native';
 import TaskCreationModal from '@/components/TaskCreationModal';
 
 export default function ManageTasksScreen() {
@@ -23,8 +30,11 @@ export default function ManageTasksScreen() {
   const [sponsees, setSponsees] = useState<Profile[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [filterStatus, setFilterStatus] = useState<'all' | 'assigned' | 'completed'>('all');
-  const [selectedSponseeFilter, setSelectedSponseeFilter] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState<
+    'all' | 'assigned' | 'completed'
+  >('all');
+  const [selectedSponseeFilter, setSelectedSponseeFilter] =
+    useState<string>('all');
 
   useEffect(() => {
     fetchData();
@@ -39,7 +49,9 @@ export default function ManageTasksScreen() {
       .eq('sponsor_id', profile.id)
       .eq('status', 'active');
 
-    const sponseeProfiles = (sponseeData || []).map((rel) => rel.sponsee).filter(Boolean) as Profile[];
+    const sponseeProfiles = (sponseeData || [])
+      .map((rel) => rel.sponsee)
+      .filter(Boolean) as Profile[];
     setSponsees(sponseeProfiles);
 
     const { data: taskData } = await supabase
@@ -65,8 +77,16 @@ export default function ManageTasksScreen() {
         ? window.confirm(confirmMessage)
         : await new Promise<boolean>((resolve) => {
             Alert.alert('Confirm Delete', confirmMessage, [
-              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
-              { text: 'Delete', style: 'destructive', onPress: () => resolve(true) },
+              {
+                text: 'Cancel',
+                style: 'cancel',
+                onPress: () => resolve(false),
+              },
+              {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: () => resolve(true),
+              },
             ]);
           });
 
@@ -102,7 +122,9 @@ export default function ManageTasksScreen() {
     }
 
     if (selectedSponseeFilter !== 'all') {
-      filtered = filtered.filter((task) => task.sponsee_id === selectedSponseeFilter);
+      filtered = filtered.filter(
+        (task) => task.sponsee_id === selectedSponseeFilter,
+      );
     }
 
     return filtered;
@@ -114,7 +136,10 @@ export default function ManageTasksScreen() {
     const inProgress = tasks.filter((t) => t.status === 'in_progress').length;
     const completed = tasks.filter((t) => t.status === 'completed').length;
     const overdue = tasks.filter(
-      (t) => t.due_date && new Date(t.due_date) < new Date() && t.status !== 'completed'
+      (t) =>
+        t.due_date &&
+        new Date(t.due_date) < new Date() &&
+        t.status !== 'completed',
     ).length;
 
     return { total, assigned, inProgress, completed, overdue };
@@ -146,7 +171,9 @@ export default function ManageTasksScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Manage Tasks</Text>
-        <Text style={styles.headerSubtitle}>Track and assign sponsee tasks</Text>
+        <Text style={styles.headerSubtitle}>
+          Track and assign sponsee tasks
+        </Text>
       </View>
 
       <View style={styles.statsContainer}>
@@ -155,44 +182,78 @@ export default function ManageTasksScreen() {
           <Text style={styles.statLabel}>Total</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={[styles.statValue, { color: theme.primary }]}>{stats.assigned}</Text>
+          <Text style={[styles.statValue, { color: theme.primary }]}>
+            {stats.assigned}
+          </Text>
           <Text style={styles.statLabel}>Assigned</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={[styles.statValue, { color: '#10b981' }]}>{stats.completed}</Text>
+          <Text style={[styles.statValue, { color: '#10b981' }]}>
+            {stats.completed}
+          </Text>
           <Text style={styles.statLabel}>Completed</Text>
         </View>
         {stats.overdue > 0 && (
           <View style={styles.statCard}>
-            <Text style={[styles.statValue, { color: '#ef4444' }]}>{stats.overdue}</Text>
+            <Text style={[styles.statValue, { color: '#ef4444' }]}>
+              {stats.overdue}
+            </Text>
             <Text style={styles.statLabel}>Overdue</Text>
           </View>
         )}
       </View>
 
       <View style={styles.filtersContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filters}
+        >
           <TouchableOpacity
-            style={[styles.filterChip, filterStatus === 'all' && styles.filterChipActive]}
+            style={[
+              styles.filterChip,
+              filterStatus === 'all' && styles.filterChipActive,
+            ]}
             onPress={() => setFilterStatus('all')}
           >
-            <Text style={[styles.filterChipText, filterStatus === 'all' && styles.filterChipTextActive]}>
+            <Text
+              style={[
+                styles.filterChipText,
+                filterStatus === 'all' && styles.filterChipTextActive,
+              ]}
+            >
               All Tasks
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.filterChip, filterStatus === 'assigned' && styles.filterChipActive]}
+            style={[
+              styles.filterChip,
+              filterStatus === 'assigned' && styles.filterChipActive,
+            ]}
             onPress={() => setFilterStatus('assigned')}
           >
-            <Text style={[styles.filterChipText, filterStatus === 'assigned' && styles.filterChipTextActive]}>
+            <Text
+              style={[
+                styles.filterChipText,
+                filterStatus === 'assigned' && styles.filterChipTextActive,
+              ]}
+            >
               Assigned
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.filterChip, filterStatus === 'completed' && styles.filterChipActive]}
+            style={[
+              styles.filterChip,
+              filterStatus === 'completed' && styles.filterChipActive,
+            ]}
             onPress={() => setFilterStatus('completed')}
           >
-            <Text style={[styles.filterChipText, filterStatus === 'completed' && styles.filterChipTextActive]}>
+            <Text
+              style={[
+                styles.filterChipText,
+                filterStatus === 'completed' && styles.filterChipTextActive,
+              ]}
+            >
               Completed
             </Text>
           </TouchableOpacity>
@@ -201,15 +262,23 @@ export default function ManageTasksScreen() {
 
       {sponsees.length > 1 && (
         <View style={styles.sponseeFiltersContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filters}
+          >
             <TouchableOpacity
-              style={[styles.filterChip, selectedSponseeFilter === 'all' && styles.filterChipActive]}
+              style={[
+                styles.filterChip,
+                selectedSponseeFilter === 'all' && styles.filterChipActive,
+              ]}
               onPress={() => setSelectedSponseeFilter('all')}
             >
               <Text
                 style={[
                   styles.filterChipText,
-                  selectedSponseeFilter === 'all' && styles.filterChipTextActive,
+                  selectedSponseeFilter === 'all' &&
+                    styles.filterChipTextActive,
                 ]}
               >
                 All Sponsees
@@ -218,13 +287,18 @@ export default function ManageTasksScreen() {
             {sponsees.map((sponsee) => (
               <TouchableOpacity
                 key={sponsee.id}
-                style={[styles.filterChip, selectedSponseeFilter === sponsee.id && styles.filterChipActive]}
+                style={[
+                  styles.filterChip,
+                  selectedSponseeFilter === sponsee.id &&
+                    styles.filterChipActive,
+                ]}
                 onPress={() => setSelectedSponseeFilter(sponsee.id)}
               >
                 <Text
                   style={[
                     styles.filterChipText,
-                    selectedSponseeFilter === sponsee.id && styles.filterChipTextActive,
+                    selectedSponseeFilter === sponsee.id &&
+                      styles.filterChipTextActive,
                   ]}
                 >
                   {sponsee.first_name} {sponsee.last_initial}.
@@ -237,13 +311,20 @@ export default function ManageTasksScreen() {
 
       <ScrollView
         style={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.primary}
+          />
+        }
       >
         {sponsees.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyTitle}>No Sponsees Yet</Text>
             <Text style={styles.emptyText}>
-              Connect with sponsees to start assigning tasks. Generate an invite code from your profile.
+              Connect with sponsees to start assigning tasks. Generate an invite
+              code from your profile.
             </Text>
           </View>
         ) : filteredTasks.length === 0 ? (
@@ -273,7 +354,8 @@ export default function ManageTasksScreen() {
                       {sponsee?.first_name} {sponsee?.last_initial}.
                     </Text>
                     <Text style={styles.sponseeMeta}>
-                      {sponseeTasks.length} task{sponseeTasks.length !== 1 ? 's' : ''}
+                      {sponseeTasks.length} task
+                      {sponseeTasks.length !== 1 ? 's' : ''}
                     </Text>
                   </View>
                   <TouchableOpacity
@@ -287,10 +369,18 @@ export default function ManageTasksScreen() {
                 </View>
 
                 {sponseeTasks.map((task) => (
-                  <View key={task.id} style={[styles.taskCard, isOverdue(task) && styles.taskCardOverdue]}>
+                  <View
+                    key={task.id}
+                    style={[
+                      styles.taskCard,
+                      isOverdue(task) && styles.taskCardOverdue,
+                    ]}
+                  >
                     <View style={styles.taskHeader}>
                       <View style={styles.stepBadge}>
-                        <Text style={styles.stepBadgeText}>Step {task.step_number}</Text>
+                        <Text style={styles.stepBadgeText}>
+                          Step {task.step_number}
+                        </Text>
                       </View>
                       {task.status === 'completed' ? (
                         <CheckCircle size={20} color="#10b981" />
@@ -308,7 +398,12 @@ export default function ManageTasksScreen() {
 
                     {task.due_date && (
                       <View style={styles.taskMeta}>
-                        <Calendar size={14} color={isOverdue(task) ? '#ef4444' : theme.textSecondary} />
+                        <Calendar
+                          size={14}
+                          color={
+                            isOverdue(task) ? '#ef4444' : theme.textSecondary
+                          }
+                        />
                         <Text
                           style={[
                             styles.taskMetaText,
@@ -322,8 +417,13 @@ export default function ManageTasksScreen() {
 
                     {task.status === 'completed' && task.completion_notes && (
                       <View style={styles.completionNotesContainer}>
-                        <Text style={styles.completionNotesLabel}>Completion Notes:</Text>
-                        <Text style={styles.completionNotesText} numberOfLines={3}>
+                        <Text style={styles.completionNotesLabel}>
+                          Completion Notes:
+                        </Text>
+                        <Text
+                          style={styles.completionNotesText}
+                          numberOfLines={3}
+                        >
                           {task.completion_notes}
                         </Text>
                       </View>
@@ -335,8 +435,8 @@ export default function ManageTasksScreen() {
                           {task.status === 'assigned'
                             ? 'Assigned'
                             : task.status === 'in_progress'
-                            ? 'In Progress'
-                            : 'Completed'}
+                              ? 'In Progress'
+                              : 'Completed'}
                         </Text>
                       </View>
                       {task.status !== 'completed' && (
@@ -357,7 +457,10 @@ export default function ManageTasksScreen() {
       </ScrollView>
 
       {sponsees.length > 0 && (
-        <TouchableOpacity style={styles.fab} onPress={() => setShowCreateModal(true)}>
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => setShowCreateModal(true)}
+        >
           <Plus size={24} color="#ffffff" />
         </TouchableOpacity>
       )}

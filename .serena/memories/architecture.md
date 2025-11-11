@@ -33,7 +33,9 @@ This centralized auth guard prevents unauthorized access to protected routes.
 ## Context Providers
 
 ### AuthContext (`contexts/AuthContext.tsx`)
+
 Manages authentication and user state:
+
 - **State**: `session`, `user`, `profile`, `loading`
 - **Methods**: `signIn`, `signUp`, `signOut`, `signInWithGoogle`
 - **Features**:
@@ -43,7 +45,9 @@ Manages authentication and user state:
   - Profile synchronization
 
 ### ThemeContext (`contexts/ThemeContext.tsx`)
+
 Manages app theme:
+
 - **State**: `theme` ('light' | 'dark' | 'system'), `isDark`, `colors`
 - **Methods**: `setTheme`
 - **Features**:
@@ -65,20 +69,25 @@ Manages app theme:
 ## Supabase Integration
 
 ### Client Setup (`lib/supabase.ts`)
+
 - Platform-aware storage adapter (SecureStore/localStorage)
 - Auto-refresh enabled
 - Session persistence
 - URL polyfill for React Native
 
 ### Type Definitions (`types/database.ts`)
+
 Complete TypeScript definitions for:
+
 - **Tables**: `profiles`, `tasks`, `messages`, `sponsor_sponsee_relationships`, `steps_content`, `notifications`, `relapses`, `invite_codes`
 - **Enums**: `UserRole`, `RelationshipStatus`, `TaskStatus`, `NotificationType`
 
 ## Security Model
 
 ### Row Level Security (RLS)
+
 All Supabase tables have RLS policies ensuring:
+
 - Users can only access their own data
 - Sponsors can view their sponsees' data
 - Sponsees can view their sponsor's data
@@ -86,6 +95,7 @@ All Supabase tables have RLS policies ensuring:
 - Private relapse tracking
 
 ### Authentication Guards
+
 - Centralized in root layout
 - No additional auth checks needed in individual screens
 - Automatic redirects based on auth state
@@ -93,15 +103,18 @@ All Supabase tables have RLS policies ensuring:
 ## Platform-Specific Considerations
 
 ### Storage
+
 - **Native (iOS/Android)**: expo-secure-store
 - **Web**: localStorage
 - Abstracted via storage adapter pattern
 
 ### UI Adjustments
+
 - Tab bar height: 90px (web) vs 85px (native)
 - Theme-aware styling via `useTheme()` hook
 - Platform-specific imports with conditionals
 
 ### Deep Linking
+
 - Scheme: `12stepstracker://`
 - Used for Google OAuth redirects on mobile

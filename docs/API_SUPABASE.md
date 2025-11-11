@@ -32,6 +32,7 @@ import { supabase } from '@/lib/supabase';
 ### Configuration
 
 The client is configured with:
+
 - **URL**: `EXPO_PUBLIC_SUPABASE_URL` environment variable
 - **Anonymous Key**: `EXPO_PUBLIC_SUPABASE_ANON_KEY` environment variable
 - **Storage Adapter**: Platform-specific (SecureStore for native, localStorage for web)
@@ -42,17 +43,23 @@ The client is configured with:
 
 The client uses a custom storage adapter that automatically selects:
 
-| Platform | Storage Method |
-|----------|---------------|
+| Platform    | Storage Method                |
+| ----------- | ----------------------------- |
 | iOS/Android | expo-secure-store (encrypted) |
-| Web | localStorage |
+| Web         | localStorage                  |
 
 ```typescript
 // Storage adapter automatically handles platform differences
 const ExpoSecureStoreAdapter = {
-  getItem: (key: string) => { /* Platform-specific implementation */ },
-  setItem: (key: string, value: string) => { /* Platform-specific implementation */ },
-  removeItem: (key: string) => { /* Platform-specific implementation */ },
+  getItem: (key: string) => {
+    /* Platform-specific implementation */
+  },
+  setItem: (key: string, value: string) => {
+    /* Platform-specific implementation */
+  },
+  removeItem: (key: string) => {
+    /* Platform-specific implementation */
+  },
 };
 ```
 
@@ -65,36 +72,43 @@ Location: `types/database.ts`
 ### Enums
 
 #### UserRole
+
 ```typescript
 type UserRole = 'sponsor' | 'sponsee' | 'both';
 ```
 
 User's role in the recovery program:
+
 - `sponsor`: Can guide others through the 12 steps
 - `sponsee`: Working through the 12 steps with a sponsor
 - `both`: Can be both a sponsor and sponsee
 
 #### RelationshipStatus
+
 ```typescript
 type RelationshipStatus = 'pending' | 'active' | 'inactive';
 ```
 
 Status of sponsor-sponsee relationship:
+
 - `pending`: Invitation sent, awaiting acceptance
 - `active`: Active sponsorship relationship
 - `inactive`: Ended relationship
 
 #### TaskStatus
+
 ```typescript
 type TaskStatus = 'assigned' | 'in_progress' | 'completed';
 ```
 
 Status of assigned tasks:
+
 - `assigned`: Task created, not yet started
 - `in_progress`: Sponsee actively working on task
 - `completed`: Task finished
 
 #### NotificationType
+
 ```typescript
 type NotificationType =
   | 'task_assigned'
@@ -116,28 +130,30 @@ User profile information.
 
 ```typescript
 interface Profile {
-  id: string;                    // UUID, references auth.users
-  email: string;                 // User's email
-  first_name: string;            // First name
-  last_initial: string;          // Last initial
-  phone?: string;                // Phone number (optional)
-  avatar_url?: string;           // Avatar image URL (optional)
-  role?: UserRole;               // User role
-  sobriety_date?: string;        // Original sobriety start date
-  bio?: string;                  // User biography
-  timezone: string;              // User's timezone
-  notification_preferences: {    // Notification settings
+  id: string; // UUID, references auth.users
+  email: string; // User's email
+  first_name: string; // First name
+  last_initial: string; // Last initial
+  phone?: string; // Phone number (optional)
+  avatar_url?: string; // Avatar image URL (optional)
+  role?: UserRole; // User role
+  sobriety_date?: string; // Original sobriety start date
+  bio?: string; // User biography
+  timezone: string; // User's timezone
+  notification_preferences: {
+    // Notification settings
     tasks: boolean;
     messages: boolean;
     milestones: boolean;
     daily: boolean;
   };
-  created_at: string;            // Profile creation timestamp
-  updated_at: string;            // Last update timestamp
+  created_at: string; // Profile creation timestamp
+  updated_at: string; // Last update timestamp
 }
 ```
 
 **RLS Policies**:
+
 - Users can view and update their own profile
 - Sponsors can view their sponsees' profiles
 - Sponsees can view their sponsor's profile
@@ -150,19 +166,20 @@ Tracks sponsor-sponsee connections.
 
 ```typescript
 interface SponsorSponseeRelationship {
-  id: string;                    // UUID primary key
-  sponsor_id: string;            // Sponsor's profile ID
-  sponsee_id: string;            // Sponsee's profile ID
-  status: RelationshipStatus;    // Relationship status
-  connected_at: string;          // When relationship became active
-  disconnected_at?: string;      // When relationship ended (optional)
-  created_at: string;            // Record creation timestamp
-  sponsor?: Profile;             // Populated sponsor profile (join)
-  sponsee?: Profile;             // Populated sponsee profile (join)
+  id: string; // UUID primary key
+  sponsor_id: string; // Sponsor's profile ID
+  sponsee_id: string; // Sponsee's profile ID
+  status: RelationshipStatus; // Relationship status
+  connected_at: string; // When relationship became active
+  disconnected_at?: string; // When relationship ended (optional)
+  created_at: string; // Record creation timestamp
+  sponsor?: Profile; // Populated sponsor profile (join)
+  sponsee?: Profile; // Populated sponsee profile (join)
 }
 ```
 
 **RLS Policies**:
+
 - Sponsors can view relationships where they are the sponsor
 - Sponsees can view relationships where they are the sponsee
 - Only sponsor can create relationships (via invite codes)
@@ -176,18 +193,19 @@ Sponsor invitation system.
 
 ```typescript
 interface InviteCode {
-  id: string;                    // UUID primary key
-  code: string;                  // Unique invite code
-  sponsor_id: string;            // Sponsor who created the code
-  expires_at: string;            // Expiration timestamp
-  used_by?: string;              // Profile ID of user who used code
-  used_at?: string;              // When code was used
-  created_at: string;            // Code creation timestamp
-  sponsor?: Profile;             // Populated sponsor profile (join)
+  id: string; // UUID primary key
+  code: string; // Unique invite code
+  sponsor_id: string; // Sponsor who created the code
+  expires_at: string; // Expiration timestamp
+  used_by?: string; // Profile ID of user who used code
+  used_at?: string; // When code was used
+  created_at: string; // Code creation timestamp
+  sponsor?: Profile; // Populated sponsor profile (join)
 }
 ```
 
 **RLS Policies**:
+
 - Sponsors can create and view their own codes
 - Anyone can read unexpired, unused codes
 - System updates code when used
@@ -200,18 +218,19 @@ Content for the 12 steps of recovery.
 
 ```typescript
 interface StepContent {
-  id: string;                    // UUID primary key
-  step_number: number;           // Step number (1-12)
-  title: string;                 // Step title
-  description: string;           // Brief description
-  detailed_content: string;      // Full step content
-  reflection_prompts: string[];  // Array of reflection questions
-  created_at: string;            // Record creation timestamp
-  updated_at: string;            // Last update timestamp
+  id: string; // UUID primary key
+  step_number: number; // Step number (1-12)
+  title: string; // Step title
+  description: string; // Brief description
+  detailed_content: string; // Full step content
+  reflection_prompts: string[]; // Array of reflection questions
+  created_at: string; // Record creation timestamp
+  updated_at: string; // Last update timestamp
 }
 ```
 
 **RLS Policies**:
+
 - Public read access for all authenticated users
 - Only admins can modify (via database admin)
 
@@ -223,24 +242,25 @@ Task assignments from sponsors to sponsees.
 
 ```typescript
 interface Task {
-  id: string;                    // UUID primary key
-  sponsor_id: string;            // Sponsor who assigned task
-  sponsee_id: string;            // Sponsee assigned to task
-  step_number: number;           // Related step (1-12)
-  title: string;                 // Task title
-  description: string;           // Detailed instructions
-  due_date?: string;             // Optional due date
-  status: TaskStatus;            // Current task status
-  completion_notes?: string;     // Notes added on completion
-  completed_at?: string;         // Completion timestamp
-  created_at: string;            // Task creation timestamp
-  updated_at: string;            // Last update timestamp
-  sponsor?: Profile;             // Populated sponsor profile (join)
-  sponsee?: Profile;             // Populated sponsee profile (join)
+  id: string; // UUID primary key
+  sponsor_id: string; // Sponsor who assigned task
+  sponsee_id: string; // Sponsee assigned to task
+  step_number: number; // Related step (1-12)
+  title: string; // Task title
+  description: string; // Detailed instructions
+  due_date?: string; // Optional due date
+  status: TaskStatus; // Current task status
+  completion_notes?: string; // Notes added on completion
+  completed_at?: string; // Completion timestamp
+  created_at: string; // Task creation timestamp
+  updated_at: string; // Last update timestamp
+  sponsor?: Profile; // Populated sponsor profile (join)
+  sponsee?: Profile; // Populated sponsee profile (join)
 }
 ```
 
 **RLS Policies**:
+
 - Sponsors can create tasks for their sponsees
 - Sponsors can view tasks they created
 - Sponsees can view tasks assigned to them
@@ -255,16 +275,17 @@ Private relapse tracking (formerly called relapses).
 
 ```typescript
 interface SlipUp {
-  id: string;                    // UUID primary key
-  user_id: string;               // User's profile ID
-  slip_up_date: string;          // Date of slip-up
+  id: string; // UUID primary key
+  user_id: string; // User's profile ID
+  slip_up_date: string; // Date of slip-up
   recovery_restart_date: string; // New recovery start date
-  notes?: string;                // Optional private notes
-  created_at: string;            // Record creation timestamp
+  notes?: string; // Optional private notes
+  created_at: string; // Record creation timestamp
 }
 ```
 
 **RLS Policies**:
+
 - Strictly private - users can only view/modify their own slip-ups
 - No access for sponsors or other users
 
@@ -276,18 +297,19 @@ Direct messaging between sponsors and sponsees.
 
 ```typescript
 interface Message {
-  id: string;                    // UUID primary key
-  sender_id: string;             // Message sender's profile ID
-  recipient_id: string;          // Message recipient's profile ID
-  content: string;               // Message text
-  read_at?: string;              // When message was read (optional)
-  created_at: string;            // Message sent timestamp
-  sender?: Profile;              // Populated sender profile (join)
-  recipient?: Profile;           // Populated recipient profile (join)
+  id: string; // UUID primary key
+  sender_id: string; // Message sender's profile ID
+  recipient_id: string; // Message recipient's profile ID
+  content: string; // Message text
+  read_at?: string; // When message was read (optional)
+  created_at: string; // Message sent timestamp
+  sender?: Profile; // Populated sender profile (join)
+  recipient?: Profile; // Populated recipient profile (join)
 }
 ```
 
 **RLS Policies**:
+
 - Sender can view messages they sent
 - Recipient can view messages sent to them
 - Recipient can update read_at timestamp
@@ -300,18 +322,19 @@ In-app notification system.
 
 ```typescript
 interface Notification {
-  id: string;                    // UUID primary key
-  user_id: string;               // Notification recipient
-  type: NotificationType;        // Notification type
-  title: string;                 // Notification title
-  content: string;               // Notification message
-  read_at?: string;              // When notification was read
-  related_id?: string;           // Related entity ID (task, message, etc.)
-  created_at: string;            // Notification creation timestamp
+  id: string; // UUID primary key
+  user_id: string; // Notification recipient
+  type: NotificationType; // Notification type
+  title: string; // Notification title
+  content: string; // Notification message
+  read_at?: string; // When notification was read
+  related_id?: string; // Related entity ID (task, message, etc.)
+  created_at: string; // Notification creation timestamp
 }
 ```
 
 **RLS Policies**:
+
 - Users can only view their own notifications
 - System creates notifications via database triggers
 
@@ -338,6 +361,7 @@ if (error) {
 ```
 
 **Response**:
+
 - `data.user`: User object
 - `data.session`: Authentication session
 - Profile is automatically created via database trigger
@@ -371,9 +395,10 @@ Authenticate using Google account.
 const { data, error } = await supabase.auth.signInWithOAuth({
   provider: 'google',
   options: {
-    redirectTo: Platform.OS === 'web'
-      ? window.location.origin
-      : '12stepstracker://auth/callback',
+    redirectTo:
+      Platform.OS === 'web'
+        ? window.location.origin
+        : '12stepstracker://auth/callback',
   },
 });
 
@@ -383,6 +408,7 @@ if (error) {
 ```
 
 **Platform Considerations**:
+
 - **Web**: Redirects to current origin
 - **Mobile**: Uses deep link scheme `12stepstracker://`
 
@@ -411,7 +437,10 @@ if (error) {
 Retrieve active session.
 
 ```typescript
-const { data: { session }, error } = await supabase.auth.getSession();
+const {
+  data: { session },
+  error,
+} = await supabase.auth.getSession();
 
 if (session) {
   console.log('User ID:', session.user.id);
@@ -426,12 +455,12 @@ if (session) {
 Subscribe to authentication state changes.
 
 ```typescript
-const { data: { subscription } } = supabase.auth.onAuthStateChange(
-  (event, session) => {
-    console.log('Auth event:', event); // SIGNED_IN, SIGNED_OUT, etc.
-    console.log('Session:', session);
-  }
-);
+const {
+  data: { subscription },
+} = supabase.auth.onAuthStateChange((event, session) => {
+  console.log('Auth event:', event); // SIGNED_IN, SIGNED_OUT, etc.
+  console.log('Session:', session);
+});
 
 // Cleanup
 subscription.unsubscribe();
@@ -468,7 +497,8 @@ const { data, error } = await supabase
 ```typescript
 const { data, error } = await supabase
   .from('tasks')
-  .select(`
+  .select(
+    `
     *,
     sponsor:sponsor_id (
       id,
@@ -481,7 +511,8 @@ const { data, error } = await supabase
       first_name,
       last_initial
     )
-  `)
+  `,
+  )
   .eq('sponsee_id', userId);
 ```
 
@@ -524,9 +555,15 @@ const { data, error } = await supabase
 const { data, error } = await supabase
   .from('tasks')
   .insert([
-    { /* task 1 */ },
-    { /* task 2 */ },
-    { /* task 3 */ },
+    {
+      /* task 1 */
+    },
+    {
+      /* task 2 */
+    },
+    {
+      /* task 3 */
+    },
   ])
   .select();
 ```
@@ -665,7 +702,8 @@ const { data: profile, error } = await supabase
 ```typescript
 const { data: relationships, error } = await supabase
   .from('sponsor_sponsee_relationships')
-  .select(`
+  .select(
+    `
     *,
     sponsee:sponsee_id (
       id,
@@ -675,7 +713,8 @@ const { data: relationships, error } = await supabase
       sobriety_date,
       role
     )
-  `)
+  `,
+  )
   .eq('sponsor_id', userId)
   .eq('status', 'active');
 ```
@@ -685,7 +724,8 @@ const { data: relationships, error } = await supabase
 ```typescript
 const { data: relationship, error } = await supabase
   .from('sponsor_sponsee_relationships')
-  .select(`
+  .select(
+    `
     *,
     sponsor:sponsor_id (
       id,
@@ -695,7 +735,8 @@ const { data: relationship, error } = await supabase
       phone,
       bio
     )
-  `)
+  `,
+  )
   .eq('sponsee_id', userId)
   .eq('status', 'active')
   .single();
@@ -708,14 +749,16 @@ const { data: relationship, error } = await supabase
 ```typescript
 const { data: tasks, error } = await supabase
   .from('tasks')
-  .select(`
+  .select(
+    `
     *,
     sponsor:sponsor_id (
       id,
       first_name,
       last_initial
     )
-  `)
+  `,
+  )
   .eq('sponsee_id', userId)
   .order('due_date', { ascending: true, nullsFirst: false })
   .order('created_at', { ascending: false });
@@ -728,7 +771,8 @@ const { data: tasks, error } = await supabase
 ```typescript
 const { data: tasks, error } = await supabase
   .from('tasks')
-  .select(`
+  .select(
+    `
     *,
     sponsee:sponsee_id (
       id,
@@ -736,7 +780,8 @@ const { data: tasks, error } = await supabase
       last_initial,
       sobriety_date
     )
-  `)
+  `,
+  )
   .eq('sponsor_id', userId)
   .order('created_at', { ascending: false });
 ```
@@ -771,11 +816,13 @@ const { data: step, error } = await supabase
 ```typescript
 const { data: messages, error } = await supabase
   .from('messages')
-  .select(`
+  .select(
+    `
     *,
     sender:sender_id (id, first_name, last_initial),
     recipient:recipient_id (id, first_name, last_initial)
-  `)
+  `,
+  )
   .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
   .or(`sender_id.eq.${otherUserId},recipient_id.eq.${otherUserId}`)
   .order('created_at', { ascending: true });
@@ -872,10 +919,10 @@ All Supabase operations return an error object with:
 
 ```typescript
 interface SupabaseError {
-  message: string;     // Human-readable error message
-  details: string;     // Additional error details
-  hint: string;        // Suggestion for fixing the error
-  code: string;        // Error code
+  message: string; // Human-readable error message
+  details: string; // Additional error details
+  hint: string; // Suggestion for fixing the error
+  code: string; // Error code
 }
 ```
 
@@ -921,13 +968,13 @@ try {
 
 ### Common Errors
 
-| Error Code | Description | Solution |
-|------------|-------------|----------|
-| `PGRST116` | No rows returned | Check if record exists, or use `.maybeSingle()` instead of `.single()` |
-| `23505` | Unique constraint violation | Record already exists, use different value or upsert |
-| `23503` | Foreign key violation | Referenced record doesn't exist |
-| `42501` | Insufficient privileges | RLS policy preventing access |
-| `401` | Unauthorized | User not authenticated |
+| Error Code | Description                 | Solution                                                               |
+| ---------- | --------------------------- | ---------------------------------------------------------------------- |
+| `PGRST116` | No rows returned            | Check if record exists, or use `.maybeSingle()` instead of `.single()` |
+| `23505`    | Unique constraint violation | Record already exists, use different value or upsert                   |
+| `23503`    | Foreign key violation       | Referenced record doesn't exist                                        |
+| `42501`    | Insufficient privileges     | RLS policy preventing access                                           |
+| `401`      | Unauthorized                | User not authenticated                                                 |
 
 ### RLS Policy Violations
 
@@ -1018,5 +1065,5 @@ When multiple operations must succeed or fail together, consider using Supabase 
 
 ---
 
-*Last Updated: January 2025*
-*Version: 1.0*
+_Last Updated: January 2025_
+_Version: 1.0_

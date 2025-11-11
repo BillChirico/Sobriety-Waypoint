@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, LayoutChangeEvent, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  LayoutChangeEvent,
+  Platform,
+} from 'react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 
 type IconComponentType = React.ComponentType<{ size?: number; color?: string }>;
@@ -27,19 +35,24 @@ export default function AnimatedBottomNav({
   const [internalActiveIndex, setInternalActiveIndex] = useState(0);
   const [textWidths, setTextWidths] = useState<number[]>([]);
 
-  const activeIndex = controlledActiveIndex !== undefined ? controlledActiveIndex : internalActiveIndex;
+  const activeIndex =
+    controlledActiveIndex !== undefined
+      ? controlledActiveIndex
+      : internalActiveIndex;
   const finalAccentColor = accentColor || theme.primary;
 
-  const animatedValuesRef = useRef<Array<{
-    iconTranslateY: Animated.Value;
-    lineWidth: Animated.Value;
-  }>>([]);
+  const animatedValuesRef = useRef<
+    Array<{
+      iconTranslateY: Animated.Value;
+      lineWidth: Animated.Value;
+    }>
+  >([]);
 
   if (animatedValuesRef.current.length !== items.length) {
     animatedValuesRef.current = items.map((_, index) => ({
       iconTranslateY: new Animated.Value(0),
       lineWidth: new Animated.Value(
-        index === activeIndex && textWidths[index] ? textWidths[index] : 0
+        index === activeIndex && textWidths[index] ? textWidths[index] : 0,
       ),
     }));
   }
@@ -96,14 +109,17 @@ export default function AnimatedBottomNav({
 
   const handleTextLayout = (index: number) => (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
-    setTextWidths(prev => {
+    setTextWidths((prev) => {
       const newWidths = [...prev];
       newWidths[index] = width;
       return newWidths;
     });
   };
 
-  const styles = useMemo(() => createStyles(theme, finalAccentColor, isDark), [theme, finalAccentColor, isDark]);
+  const styles = useMemo(
+    () => createStyles(theme, finalAccentColor, isDark),
+    [theme, finalAccentColor, isDark],
+  );
 
   return (
     <View style={styles.container}>
@@ -125,14 +141,18 @@ export default function AnimatedBottomNav({
                   styles.iconWrapper,
                   {
                     transform: [
-                      { translateY: animValues ? animValues.iconTranslateY : 0 },
+                      {
+                        translateY: animValues ? animValues.iconTranslateY : 0,
+                      },
                     ],
                   },
                 ]}
               >
                 <IconComponent
                   size={24}
-                  color={isActive ? finalAccentColor : styles.inactiveColor.color}
+                  color={
+                    isActive ? finalAccentColor : styles.inactiveColor.color
+                  }
                 />
               </Animated.View>
 
@@ -140,7 +160,9 @@ export default function AnimatedBottomNav({
                 <Text
                   style={[
                     styles.menuText,
-                    isActive ? { color: finalAccentColor, fontFamily: theme.fontBold } : styles.inactiveColor,
+                    isActive
+                      ? { color: finalAccentColor, fontFamily: theme.fontBold }
+                      : styles.inactiveColor,
                   ]}
                   onLayout={handleTextLayout(index)}
                   numberOfLines={1}

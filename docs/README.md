@@ -7,9 +7,11 @@ Welcome to the comprehensive documentation for the 12-Step Tracker application. 
 ### For End Users
 
 #### [User Guide for Sponsees](./USER_GUIDE_SPONSEE.md)
+
 Complete guide for sponsees using the app to work through their recovery journey.
 
 **Topics Covered**:
+
 - Getting started and account creation
 - Connecting with a sponsor
 - Working with tasks
@@ -24,9 +26,11 @@ Complete guide for sponsees using the app to work through their recovery journey
 ---
 
 #### [User Guide for Sponsors](./USER_GUIDE_SPONSOR.md)
+
 Complete guide for sponsors using the app to support their sponsees.
 
 **Topics Covered**:
+
 - Getting started as a sponsor
 - Managing sponsees
 - Creating and managing tasks
@@ -43,9 +47,11 @@ Complete guide for sponsors using the app to support their sponsees.
 ### For Developers
 
 #### [Developer Setup Guide](./DEVELOPER_GUIDE.md)
+
 Step-by-step guide to set up your development environment and start contributing.
 
 **Topics Covered**:
+
 - Prerequisites and required software
 - Initial project setup
 - Environment configuration
@@ -60,9 +66,11 @@ Step-by-step guide to set up your development environment and start contributing
 ---
 
 #### [Supabase API Documentation](./API_SUPABASE.md)
+
 Comprehensive API reference for Supabase integration.
 
 **Topics Covered**:
+
 - Client setup and configuration
 - Type definitions for all database tables
 - Authentication methods (email, OAuth)
@@ -77,9 +85,11 @@ Comprehensive API reference for Supabase integration.
 ---
 
 #### [Context Providers API Documentation](./API_CONTEXTS.md)
+
 Complete API reference for React Context providers.
 
 **Topics Covered**:
+
 - **AuthContext**:
   - Authentication state management
   - Sign in/up/out methods
@@ -99,9 +109,11 @@ Complete API reference for React Context providers.
 ### Setup & Configuration
 
 #### [Google OAuth Setup](../GOOGLE_OAUTH_SETUP.md)
+
 Detailed instructions for configuring Google Sign-In.
 
 **Topics Covered**:
+
 - Google Cloud Console configuration
 - Supabase provider setup
 - OAuth credentials
@@ -116,18 +128,21 @@ Detailed instructions for configuring Google Sign-In.
 ## Quick Start Guides
 
 ### I'm a Sponsee
+
 1. Start with [User Guide for Sponsees](./USER_GUIDE_SPONSEE.md)
 2. Create your account
 3. Connect with your sponsor using their invite code
 4. Begin working on your first tasks
 
 ### I'm a Sponsor
+
 1. Start with [User Guide for Sponsors](./USER_GUIDE_SPONSOR.md)
 2. Create your account and complete your profile
 3. Generate invite codes for your sponsees
 4. Create task templates and start guiding your sponsees
 
 ### I'm a Developer
+
 1. Start with [Developer Setup Guide](./DEVELOPER_GUIDE.md)
 2. Set up your development environment
 3. Configure Supabase
@@ -156,11 +171,13 @@ docs/
 ### For Users
 
 **Roles**:
+
 - **Sponsee**: Someone working through the 12 steps with guidance from a sponsor
 - **Sponsor**: Someone who has completed the steps and guides others
 - **Both**: Can be both a sponsor and sponsee simultaneously
 
 **Core Features**:
+
 - **Task System**: Sponsors assign tasks to guide sponsees through each step
 - **Progress Tracking**: Visual representation of progress through the 12 steps
 - **Direct Messaging**: Secure communication between sponsors and sponsees
@@ -171,6 +188,7 @@ docs/
 ### For Developers
 
 **Technology Stack**:
+
 - **Frontend**: React Native 0.81.4 with React 19
 - **Framework**: Expo 54
 - **Router**: Expo Router v6 (file-based routing)
@@ -181,6 +199,7 @@ docs/
 - **UI**: Custom theming with light/dark mode support
 
 **Architecture**:
+
 - File-based routing with grouped routes
 - Context providers for global state (Auth, Theme)
 - Row Level Security for data access control
@@ -211,6 +230,7 @@ When making changes to the app:
 ### Documentation Checklist
 
 When adding a new feature:
+
 - [ ] Update relevant user guide
 - [ ] Add API documentation if applicable
 - [ ] Include code examples
@@ -224,10 +244,12 @@ When adding a new feature:
 ### For Users
 
 **Technical Support**:
+
 - Email: support@12steptracker.com
 - Check user guides for common questions
 
 **Recovery Support**:
+
 - AA Hotline: 1-800-839-1686
 - National Suicide Prevention Lifeline: 988
 - SAMHSA Treatment Referral: 1-800-662-4357
@@ -235,10 +257,12 @@ When adding a new feature:
 ### For Developers
 
 **Documentation Issues**:
+
 - Create an issue in the repository
 - Submit a pull request with corrections
 
 **Technical Questions**:
+
 - Review [Developer Guide](./DEVELOPER_GUIDE.md)
 - Check [API Documentation](./API_SUPABASE.md)
 - Consult external resources:
@@ -275,6 +299,7 @@ When adding a new feature:
 ## Document Versions
 
 All documentation in this directory:
+
 - **Last Updated**: January 2025
 - **Version**: 1.0
 - **Compatible with**: Expo SDK 54, React Native 0.81.4
@@ -284,12 +309,14 @@ All documentation in this directory:
 ## Feedback
 
 We welcome feedback on our documentation! If you find:
+
 - Unclear instructions
 - Missing information
 - Outdated content
 - Errors or typos
 
 Please:
+
 1. Create an issue in the repository
 2. Tag it with "documentation"
 3. Provide specific details about what needs improvement
@@ -302,8 +329,8 @@ Or submit a pull request with corrections!
 
 Whether you're here to support your recovery journey or to contribute to the codebase, we're glad you're here. Remember: recovery is possible, and every step forward matters.
 
-*One day at a time.*
+_One day at a time._
 
 ---
 
-*This documentation is maintained by the 12-Step Tracker development team.*
+_This documentation is maintained by the 12-Step Tracker development team._

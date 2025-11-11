@@ -66,6 +66,7 @@ The current Supabase authentication session.
 **Type**: `Session | null`
 
 **Example**:
+
 ```typescript
 const { session } = useAuth();
 
@@ -76,6 +77,7 @@ if (session) {
 ```
 
 **Session Object**:
+
 - `access_token`: JWT access token
 - `refresh_token`: Token for refreshing session
 - `expires_at`: Session expiration timestamp
@@ -90,6 +92,7 @@ The authenticated user object from Supabase Auth.
 **Type**: `User | null`
 
 **Example**:
+
 ```typescript
 const { user } = useAuth();
 
@@ -101,6 +104,7 @@ if (user) {
 ```
 
 **User Object Properties**:
+
 - `id`: Unique user identifier (UUID)
 - `email`: User's email address
 - `created_at`: Account creation timestamp
@@ -116,6 +120,7 @@ The user's profile data from the `profiles` table.
 **Type**: `Profile | null` (see [Type Definitions](#type-definitions))
 
 **Example**:
+
 ```typescript
 const { profile } = useAuth();
 
@@ -127,6 +132,7 @@ if (profile) {
 ```
 
 **Profile Object** (see `types/database.ts`):
+
 ```typescript
 interface Profile {
   id: string;
@@ -159,6 +165,7 @@ Indicates whether the authentication state is being initialized.
 **Type**: `boolean`
 
 **Example**:
+
 ```typescript
 const { loading, user } = useAuth();
 
@@ -174,6 +181,7 @@ return <MainApp />;
 ```
 
 **Use Cases**:
+
 - Show loading screen during initial auth check
 - Prevent flash of wrong content
 - Gate navigation until auth state is known
@@ -187,6 +195,7 @@ return <MainApp />;
 Authenticates a user with email and password.
 
 **Parameters**:
+
 - `email` (string): User's email address
 - `password` (string): User's password
 
@@ -195,6 +204,7 @@ Authenticates a user with email and password.
 **Throws**: Error if authentication fails
 
 **Example**:
+
 ```typescript
 const { signIn } = useAuth();
 
@@ -209,6 +219,7 @@ try {
 ```
 
 **Error Handling**:
+
 ```typescript
 try {
   await signIn(email, password);
@@ -234,10 +245,12 @@ Authenticates a user using Google OAuth.
 **Throws**: Error if authentication fails
 
 **Platform Behavior**:
+
 - **Web**: Opens Google sign-in in same window
 - **Native**: Opens Google sign-in in secure in-app browser
 
 **Example**:
+
 ```typescript
 const { signInWithGoogle } = useAuth();
 
@@ -251,6 +264,7 @@ try {
 ```
 
 **Web Example**:
+
 ```typescript
 <Button onPress={async () => {
   try {
@@ -264,6 +278,7 @@ try {
 ```
 
 **Native Flow**:
+
 1. User taps "Sign in with Google"
 2. In-app browser opens with Google sign-in
 3. User authenticates with Google
@@ -272,6 +287,7 @@ try {
 
 **Configuration Required**:
 See `GOOGLE_OAUTH_SETUP.md` for setup instructions including:
+
 - Google Cloud Console configuration
 - Supabase OAuth provider setup
 - Mobile app deep linking configuration
@@ -283,6 +299,7 @@ See `GOOGLE_OAUTH_SETUP.md` for setup instructions including:
 Creates a new user account.
 
 **Parameters**:
+
 - `email` (string): User's email address
 - `password` (string): Desired password (min 6 characters)
 - `firstName` (string): User's first name
@@ -293,16 +310,12 @@ Creates a new user account.
 **Throws**: Error if sign up fails
 
 **Example**:
+
 ```typescript
 const { signUp } = useAuth();
 
 try {
-  await signUp(
-    'newuser@example.com',
-    'securePassword123',
-    'John',
-    'D'
-  );
+  await signUp('newuser@example.com', 'securePassword123', 'John', 'D');
   // Account created, profile created automatically
   // User may need to verify email depending on Supabase settings
 } catch (error) {
@@ -312,6 +325,7 @@ try {
 
 **Automatic Profile Creation**:
 The method automatically creates a profile record in the `profiles` table with:
+
 - User's ID (from Supabase Auth)
 - Email
 - First name
@@ -320,6 +334,7 @@ The method automatically creates a profile record in the `profiles` table with:
 - Current timezone
 
 **Error Handling**:
+
 ```typescript
 try {
   await signUp(email, password, firstName, lastInitial);
@@ -345,6 +360,7 @@ Signs out the current user and clears session data.
 **Throws**: Error if sign out fails
 
 **Example**:
+
 ```typescript
 const { signOut } = useAuth();
 
@@ -358,6 +374,7 @@ try {
 ```
 
 **Side Effects**:
+
 - Clears Supabase session
 - Sets `profile` to `null`
 - Removes session from secure storage
@@ -372,6 +389,7 @@ Manually refreshes the user's profile data from the database.
 **Returns**: `Promise<void>`
 
 **Example**:
+
 ```typescript
 const { refreshProfile, profile } = useAuth();
 
@@ -388,6 +406,7 @@ await refreshProfile();
 ```
 
 **Use Cases**:
+
 - After updating profile information
 - When profile data may have changed externally
 - To force-sync profile with database
@@ -413,6 +432,7 @@ This ensures every authenticated user always has a profile record.
 #### Session Management
 
 The context automatically:
+
 - Restores session on app launch
 - Refreshes access tokens before expiration
 - Persists session to secure storage
@@ -421,6 +441,7 @@ The context automatically:
 #### Auth State Change Listener
 
 The context listens for authentication events:
+
 - `SIGNED_IN`: User signed in
 - `SIGNED_OUT`: User signed out
 - `TOKEN_REFRESHED`: Access token refreshed
@@ -440,7 +461,12 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
-  signUp: (email: string, password: string, firstName: string, lastInitial: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    firstName: string,
+    lastInitial: string,
+  ) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -572,6 +598,7 @@ Object containing all themed color values.
 **Type**: `ThemeColors`
 
 **Example**:
+
 ```typescript
 const { theme } = useTheme();
 
@@ -587,39 +614,40 @@ return (
 ```
 
 **ThemeColors Interface**:
+
 ```typescript
 interface ThemeColors {
   // Background colors
-  background: string;      // Main app background
-  surface: string;         // Surface/container background
-  card: string;            // Card background
+  background: string; // Main app background
+  surface: string; // Surface/container background
+  card: string; // Card background
 
   // Text colors
-  text: string;            // Primary text
-  textSecondary: string;   // Secondary text (less emphasis)
-  textTertiary: string;    // Tertiary text (least emphasis)
+  text: string; // Primary text
+  textSecondary: string; // Secondary text (less emphasis)
+  textTertiary: string; // Tertiary text (least emphasis)
 
   // Brand colors
-  primary: string;         // Primary brand color
-  primaryLight: string;    // Lighter primary variant
+  primary: string; // Primary brand color
+  primaryLight: string; // Lighter primary variant
 
   // Border colors
-  border: string;          // Default border
-  borderLight: string;     // Lighter border
+  border: string; // Default border
+  borderLight: string; // Lighter border
 
   // Semantic colors
-  error: string;           // Error/destructive actions
-  success: string;         // Success/positive actions
+  error: string; // Error/destructive actions
+  success: string; // Success/positive actions
 
   // Base colors
-  white: string;           // Pure white
-  black: string;           // Pure black
+  white: string; // Pure white
+  black: string; // Pure black
 
   // Font weights (JetBrains Mono)
-  fontRegular: string;     // Regular weight
-  fontMedium: string;      // Medium weight
-  fontSemiBold: string;    // Semi-bold weight
-  fontBold: string;        // Bold weight
+  fontRegular: string; // Regular weight
+  fontMedium: string; // Medium weight
+  fontSemiBold: string; // Semi-bold weight
+  fontBold: string; // Bold weight
 }
 ```
 
@@ -678,11 +706,13 @@ The current theme mode setting.
 **Type**: `'light' | 'dark' | 'system'`
 
 **Values**:
+
 - `'light'`: Always use light theme
 - `'dark'`: Always use dark theme
 - `'system'`: Follow device system setting
 
 **Example**:
+
 ```typescript
 const { themeMode } = useTheme();
 
@@ -698,6 +728,7 @@ Indicates whether dark theme is currently active.
 **Type**: `boolean`
 
 **Example**:
+
 ```typescript
 const { isDark } = useTheme();
 
@@ -707,6 +738,7 @@ return (
 ```
 
 **Calculation**:
+
 - If `themeMode` is `'system'`: Based on device system setting
 - If `themeMode` is `'light'`: Always `false`
 - If `themeMode` is `'dark'`: Always `true`
@@ -720,16 +752,19 @@ return (
 Sets the theme mode and persists the preference.
 
 **Parameters**:
+
 - `mode` (`'light' | 'dark' | 'system'`): Theme mode to set
 
 **Returns**: `void`
 
 **Side Effects**:
+
 - Updates theme mode state
 - Persists preference to AsyncStorage
 - Triggers re-render with new theme colors
 
 **Example**:
+
 ```typescript
 const { setThemeMode, themeMode } = useTheme();
 
@@ -745,6 +780,7 @@ const useSystemTheme = () => {
 ```
 
 **Theme Selector Example**:
+
 ```typescript
 import { useTheme } from '@/contexts/ThemeContext';
 import { View, Text, TouchableOpacity } from 'react-native';
@@ -802,6 +838,7 @@ Theme preference is automatically saved to AsyncStorage and restored on app laun
 When `themeMode` is `'system'`, the context uses React Native's `useColorScheme()` hook to detect the device's system theme preference.
 
 **Supported Platforms**:
+
 - iOS: Follows system-wide appearance setting
 - Android: Follows system-wide dark mode setting
 - Web: Follows browser/OS dark mode preference
@@ -1009,5 +1046,5 @@ export default function App() {
 
 ---
 
-*Last Updated: January 2025*
-*Version: 1.0*
+_Last Updated: January 2025_
+_Version: 1.0_

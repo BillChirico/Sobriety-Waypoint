@@ -40,11 +40,13 @@ This guide will help you set up the 12-Step Tracker application for local develo
 ### Mobile Development (Optional)
 
 For iOS development (macOS only):
+
 - **Xcode** (latest version)
   - Install from Mac App Store
   - Install Xcode Command Line Tools: `xcode-select --install`
 
 For Android development:
+
 - **Android Studio**
   - Download from [developer.android.com](https://developer.android.com/studio)
   - Install Android SDK and emulator
@@ -74,6 +76,7 @@ pnpm install
 ```
 
 This will install all required packages including:
+
 - React Native and Expo SDK
 - Supabase client
 - Navigation libraries
@@ -109,6 +112,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 **Important**:
+
 - Never commit `.env` to version control (it's already in `.gitignore`)
 - Environment variables must be prefixed with `EXPO_PUBLIC_` to be accessible in the app
 - You'll get these values from your Supabase project dashboard
@@ -162,11 +166,13 @@ The project includes SQL migrations in `supabase/migrations/`. You need to run t
 #### Option 2: Using Supabase CLI
 
 1. Install Supabase CLI:
+
    ```bash
    pnpm add -g supabase
    ```
 
 2. Link to your project:
+
    ```bash
    supabase link --project-ref your-project-ref
    ```
@@ -214,6 +220,7 @@ In Supabase dashboard:
 See `GOOGLE_OAUTH_SETUP.md` for detailed instructions.
 
 Summary:
+
 1. Create OAuth credentials in Google Cloud Console
 2. Configure in Supabase: **Authentication** → **Providers** → **Google**
 3. Add credentials:
@@ -232,6 +239,7 @@ pnpm dev
 ```
 
 Or using the full command:
+
 ```bash
 npx expo start --no-telemetry
 ```
@@ -310,6 +318,7 @@ Requires Android Studio and emulator set up.
 #### Add a New Screen
 
 1. Create file in `app/` directory:
+
    ```typescript
    // app/new-screen.tsx
    import { View, Text } from 'react-native';
@@ -327,6 +336,7 @@ Requires Android Studio and emulator set up.
    ```
 
 2. Navigate to it:
+
    ```typescript
    import { router } from 'expo-router';
 
@@ -336,6 +346,7 @@ Requires Android Studio and emulator set up.
 #### Add a Database Table
 
 1. Create migration in `supabase/migrations/`:
+
    ```sql
    -- 20250115_add_new_table.sql
    CREATE TABLE new_table (
@@ -439,6 +450,7 @@ Uses EAS (Expo Application Services).
 #### Prerequisites
 
 1. Install EAS CLI:
+
    ```bash
    pnpm add -g eas-cli
    ```
@@ -510,6 +522,7 @@ See [Expo EAS documentation](https://docs.expo.dev/build/introduction/) for more
 #### Issue: "Cannot connect to Metro bundler"
 
 **Solution**:
+
 1. Ensure dev server is running (`pnpm dev`)
 2. Check firewall settings
 3. Try clearing cache: `npx expo start -c`
@@ -517,6 +530,7 @@ See [Expo EAS documentation](https://docs.expo.dev/build/introduction/) for more
 #### Issue: "Module not found"
 
 **Solution**:
+
 1. Clear cache: `npx expo start -c`
 2. Reinstall dependencies:
    ```bash
@@ -527,6 +541,7 @@ See [Expo EAS documentation](https://docs.expo.dev/build/introduction/) for more
 #### Issue: "Supabase connection error"
 
 **Solution**:
+
 1. Verify `.env` file exists and has correct values
 2. Check Supabase URL and anon key
 3. Ensure Supabase project is active
@@ -535,6 +550,7 @@ See [Expo EAS documentation](https://docs.expo.dev/build/introduction/) for more
 #### Issue: "Row Level Security policy error"
 
 **Solution**:
+
 1. Check RLS policies in Supabase dashboard
 2. Verify user is authenticated
 3. Check policy conditions match your query
@@ -547,6 +563,7 @@ See [Expo EAS documentation](https://docs.expo.dev/build/introduction/) for more
 #### Issue: iOS build fails
 
 **Solution**:
+
 1. Update Xcode to latest version
 2. Clean build folder: `expo prebuild --clean`
 3. Check certificates in Apple Developer account
@@ -554,6 +571,7 @@ See [Expo EAS documentation](https://docs.expo.dev/build/introduction/) for more
 #### Issue: Android build fails
 
 **Solution**:
+
 1. Update Android Studio and SDK
 2. Check `android/gradle.properties`
 3. Clean and rebuild: `cd android && ./gradlew clean`
@@ -617,6 +635,7 @@ const { user, profile } = useAuth();
 ### 4. Test on Multiple Platforms
 
 Always test on:
+
 - Web browser
 - iOS (simulator or device)
 - Android (emulator or device)
@@ -676,5 +695,5 @@ After completing setup:
 
 ---
 
-*Last Updated: January 2025*
-*Version: 1.0*
+_Last Updated: January 2025_
+_Version: 1.0_

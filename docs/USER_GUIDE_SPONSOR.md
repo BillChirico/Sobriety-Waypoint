@@ -195,17 +195,20 @@ For common tasks, use templates to save time:
 #### Task Examples by Step
 
 **Step 1 Tasks**:
+
 - "Read pages 21-26 in the Big Book"
 - "Journal about powerlessness over alcohol"
 - "List 3 examples of unmanageability in your life"
 
 **Step 4 Tasks**:
+
 - "Complete resentments inventory (people)"
 - "Complete resentments inventory (institutions)"
 - "Complete fears inventory"
 - "Complete sex conduct inventory"
 
 **Step 9 Tasks**:
+
 - "Create your amends list"
 - "Make amends to [specific person]"
 - "Journal about the experience"
@@ -260,35 +263,42 @@ Watch for signs a sponsee might need extra support:
 #### Message Types
 
 **Check-ins**:
+
 - "How are you doing with the Step 4 inventory?"
 - "Thinking of you today. How's your sobriety?"
 
 **Guidance**:
+
 - "Let's meet this week to discuss your progress"
 - "I noticed you completed that task - great work!"
 
 **Support**:
+
 - "I'm here if you need to talk"
 - "Remember, progress not perfection"
 
 **Encouragement**:
+
 - "30 days sober - incredible achievement!"
 - "You're doing the hard work. Keep going!"
 
 ### Communication Best Practices
 
 #### Response Times
+
 - **Urgent Messages**: Respond within 24 hours
 - **Regular Check-ins**: At least weekly contact
 - **Task Questions**: Respond promptly to unblock progress
 
 #### Tone
+
 - **Supportive**: Encourage and celebrate progress
 - **Honest**: Provide truthful feedback with compassion
 - **Respectful**: Honor their journey and autonomy
 - **Confidential**: Maintain trust and privacy
 
 #### Setting Boundaries
+
 - **Availability**: Communicate your available hours
 - **Emergency Protocol**: Share when to call vs. message
 - **Response Time**: Set expectations for message replies
@@ -301,6 +311,7 @@ Watch for signs a sponsee might need extra support:
 ### Profile Settings
 
 #### Personal Information
+
 - **Name**: Your display name for sponsees
 - **Bio**: Share your recovery story and experience
   - Years sober
@@ -310,6 +321,7 @@ Watch for signs a sponsee might need extra support:
 - **Contact Preferences**: How sponsees can reach you
 
 #### Capacity Management
+
 - **Max Sponsees**: Set a limit on active sponsees
 - **Availability Status**: Indicate if accepting new sponsees
 - **Temporary Unavailable**: Mark yourself unavailable during life events
@@ -325,6 +337,7 @@ Control your notification preferences:
 - **Overdue Tasks**: When sponsee tasks are overdue
 
 #### Privacy & Security
+
 - **Password**: Change your password regularly
 - **Two-Factor Authentication**: Enable for added security (coming soon)
 - **Data Export**: Download your data
@@ -346,12 +359,14 @@ If you're in recovery and also sponsor others:
 ### Effective Sponsorship Through the App
 
 #### Initial Setup
+
 1. **Complete your profile**: Help sponsees get to know you
 2. **Create your first task**: Start with Step 1 reading
 3. **Schedule regular check-ins**: Set weekly message times
 4. **Share your approach**: Explain how you work through the steps
 
 #### Ongoing Support
+
 1. **Regular Task Creation**: Keep them progressing
 2. **Consistent Communication**: Message at least weekly
 3. **Celebrate Milestones**: Acknowledge sobriety anniversaries
@@ -359,6 +374,7 @@ If you're in recovery and also sponsor others:
 5. **Adjust Pace**: Customize to each sponsee's needs
 
 #### Building Strong Relationships
+
 - **Be Present**: Respond to messages promptly
 - **Be Consistent**: Maintain regular contact
 - **Be Patient**: Recovery is a process
@@ -368,6 +384,7 @@ If you're in recovery and also sponsor others:
 ### Working with Multiple Sponsees
 
 #### Organization Strategies
+
 - **Use Task Templates**: Save time on common assignments
 - **Set Regular Schedules**: Specific days for each sponsee
 - **Batch Similar Activities**: Review all completed tasks together
@@ -375,6 +392,7 @@ If you're in recovery and also sponsor others:
 - **Take Notes**: Remember details about each sponsee
 
 #### Avoiding Burnout
+
 - **Know Your Limits**: Don't take on more than you can handle
 - **Set Boundaries**: Establish clear availability
 - **Self-Care**: Maintain your own program
@@ -386,11 +404,13 @@ If you're in recovery and also sponsor others:
 The app is not for crisis intervention. If a sponsee is in crisis:
 
 **Immediate Danger**:
+
 - Call 988 (Suicide & Crisis Lifeline)
 - Call 911 for medical emergencies
 - Direct them to emergency services
 
 **Relapse Concerns**:
+
 - Encourage AA meeting attendance
 - Suggest connecting with their support network
 - Increase check-in frequency
@@ -405,6 +425,7 @@ The app is not for crisis intervention. If a sponsee is in crisis:
 ### How many sponsees should I have?
 
 There's no set number, but quality matters more than quantity. Many sponsors effectively support 3-5 active sponsees. Consider:
+
 - Your available time
 - Your experience level
 - Complexity of each case
@@ -417,6 +438,7 @@ Yes! The app is designed to support both local and remote sponsorship. Video cal
 ### What if a sponsee stops responding?
 
 Try these approaches:
+
 1. Send a caring check-in message
 2. Call them if you have their number
 3. Wait a few days and reach out again
@@ -426,6 +448,7 @@ Try these approaches:
 ### How do I handle task templates?
 
 Task templates are pre-made assignments for common step work. You can:
+
 - Use them as-is
 - Customize before assigning
 - Create your own templates
@@ -455,24 +478,28 @@ Task templates are pre-made assignments for common step work. You can:
 ## Tips for Success
 
 ### Building Trust
+
 - **Consistency**: Show up regularly
 - **Confidentiality**: Keep their information private
 - **Reliability**: Follow through on commitments
 - **Vulnerability**: Share your own experience appropriately
 
 ### Effective Task Assignment
+
 - **Progressive**: Build from simple to complex
 - **Relevant**: Connect to their current struggles
 - **Timely**: Assign when they're ready
 - **Reviewed**: Follow up on completed work
 
 ### Maintaining Boundaries
+
 - **Availability**: Communicate your schedule
 - **Professional**: Maintain appropriate relationship
 - **Self-Care**: Prioritize your own recovery
 - **Limitations**: Know what's beyond your scope
 
 ### Using the App Efficiently
+
 - **Daily Quick Check**: 5 minutes to review notifications
 - **Weekly Deep Dive**: 30 minutes to review progress
 - **Task Templates**: Save time on common assignments
@@ -485,6 +512,7 @@ Task templates are pre-made assignments for common step work. You can:
 ### Technical Support
 
 For app issues:
+
 - Check for updates
 - Review help documentation
 - Contact support: support@12steptracker.com
@@ -514,5 +542,5 @@ Remember: Your experience and guidance are invaluable. Use this app as a tool to
 
 ---
 
-*Last Updated: January 2025*
-*Version: 1.0*
+_Last Updated: January 2025_
+_Version: 1.0_

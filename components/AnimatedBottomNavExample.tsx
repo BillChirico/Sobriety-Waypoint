@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import AnimatedBottomNav, { AnimatedNavItem } from './AnimatedBottomNav';
-import { Home, Briefcase, Calendar, Shield, Settings } from 'lucide-react-native';
+import {
+  Home,
+  Briefcase,
+  Calendar,
+  Shield,
+  Settings,
+} from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 
 export default function AnimatedBottomNavExample() {
@@ -40,15 +46,24 @@ export default function AnimatedBottomNavExample() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.contentContainer}
+      >
         <Text style={styles.title}>Animated Bottom Navigation Demo</Text>
-        <Text style={styles.subtitle}>Active Tab: {exampleItems[activeIndex].label}</Text>
+        <Text style={styles.subtitle}>
+          Active Tab: {exampleItems[activeIndex].label}
+        </Text>
 
         <View style={styles.infoBox}>
           <Text style={styles.infoTitle}>Features:</Text>
           <Text style={styles.infoText}>• Smooth icon bounce animation</Text>
-          <Text style={styles.infoText}>• Animated underline that matches text width</Text>
-          <Text style={styles.infoText}>• Color changes on active/inactive states</Text>
+          <Text style={styles.infoText}>
+            • Animated underline that matches text width
+          </Text>
+          <Text style={styles.infoText}>
+            • Color changes on active/inactive states
+          </Text>
           <Text style={styles.infoText}>• Supports 2-5 navigation items</Text>
           <Text style={styles.infoText}>• Works on iOS, Android, and Web</Text>
           <Text style={styles.infoText}>• Uses lucide-react-native icons</Text>

@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, RefreshControl, Alert, Modal, TextInput, ActivityIndicator, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  RefreshControl,
+  Alert,
+  Modal,
+  TextInput,
+  ActivityIndicator,
+  Platform,
+} from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
@@ -64,7 +76,10 @@ export default function TasksScreen() {
         type: 'task_completed',
         title: 'Task Completed',
         content: `${profile?.first_name} ${profile?.last_initial}. has completed: ${selectedTask.title}`,
-        data: { task_id: selectedTask.id, step_number: selectedTask.step_number },
+        data: {
+          task_id: selectedTask.id,
+          step_number: selectedTask.step_number,
+        },
       });
 
       setShowCompleteModal(false);
@@ -89,7 +104,8 @@ export default function TasksScreen() {
     }
   };
 
-  const getTasksByStatus = (status: string) => tasks.filter(t => t.status === status);
+  const getTasksByStatus = (status: string) =>
+    tasks.filter((t) => t.status === status);
 
   const styles = createStyles(theme);
 
@@ -102,17 +118,25 @@ export default function TasksScreen() {
 
       <ScrollView
         style={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.primary}
+          />
+        }
       >
         {getTasksByStatus('assigned').length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>New Tasks</Text>
-            {getTasksByStatus('assigned').map(task => (
+            {getTasksByStatus('assigned').map((task) => (
               <View key={task.id} style={styles.taskCard}>
                 <View style={styles.taskHeader}>
                   {task.step_number && (
                     <View style={styles.stepBadge}>
-                      <Text style={styles.stepBadgeText}>Step {task.step_number}</Text>
+                      <Text style={styles.stepBadgeText}>
+                        Step {task.step_number}
+                      </Text>
                     </View>
                   )}
                   <Text style={styles.taskDate}>
@@ -130,7 +154,10 @@ export default function TasksScreen() {
                   </View>
                 )}
                 <View style={styles.taskFooter}>
-                  <Text style={styles.sponsorText}>From: {task.sponsor?.first_name} {task.sponsor?.last_initial}.</Text>
+                  <Text style={styles.sponsorText}>
+                    From: {task.sponsor?.first_name}{' '}
+                    {task.sponsor?.last_initial}.
+                  </Text>
                   <TouchableOpacity
                     style={styles.completeButton}
                     onPress={() => handleCompleteTask(task)}
@@ -147,12 +174,17 @@ export default function TasksScreen() {
         {getTasksByStatus('completed').length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Completed</Text>
-            {getTasksByStatus('completed').map(task => (
-              <View key={task.id} style={[styles.taskCard, styles.completedCard]}>
+            {getTasksByStatus('completed').map((task) => (
+              <View
+                key={task.id}
+                style={[styles.taskCard, styles.completedCard]}
+              >
                 <View style={styles.taskHeader}>
                   {task.step_number && (
                     <View style={styles.stepBadge}>
-                      <Text style={styles.stepBadgeText}>Step {task.step_number}</Text>
+                      <Text style={styles.stepBadgeText}>
+                        Step {task.step_number}
+                      </Text>
                     </View>
                   )}
                   <CheckCircle size={20} color={theme.primary} />
@@ -165,7 +197,9 @@ export default function TasksScreen() {
                 {task.completion_notes && (
                   <View style={styles.completionNotesContainer}>
                     <Text style={styles.completionNotesLabel}>Your Notes:</Text>
-                    <Text style={styles.completionNotesText}>{task.completion_notes}</Text>
+                    <Text style={styles.completionNotesText}>
+                      {task.completion_notes}
+                    </Text>
                   </View>
                 )}
               </View>
@@ -178,18 +212,27 @@ export default function TasksScreen() {
             <Circle size={64} color="#d1d5db" />
             <Text style={styles.emptyTitle}>No tasks yet</Text>
             <Text style={styles.emptyText}>
-              Your sponsor will assign tasks to help you progress through the 12 steps
+              Your sponsor will assign tasks to help you progress through the 12
+              steps
             </Text>
           </View>
         )}
       </ScrollView>
 
-      <Modal visible={showCompleteModal} transparent animationType="slide" onRequestClose={() => setShowCompleteModal(false)}>
+      <Modal
+        visible={showCompleteModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowCompleteModal(false)}
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Complete Task</Text>
-              <TouchableOpacity onPress={() => setShowCompleteModal(false)} style={styles.closeButton}>
+              <TouchableOpacity
+                onPress={() => setShowCompleteModal(false)}
+                style={styles.closeButton}
+              >
                 <X size={24} color={theme.textSecondary} />
               </TouchableOpacity>
             </View>
@@ -200,16 +243,23 @@ export default function TasksScreen() {
                   <View style={styles.taskSummary}>
                     {selectedTask.step_number && (
                       <View style={styles.stepBadge}>
-                        <Text style={styles.stepBadgeText}>Step {selectedTask.step_number}</Text>
+                        <Text style={styles.stepBadgeText}>
+                          Step {selectedTask.step_number}
+                        </Text>
                       </View>
                     )}
-                    <Text style={styles.taskSummaryTitle}>{selectedTask.title}</Text>
+                    <Text style={styles.taskSummaryTitle}>
+                      {selectedTask.title}
+                    </Text>
                   </View>
 
                   <View style={styles.formGroup}>
-                    <Text style={styles.label}>Completion Notes (Optional)</Text>
+                    <Text style={styles.label}>
+                      Completion Notes (Optional)
+                    </Text>
                     <Text style={styles.helpText}>
-                      Share your reflections, insights, or any challenges you faced with this task.
+                      Share your reflections, insights, or any challenges you
+                      faced with this task.
                     </Text>
                     <TextInput
                       style={styles.textArea}
@@ -235,7 +285,10 @@ export default function TasksScreen() {
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.submitButton, isSubmitting && styles.buttonDisabled]}
+                style={[
+                  styles.submitButton,
+                  isSubmitting && styles.buttonDisabled,
+                ]}
                 onPress={submitTaskCompletion}
                 disabled={isSubmitting}
               >
@@ -253,286 +306,287 @@ export default function TasksScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
-  header: {
-    padding: 24,
-    paddingTop: 60,
-    backgroundColor: theme.card,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.border,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.text,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 4,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginBottom: 12,
-  },
-  taskCard: {
-    backgroundColor: theme.card,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  completedCard: {
-    opacity: 0.7,
-  },
-  taskHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  stepBadge: {
-    backgroundColor: theme.primary,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  stepBadgeText: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-  taskDate: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-  },
-  taskTitle: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginBottom: 8,
-  },
-  taskDescription: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    lineHeight: 20,
-    marginBottom: 12,
-  },
-  taskFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  sponsorText: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-  },
-  completeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0fdf4',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-  },
-  completeButtonText: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.primary,
-    marginLeft: 6,
-  },
-  completedDate: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    color: theme.primary,
-    fontWeight: '600',
-    marginTop: 8,
-  },
-  completionNotesContainer: {
-    backgroundColor: theme.background,
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 12,
-    borderLeftWidth: 3,
-    borderLeftColor: theme.primary,
-  },
-  completionNotesLabel: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginBottom: 4,
-  },
-  completionNotesText: {
-    fontSize: 13,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    lineHeight: 18,
-  },
-  dueDateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 8,
-  },
-  dueDateText: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: theme.card,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '80%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.border,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.text,
-  },
-  closeButton: {
-    padding: 4,
-  },
-  modalBody: {
-    padding: 20,
-  },
-  taskSummary: {
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  taskSummaryTitle: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginTop: 12,
-    textAlign: 'center',
-  },
-  formGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginBottom: 4,
-  },
-  helpText: {
-    fontSize: 13,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginBottom: 12,
-    lineHeight: 18,
-  },
-  textArea: {
-    backgroundColor: theme.background,
-    borderWidth: 1,
-    borderColor: theme.border,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: theme.text,
-    minHeight: 120,
-  },
-  modalFooter: {
-    flexDirection: 'row',
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: theme.border,
-    gap: 12,
-  },
-  cancelButton: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.border,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.textSecondary,
-  },
-  submitButton: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 8,
-    backgroundColor: theme.primary,
-    alignItems: 'center',
-  },
-  submitButtonText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 64,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginTop: 16,
-  },
-  emptyText: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    textAlign: 'center',
-    marginTop: 8,
-    paddingHorizontal: 32,
-  },
-});
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      padding: 24,
+      paddingTop: 60,
+      backgroundColor: theme.card,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    headerTitle: {
+      fontSize: 28,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.text,
+    },
+    headerSubtitle: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 4,
+    },
+    content: {
+      flex: 1,
+      padding: 16,
+    },
+    section: {
+      marginBottom: 24,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginBottom: 12,
+    },
+    taskCard: {
+      backgroundColor: theme.card,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    completedCard: {
+      opacity: 0.7,
+    },
+    taskHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    stepBadge: {
+      backgroundColor: theme.primary,
+      paddingHorizontal: 12,
+      paddingVertical: 4,
+      borderRadius: 12,
+    },
+    stepBadgeText: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#ffffff',
+    },
+    taskDate: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+    },
+    taskTitle: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginBottom: 8,
+    },
+    taskDescription: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      lineHeight: 20,
+      marginBottom: 12,
+    },
+    taskFooter: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    sponsorText: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+    },
+    completeButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#f0fdf4',
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 12,
+    },
+    completeButtonText: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.primary,
+      marginLeft: 6,
+    },
+    completedDate: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      color: theme.primary,
+      fontWeight: '600',
+      marginTop: 8,
+    },
+    completionNotesContainer: {
+      backgroundColor: theme.background,
+      padding: 12,
+      borderRadius: 8,
+      marginTop: 12,
+      borderLeftWidth: 3,
+      borderLeftColor: theme.primary,
+    },
+    completionNotesLabel: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginBottom: 4,
+    },
+    completionNotesText: {
+      fontSize: 13,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      lineHeight: 18,
+    },
+    dueDateContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      marginTop: 8,
+    },
+    dueDateText: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'flex-end',
+    },
+    modalContent: {
+      backgroundColor: theme.card,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      maxHeight: '80%',
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.text,
+    },
+    closeButton: {
+      padding: 4,
+    },
+    modalBody: {
+      padding: 20,
+    },
+    taskSummary: {
+      marginBottom: 20,
+      alignItems: 'center',
+    },
+    taskSummaryTitle: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginTop: 12,
+      textAlign: 'center',
+    },
+    formGroup: {
+      marginBottom: 20,
+    },
+    label: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginBottom: 4,
+    },
+    helpText: {
+      fontSize: 13,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginBottom: 12,
+      lineHeight: 18,
+    },
+    textArea: {
+      backgroundColor: theme.background,
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.text,
+      minHeight: 120,
+    },
+    modalFooter: {
+      flexDirection: 'row',
+      padding: 20,
+      borderTopWidth: 1,
+      borderTopColor: theme.border,
+      gap: 12,
+    },
+    cancelButton: {
+      flex: 1,
+      padding: 14,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.border,
+      alignItems: 'center',
+    },
+    cancelButtonText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.textSecondary,
+    },
+    submitButton: {
+      flex: 1,
+      padding: 14,
+      borderRadius: 8,
+      backgroundColor: theme.primary,
+      alignItems: 'center',
+    },
+    submitButtonText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#ffffff',
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+    },
+    emptyState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 64,
+    },
+    emptyTitle: {
+      fontSize: 20,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginTop: 16,
+    },
+    emptyText: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      textAlign: 'center',
+      marginTop: 8,
+      paddingHorizontal: 32,
+    },
+  });

@@ -131,6 +131,20 @@ pnpm lint
 
 Runs ESLint using Expo's lint configuration.
 
+### Code Formatting
+
+```bash
+pnpm format
+```
+
+Formats all code using Prettier.
+
+```bash
+pnpm format:check
+```
+
+Checks if code is properly formatted without making changes.
+
 ## Project Structure
 
 ```
@@ -216,6 +230,7 @@ This is a private project for recovery support. If you're contributing, please e
 
 - All code passes TypeScript type checking (`pnpm typecheck`)
 - Code follows the linting rules (`pnpm lint`)
+- Code is properly formatted (`pnpm format:check` or run `pnpm format`)
 - Test thoroughly on both iOS and Android platforms
 - Respect user privacy and data security
 
@@ -227,7 +242,7 @@ This project uses GitHub Actions for automated testing and builds.
 
 The CI workflow runs on every push to `main` and `develop` as well as on all pull requests:
 
-1. **Lint and Type Check** - Validates code quality and TypeScript types
+1. **Lint, Format, and Type Check** - Validates code quality, formatting, and TypeScript types
 2. **Build** - Creates production web build
 
 ### GitHub Secrets Required

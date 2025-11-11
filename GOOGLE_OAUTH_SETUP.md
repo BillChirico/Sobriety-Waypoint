@@ -18,13 +18,16 @@ To enable Google Sign-In in your app, you need to configure Google OAuth in your
 Add the following redirect URIs to your Google OAuth client:
 
 **For Supabase (Required):**
+
 - `https://vzwdsjphpabtxhmffous.supabase.co/auth/v1/callback`
 
 **For Local Development (Optional):**
+
 - `http://localhost:8081`
 - `http://localhost:19006`
 
 **For Mobile App (Optional):**
+
 - `12stepstracker://auth/callback`
 
 ### 3. Configure Supabase

@@ -1,13 +1,30 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { UserStepProgress, SlipUp } from '@/types/database';
-import { Calendar, CheckCircle, Heart, RefreshCw, Award, TrendingUp } from 'lucide-react-native';
+import {
+  Calendar,
+  CheckCircle,
+  Heart,
+  RefreshCw,
+  Award,
+  TrendingUp,
+} from 'lucide-react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
-type TimelineEventType = 'sobriety_start' | 'slip_up' | 'step_completion' | 'milestone';
+type TimelineEventType =
+  | 'sobriety_start'
+  | 'slip_up'
+  | 'step_completion'
+  | 'milestone';
 
 interface TimelineEvent {
   id: string;
@@ -30,7 +47,7 @@ export default function JourneyScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchTimelineData();
-    }, [profile])
+    }, [profile]),
   );
 
   const fetchTimelineData = async () => {
@@ -94,7 +111,8 @@ export default function JourneyScreen() {
             type: 'step_completion',
             date: new Date(progress.completed_at),
             title: `Step ${progress.step_number} Completed`,
-            description: progress.notes || `Completed Step ${progress.step_number}`,
+            description:
+              progress.notes || `Completed Step ${progress.step_number}`,
             icon: 'check',
             color: '#10b981',
             metadata: progress,
@@ -106,7 +124,9 @@ export default function JourneyScreen() {
       if (profile.sobriety_date) {
         const sobrietyDate = new Date(profile.sobriety_date);
         const today = new Date();
-        const daysSober = Math.floor((today.getTime() - sobrietyDate.getTime()) / (1000 * 60 * 60 * 24));
+        const daysSober = Math.floor(
+          (today.getTime() - sobrietyDate.getTime()) / (1000 * 60 * 60 * 24),
+        );
 
         const milestones = [
           { days: 30, label: '30 Days Sober' },
@@ -234,14 +254,14 @@ export default function JourneyScreen() {
               <View style={styles.statItem}>
                 <CheckCircle size={18} color="#10b981" />
                 <Text style={styles.statValue}>
-                  {events.filter(e => e.type === 'step_completion').length}
+                  {events.filter((e) => e.type === 'step_completion').length}
                 </Text>
                 <Text style={styles.statLabel}>Steps Completed</Text>
               </View>
               <View style={styles.statItem}>
                 <Award size={18} color="#8b5cf6" />
                 <Text style={styles.statValue}>
-                  {events.filter(e => e.type === 'milestone').length}
+                  {events.filter((e) => e.type === 'milestone').length}
                 </Text>
                 <Text style={styles.statLabel}>Milestones</Text>
               </View>
@@ -262,22 +282,40 @@ export default function JourneyScreen() {
             {events.map((event, index) => (
               <View key={event.id} style={styles.timelineItem}>
                 <View style={styles.timelineLine}>
-                  <View style={[styles.timelineDot, { backgroundColor: event.color }]} />
-                  {index < events.length - 1 && <View style={styles.timelineConnector} />}
+                  <View
+                    style={[
+                      styles.timelineDot,
+                      { backgroundColor: event.color },
+                    ]}
+                  />
+                  {index < events.length - 1 && (
+                    <View style={styles.timelineConnector} />
+                  )}
                 </View>
                 <View style={styles.timelineContent}>
                   <View style={styles.timelineDate}>
-                    <Text style={styles.timelineDateText}>{formatDate(event.date)}</Text>
+                    <Text style={styles.timelineDateText}>
+                      {formatDate(event.date)}
+                    </Text>
                   </View>
-                  <View style={[styles.eventCard, { borderLeftColor: event.color }]}>
+                  <View
+                    style={[styles.eventCard, { borderLeftColor: event.color }]}
+                  >
                     <View style={styles.eventHeader}>
-                      <View style={[styles.eventIcon, { backgroundColor: event.color + '20' }]}>
+                      <View
+                        style={[
+                          styles.eventIcon,
+                          { backgroundColor: event.color + '20' },
+                        ]}
+                      >
                         {getIcon(event.icon, event.color)}
                       </View>
                       <Text style={styles.eventTitle}>{event.title}</Text>
                     </View>
                     {event.description && (
-                      <Text style={styles.eventDescription}>{event.description}</Text>
+                      <Text style={styles.eventDescription}>
+                        {event.description}
+                      </Text>
                     )}
                   </View>
                 </View>
@@ -290,200 +328,201 @@ export default function JourneyScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
-  header: {
-    padding: 24,
-    paddingTop: 60,
-    backgroundColor: theme.card,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.border,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.text,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 4,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 32,
-  },
-  loadingText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 16,
-  },
-  errorText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: '#ef4444',
-    textAlign: 'center',
-  },
-  statsCard: {
-    backgroundColor: theme.card,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  statMain: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    marginBottom: 20,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.border,
-  },
-  statMainContent: {
-    flex: 1,
-  },
-  statMainNumber: {
-    fontSize: 40,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.primary,
-  },
-  statMainLabel: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 4,
-  },
-  statRow: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 8,
-  },
-  statValue: {
-    fontSize: 24,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.text,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    textAlign: 'center',
-  },
-  timeline: {
-    paddingBottom: 24,
-  },
-  timelineItem: {
-    flexDirection: 'row',
-    marginBottom: 24,
-  },
-  timelineLine: {
-    width: 40,
-    alignItems: 'center',
-  },
-  timelineDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginTop: 8,
-  },
-  timelineConnector: {
-    width: 2,
-    flex: 1,
-    backgroundColor: theme.border,
-    marginTop: 8,
-  },
-  timelineContent: {
-    flex: 1,
-  },
-  timelineDate: {
-    marginBottom: 8,
-  },
-  timelineDateText: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    color: theme.textTertiary,
-    fontWeight: '600',
-  },
-  eventCard: {
-    backgroundColor: theme.card,
-    borderRadius: 12,
-    padding: 16,
-    borderLeftWidth: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  eventHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  eventIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  eventTitle: {
-    flex: 1,
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-  },
-  eventDescription: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 12,
-    lineHeight: 20,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 48,
-    marginTop: 48,
-  },
-  emptyText: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginTop: 16,
-    textAlign: 'center',
-  },
-  emptySubtext: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 8,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-});
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      padding: 24,
+      paddingTop: 60,
+      backgroundColor: theme.card,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    headerTitle: {
+      fontSize: 28,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.text,
+    },
+    headerSubtitle: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 4,
+    },
+    content: {
+      flex: 1,
+      padding: 16,
+    },
+    centerContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 32,
+    },
+    loadingText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 16,
+    },
+    errorText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: '#ef4444',
+      textAlign: 'center',
+    },
+    statsCard: {
+      backgroundColor: theme.card,
+      borderRadius: 16,
+      padding: 20,
+      marginBottom: 24,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    statMain: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 16,
+      marginBottom: 20,
+      paddingBottom: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    statMainContent: {
+      flex: 1,
+    },
+    statMainNumber: {
+      fontSize: 40,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.primary,
+    },
+    statMainLabel: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 4,
+    },
+    statRow: {
+      flexDirection: 'row',
+      gap: 16,
+    },
+    statItem: {
+      flex: 1,
+      alignItems: 'center',
+      gap: 8,
+    },
+    statValue: {
+      fontSize: 24,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.text,
+    },
+    statLabel: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      textAlign: 'center',
+    },
+    timeline: {
+      paddingBottom: 24,
+    },
+    timelineItem: {
+      flexDirection: 'row',
+      marginBottom: 24,
+    },
+    timelineLine: {
+      width: 40,
+      alignItems: 'center',
+    },
+    timelineDot: {
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      marginTop: 8,
+    },
+    timelineConnector: {
+      width: 2,
+      flex: 1,
+      backgroundColor: theme.border,
+      marginTop: 8,
+    },
+    timelineContent: {
+      flex: 1,
+    },
+    timelineDate: {
+      marginBottom: 8,
+    },
+    timelineDateText: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      color: theme.textTertiary,
+      fontWeight: '600',
+    },
+    eventCard: {
+      backgroundColor: theme.card,
+      borderRadius: 12,
+      padding: 16,
+      borderLeftWidth: 4,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    eventHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    eventIcon: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    eventTitle: {
+      flex: 1,
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+    },
+    eventDescription: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 12,
+      lineHeight: 20,
+    },
+    emptyState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 48,
+      marginTop: 48,
+    },
+    emptyText: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginTop: 16,
+      textAlign: 'center',
+    },
+    emptySubtext: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 8,
+      textAlign: 'center',
+      lineHeight: 20,
+    },
+  });

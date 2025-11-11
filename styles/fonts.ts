@@ -18,6 +18,6 @@ export const fontWeights = {
   '500': fonts.medium,
   '600': fonts.semiBold,
   '700': fonts.bold,
-  'normal': fonts.regular,
-  'bold': fonts.bold,
+  normal: fonts.regular,
+  bold: fonts.bold,
 };

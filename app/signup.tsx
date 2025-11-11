@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -7,7 +17,12 @@ import { Heart, ArrowLeft } from 'lucide-react-native';
 import Svg, { Path } from 'react-native-svg';
 
 const GoogleLogo = ({ size = 20 }: { size?: number }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24" style={{ marginRight: 12 }}>
+  <Svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    style={{ marginRight: 12 }}
+  >
     <Path
       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
       fill="#4285F4"
@@ -104,7 +119,9 @@ export default function SignupScreen() {
       await signInWithGoogle();
     } catch (error: any) {
       if (Platform.OS === 'web') {
-        window.alert('Error: ' + (error.message || 'Failed to sign in with Google'));
+        window.alert(
+          'Error: ' + (error.message || 'Failed to sign in with Google'),
+        );
       } else {
         Alert.alert('Error', error.message || 'Failed to sign in with Google');
       }
@@ -215,13 +232,18 @@ export default function SignupScreen() {
           </View>
 
           <TouchableOpacity
-            style={[styles.googleButton, googleLoading && styles.buttonDisabled]}
+            style={[
+              styles.googleButton,
+              googleLoading && styles.buttonDisabled,
+            ]}
             onPress={handleGoogleSignIn}
             disabled={loading || googleLoading}
           >
             {!googleLoading && <GoogleLogo size={20} />}
             <Text style={styles.googleButtonText}>
-              {googleLoading ? 'Signing in with Google...' : 'Continue with Google'}
+              {googleLoading
+                ? 'Signing in with Google...'
+                : 'Continue with Google'}
             </Text>
           </TouchableOpacity>
 
@@ -231,7 +253,8 @@ export default function SignupScreen() {
             disabled={loading || googleLoading}
           >
             <Text style={styles.loginLinkText}>
-              Already have an account? <Text style={styles.loginLinkBold}>Sign In</Text>
+              Already have an account?{' '}
+              <Text style={styles.loginLinkBold}>Sign In</Text>
             </Text>
           </TouchableOpacity>
         </View>
@@ -240,128 +263,129 @@ export default function SignupScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    padding: 24,
-    paddingTop: 60,
-  },
-  backButton: {
-    position: 'absolute',
-    top: 48,
-    left: 24,
-    zIndex: 1,
-    padding: 8,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 40,
-    marginTop: 20,
-  },
-  iconContainer: {
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 32,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.text,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-  },
-  form: {
-    width: '100%',
-    maxWidth: 400,
-    alignSelf: 'center',
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: theme.card,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: theme.text,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 24,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#e5e7eb',
-  },
-  dividerText: {
-    marginHorizontal: 16,
-    color: '#9ca3af',
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-  },
-  googleButton: {
-    backgroundColor: theme.card,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  googleButtonText: {
-    color: '#374151',
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-  },
-  loginLink: {
-    marginTop: 12,
-    alignItems: 'center',
-  },
-  loginLinkText: {
-    color: theme.textSecondary,
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-  },
-  loginLinkBold: {
-    color: '#007AFF',
-    fontWeight: '600',
-  },
-});
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      padding: 24,
+      paddingTop: 60,
+    },
+    backButton: {
+      position: 'absolute',
+      top: 48,
+      left: 24,
+      zIndex: 1,
+      padding: 8,
+    },
+    header: {
+      alignItems: 'center',
+      marginBottom: 40,
+      marginTop: 20,
+    },
+    iconContainer: {
+      marginBottom: 16,
+    },
+    title: {
+      fontSize: 32,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.text,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+    },
+    form: {
+      width: '100%',
+      maxWidth: 400,
+      alignSelf: 'center',
+    },
+    inputContainer: {
+      marginBottom: 20,
+    },
+    label: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#374151',
+      marginBottom: 8,
+    },
+    input: {
+      backgroundColor: theme.card,
+      borderWidth: 1,
+      borderColor: '#d1d5db',
+      borderRadius: 12,
+      padding: 16,
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.text,
+    },
+    button: {
+      backgroundColor: '#007AFF',
+      borderRadius: 12,
+      padding: 16,
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+    },
+    buttonText: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+    },
+    divider: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 24,
+    },
+    dividerLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: '#e5e7eb',
+    },
+    dividerText: {
+      marginHorizontal: 16,
+      color: '#9ca3af',
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+    },
+    googleButton: {
+      backgroundColor: theme.card,
+      borderWidth: 1,
+      borderColor: '#d1d5db',
+      borderRadius: 12,
+      padding: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 12,
+    },
+    googleButtonText: {
+      color: '#374151',
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+    },
+    loginLink: {
+      marginTop: 12,
+      alignItems: 'center',
+    },
+    loginLinkText: {
+      color: theme.textSecondary,
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+    },
+    loginLinkBold: {
+      color: '#007AFF',
+      fontWeight: '600',
+    },
+  });

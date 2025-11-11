@@ -1,7 +1,16 @@
 import { Tabs, usePathname, useRouter } from 'expo-router';
-import { Home, BookOpen, TrendingUp, CheckSquare, User, ClipboardList } from 'lucide-react-native';
+import {
+  Home,
+  BookOpen,
+  TrendingUp,
+  CheckSquare,
+  User,
+  ClipboardList,
+} from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
-import AnimatedBottomNav, { AnimatedNavItem } from '@/components/AnimatedBottomNav';
+import AnimatedBottomNav, {
+  AnimatedNavItem,
+} from '@/components/AnimatedBottomNav';
 import { useEffect, useState } from 'react';
 
 const tabRoutes = [
@@ -9,7 +18,12 @@ const tabRoutes = [
   { route: '/steps', name: 'steps', title: 'Steps', icon: BookOpen },
   { route: '/journey', name: 'journey', title: 'Journey', icon: TrendingUp },
   { route: '/tasks', name: 'tasks', title: 'Tasks', icon: CheckSquare },
-  { route: '/manage-tasks', name: 'manage-tasks', title: 'Manage', icon: ClipboardList },
+  {
+    route: '/manage-tasks',
+    name: 'manage-tasks',
+    title: 'Manage',
+    icon: ClipboardList,
+  },
   { route: '/profile', name: 'profile', title: 'Profile', icon: User },
 ];
 
@@ -20,7 +34,9 @@ export default function TabLayout() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    const index = tabRoutes.findIndex(tab => pathname === tab.route || pathname.startsWith(`/${tab.name}`));
+    const index = tabRoutes.findIndex(
+      (tab) => pathname === tab.route || pathname.startsWith(`/${tab.name}`),
+    );
     if (index !== -1 && index !== activeIndex) {
       setActiveIndex(index);
     }

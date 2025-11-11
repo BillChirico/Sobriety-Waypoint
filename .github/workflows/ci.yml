@@ -12,7 +12,7 @@ on:
 
 jobs:
   lint-and-typecheck:
-    name: Lint and Type Check
+    name: Lint, Format, and Type Check
     runs-on: ubuntu-latest
 
     steps:
@@ -50,6 +50,9 @@ jobs:
 
       - name: Run ESLint
         run: pnpm lint
+
+      - name: Check code formatting
+        run: pnpm format:check
 
   build:
     name: Build for Web

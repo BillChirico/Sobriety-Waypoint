@@ -20,11 +20,12 @@ The CI pipeline runs automatically on:
 
 ## Jobs
 
-### 1. Lint and Type Check
+### 1. Lint, Format, and Type Check
 
-**Purpose**: Validates code quality and TypeScript correctness
+**Purpose**: Validates code quality, formatting, and TypeScript correctness
 
 **Steps**:
+
 1. Checkout code
 2. Setup Node.js 22 (latest LTS)
 3. Install pnpm (latest version)
@@ -32,12 +33,15 @@ The CI pipeline runs automatically on:
 5. Install dependencies with `pnpm install --frozen-lockfile`
 6. Run TypeScript type checking (`pnpm typecheck`)
 7. Run ESLint (`pnpm lint`)
+8. Check code formatting (`pnpm format:check`)
 
 **Duration**: ~2-3 minutes (with cache)
 
 **Failure Scenarios**:
+
 - TypeScript type errors
 - ESLint violations
+- Code formatting issues (not matching Prettier rules)
 - Missing dependencies
 
 ### 2. Build
@@ -47,6 +51,7 @@ The CI pipeline runs automatically on:
 **Dependencies**: Runs after lint-and-typecheck succeeds
 
 **Steps**:
+
 1. Checkout code
 2. Setup Node.js 22 (latest LTS)
 3. Install pnpm (latest version)
@@ -62,6 +67,7 @@ The CI pipeline runs automatically on:
 **Artifact Retention**: 7 days
 
 **Failure Scenarios**:
+
 - Build configuration errors
 - Missing environment variables
 - Expo build failures
@@ -70,10 +76,10 @@ The CI pipeline runs automatically on:
 
 Configure these secrets in your GitHub repository settings (Settings → Secrets and variables → Actions):
 
-| Secret Name | Description | Required For |
-|------------|-------------|--------------|
-| `EXPO_PUBLIC_SUPABASE_URL` | Your Supabase project URL | Build job |
-| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anonymous key | Build job |
+| Secret Name                     | Description                 | Required For |
+| ------------------------------- | --------------------------- | ------------ |
+| `EXPO_PUBLIC_SUPABASE_URL`      | Your Supabase project URL   | Build job    |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anonymous key | Build job    |
 
 **Note**: These secrets are only used during the build process and are not exposed in logs.
 
@@ -86,6 +92,7 @@ The workflow uses GitHub Actions cache to speed up builds:
 - **Cache Restore**: Falls back to latest cache if exact match not found
 
 **Benefits**:
+
 - Reduces build time from ~5-7 minutes to ~2-3 minutes
 - Saves bandwidth by not re-downloading unchanged dependencies
 - More consistent build times
@@ -102,11 +109,13 @@ The workflow uses GitHub Actions cache to speed up builds:
 ### Build Failing on CI but Passing Locally
 
 **Possible Causes**:
+
 - Different Node.js version (CI uses Node 22)
 - Missing environment variables
 - Uncommitted changes to `pnpm-lock.yaml`
 
 **Solutions**:
+
 1. Ensure `pnpm-lock.yaml` is committed
 2. Run `pnpm install` locally to sync lockfile
 3. Verify secrets are configured in GitHub
@@ -114,10 +123,12 @@ The workflow uses GitHub Actions cache to speed up builds:
 ### Cache Issues
 
 **Symptoms**:
+
 - Slower than expected builds
 - Dependency installation errors
 
 **Solutions**:
+
 1. Clear GitHub Actions cache:
    - Go to Actions → Caches
    - Delete relevant caches
@@ -126,10 +137,12 @@ The workflow uses GitHub Actions cache to speed up builds:
 ### TypeScript Errors Only on CI
 
 **Possible Causes**:
+
 - Local vs remote TypeScript version mismatch
 - Missing type definitions
 
 **Solutions**:
+
 1. Run `pnpm typecheck` locally first
 2. Ensure all dependencies are in `pnpm-lock.yaml`
 3. Check `typescript` version in `package.json` devDependencies
@@ -137,10 +150,12 @@ The workflow uses GitHub Actions cache to speed up builds:
 ### ESLint Failures
 
 **Common Issues**:
+
 - Code that passes locally but fails in CI usually means eslint config differences
 - Pre-commit hooks not catching issues
 
 **Solutions**:
+
 1. Run `pnpm lint` before pushing
 2. Use `pnpm lint` in pre-commit hooks
 3. Review ESLint configuration in `.eslintrc` or package.json
@@ -156,6 +171,7 @@ The workflow uses GitHub Actions cache to speed up builds:
 ### Understanding Build Artifacts
 
 Build artifacts contain the compiled web application:
+
 - Located under workflow run → Artifacts section
 - Download as zip file
 - Extract to view built application
@@ -202,6 +218,7 @@ Recommended workflow when working with this CI:
 ## Contact
 
 For questions or issues with CI/CD, check:
+
 - GitHub Actions logs
 - This documentation
 - `.github/workflows/ci.yml` for workflow definition

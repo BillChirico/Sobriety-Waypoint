@@ -1,17 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, RefreshControl, Alert, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  RefreshControl,
+  Alert,
+  Platform,
+} from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { SponsorSponseeRelationship, Task, Profile } from '@/types/database';
-import { Heart, CheckCircle, Users, Award, UserMinus, Plus } from 'lucide-react-native';
+import {
+  Heart,
+  CheckCircle,
+  Users,
+  Award,
+  UserMinus,
+  Plus,
+} from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import TaskCreationModal from '@/components/TaskCreationModal';
 
 export default function HomeScreen() {
   const { profile } = useAuth();
   const { theme } = useTheme();
-  const [relationships, setRelationships] = useState<SponsorSponseeRelationship[]>([]);
+  const [relationships, setRelationships] = useState<
+    SponsorSponseeRelationship[]
+  >([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -24,7 +42,8 @@ export default function HomeScreen() {
 
     const { data: asSponsor } = await supabase
       .from('sponsor_sponsee_relationships')
-      .select('*, sponsee:sponsee_id(*)').eq('sponsor_id', profile.id)
+      .select('*, sponsee:sponsee_id(*)')
+      .eq('sponsor_id', profile.id)
       .eq('status', 'active');
 
     const { data: asSponsee } = await supabase
@@ -34,7 +53,9 @@ export default function HomeScreen() {
       .eq('status', 'active');
 
     setRelationships([...(asSponsor || []), ...(asSponsee || [])]);
-    const profiles = (asSponsor || []).map((rel) => rel.sponsee).filter(Boolean) as Profile[];
+    const profiles = (asSponsor || [])
+      .map((rel) => rel.sponsee)
+      .filter(Boolean) as Profile[];
     setSponseeProfiles(profiles);
 
     const { data: tasksData } = await supabase
@@ -57,23 +78,32 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
-  const handleDisconnect = async (relationshipId: string, isSponsor: boolean, otherUserName: string) => {
+  const handleDisconnect = async (
+    relationshipId: string,
+    isSponsor: boolean,
+    otherUserName: string,
+  ) => {
     const confirmMessage = isSponsor
       ? `Disconnect from ${otherUserName}? This will end the sponsee relationship.`
       : `Disconnect from ${otherUserName}? This will end the sponsor relationship.`;
 
-    const confirmed = Platform.OS === 'web'
-      ? window.confirm(confirmMessage)
-      : await new Promise<boolean>((resolve) => {
-          Alert.alert(
-            'Confirm Disconnection',
-            confirmMessage,
-            [
-              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
-              { text: 'Disconnect', style: 'destructive', onPress: () => resolve(true) },
-            ]
-          );
-        });
+    const confirmed =
+      Platform.OS === 'web'
+        ? window.confirm(confirmMessage)
+        : await new Promise<boolean>((resolve) => {
+            Alert.alert('Confirm Disconnection', confirmMessage, [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+                onPress: () => resolve(false),
+              },
+              {
+                text: 'Disconnect',
+                style: 'destructive',
+                onPress: () => resolve(true),
+              },
+            ]);
+          });
 
     if (!confirmed) return;
 
@@ -88,18 +118,22 @@ export default function HomeScreen() {
 
       if (error) throw error;
 
-      const relationship = relationships.find(r => r.id === relationshipId);
+      const relationship = relationships.find((r) => r.id === relationshipId);
       if (relationship && profile) {
-        const notificationRecipientId = isSponsor ? relationship.sponsee_id : relationship.sponsor_id;
+        const notificationRecipientId = isSponsor
+          ? relationship.sponsee_id
+          : relationship.sponsor_id;
         const notificationSenderName = `${profile.first_name} ${profile.last_initial}.`;
 
-        await supabase.from('notifications').insert([{
-          user_id: notificationRecipientId,
-          type: 'connection_request',
-          title: 'Relationship Ended',
-          content: `${notificationSenderName} has ended the ${isSponsor ? 'sponsorship' : 'sponsee'} relationship.`,
-          data: { relationship_id: relationshipId },
-        }]);
+        await supabase.from('notifications').insert([
+          {
+            user_id: notificationRecipientId,
+            type: 'connection_request',
+            title: 'Relationship Ended',
+            content: `${notificationSenderName} has ended the ${isSponsor ? 'sponsorship' : 'sponsee'} relationship.`,
+            data: { relationship_id: relationshipId },
+          },
+        ]);
       }
 
       await fetchData();
@@ -128,7 +162,11 @@ export default function HomeScreen() {
   };
 
   const getMilestone = (days: number) => {
-    if (days >= 365) return { text: `${Math.floor(days / 365)} Year${Math.floor(days / 365) > 1 ? 's' : ''}`, color: '#007AFF' };
+    if (days >= 365)
+      return {
+        text: `${Math.floor(days / 365)} Year${Math.floor(days / 365) > 1 ? 's' : ''}`,
+        color: '#007AFF',
+      };
     if (days >= 180) return { text: '6 Months', color: '#007AFF' };
     if (days >= 90) return { text: '90 Days', color: '#007AFF' };
     if (days >= 30) return { text: '30 Days', color: '#007AFF' };
@@ -144,11 +182,25 @@ export default function HomeScreen() {
   return (
     <ScrollView
       style={styles.container}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.primary} />}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={theme.primary}
+        />
+      }
     >
       <View style={styles.header}>
-        <Text style={styles.greeting}>Hello, {profile?.first_name || 'Friend'}</Text>
-        <Text style={styles.date}>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</Text>
+        <Text style={styles.greeting}>
+          Hello, {profile?.first_name || 'Friend'}
+        </Text>
+        <Text style={styles.date}>
+          {new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </Text>
       </View>
 
       <View style={styles.sobrietyCard}>
@@ -157,47 +209,67 @@ export default function HomeScreen() {
           <View style={styles.sobrietyInfo}>
             <Text style={styles.sobrietyTitle}>Your Sobriety Journey</Text>
             <Text style={styles.sobrietyDate}>
-              Since {new Date(profile?.sobriety_date || '').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              Since{' '}
+              {new Date(profile?.sobriety_date || '').toLocaleDateString(
+                'en-US',
+                { month: 'long', day: 'numeric', year: 'numeric' },
+              )}
             </Text>
           </View>
         </View>
         <View style={styles.daysSoberContainer}>
           <Text style={styles.daysSoberCount}>{daysSober}</Text>
           <Text style={styles.daysSoberLabel}>Days Sober</Text>
-          <View style={[styles.milestoneBadge, { backgroundColor: milestone.color }]}>
+          <View
+            style={[
+              styles.milestoneBadge,
+              { backgroundColor: milestone.color },
+            ]}
+          >
             <Award size={16} color="#ffffff" />
             <Text style={styles.milestoneText}>{milestone.text}</Text>
           </View>
         </View>
       </View>
 
-      {relationships.filter(rel => rel.sponsor_id !== profile?.id).length > 0 && (
+      {relationships.filter((rel) => rel.sponsor_id !== profile?.id).length >
+        0 && (
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Users size={24} color={theme.textSecondary} />
             <Text style={styles.cardTitle}>Your Sponsor</Text>
           </View>
-          {relationships.filter(rel => rel.sponsor_id !== profile?.id).map((rel) => (
-            <View key={rel.id} style={styles.relationshipItem}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>
-                  {(rel.sponsor?.first_name || '?')[0].toUpperCase()}
-                </Text>
+          {relationships
+            .filter((rel) => rel.sponsor_id !== profile?.id)
+            .map((rel) => (
+              <View key={rel.id} style={styles.relationshipItem}>
+                <View style={styles.avatar}>
+                  <Text style={styles.avatarText}>
+                    {(rel.sponsor?.first_name || '?')[0].toUpperCase()}
+                  </Text>
+                </View>
+                <View style={styles.relationshipInfo}>
+                  <Text style={styles.relationshipName}>
+                    {rel.sponsor?.first_name} {rel.sponsor?.last_initial}.
+                  </Text>
+                  <Text style={styles.relationshipMeta}>
+                    Connected {new Date(rel.connected_at).toLocaleDateString()}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.disconnectButton}
+                  onPress={() =>
+                    handleDisconnect(
+                      rel.id,
+                      false,
+                      `${rel.sponsor?.first_name} ${rel.sponsor?.last_initial}.`,
+                    )
+                  }
+                >
+                  <UserMinus size={16} color="#ef4444" />
+                </TouchableOpacity>
               </View>
-              <View style={styles.relationshipInfo}>
-                <Text style={styles.relationshipName}>{rel.sponsor?.first_name} {rel.sponsor?.last_initial}.</Text>
-                <Text style={styles.relationshipMeta}>
-                  Connected {new Date(rel.connected_at).toLocaleDateString()}
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={styles.disconnectButton}
-                onPress={() => handleDisconnect(rel.id, false, `${rel.sponsor?.first_name} ${rel.sponsor?.last_initial}.`)}
-              >
-                <UserMinus size={16} color="#ef4444" />
-              </TouchableOpacity>
-            </View>
-          ))}
+            ))}
         </View>
       )}
 
@@ -206,10 +278,15 @@ export default function HomeScreen() {
           <Users size={24} color={theme.textSecondary} />
           <Text style={styles.cardTitle}>Your Sponsees</Text>
         </View>
-        {relationships.filter(rel => rel.sponsor_id === profile?.id).length === 0 ? (
-          <Text style={styles.emptyText}>No sponsees yet. Share your invite code to connect.</Text>
+        {relationships.filter((rel) => rel.sponsor_id === profile?.id)
+          .length === 0 ? (
+          <Text style={styles.emptyText}>
+            No sponsees yet. Share your invite code to connect.
+          </Text>
         ) : (
-          relationships.filter(rel => rel.sponsor_id === profile?.id).map((rel) => (
+          relationships
+            .filter((rel) => rel.sponsor_id === profile?.id)
+            .map((rel) => (
               <View key={rel.id} style={styles.relationshipItem}>
                 <View style={styles.avatar}>
                   <Text style={styles.avatarText}>
@@ -217,7 +294,9 @@ export default function HomeScreen() {
                   </Text>
                 </View>
                 <View style={styles.relationshipInfo}>
-                  <Text style={styles.relationshipName}>{rel.sponsee?.first_name} {rel.sponsee?.last_initial}.</Text>
+                  <Text style={styles.relationshipName}>
+                    {rel.sponsee?.first_name} {rel.sponsee?.last_initial}.
+                  </Text>
                   <Text style={styles.relationshipMeta}>
                     Connected {new Date(rel.connected_at).toLocaleDateString()}
                   </Text>
@@ -233,13 +312,19 @@ export default function HomeScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.disconnectButton}
-                  onPress={() => handleDisconnect(rel.id, true, `${rel.sponsee?.first_name} ${rel.sponsee?.last_initial}.`)}
+                  onPress={() =>
+                    handleDisconnect(
+                      rel.id,
+                      true,
+                      `${rel.sponsee?.first_name} ${rel.sponsee?.last_initial}.`,
+                    )
+                  }
                 >
                   <UserMinus size={16} color="#ef4444" />
                 </TouchableOpacity>
               </View>
             ))
-          )}
+        )}
       </View>
 
       <TaskCreationModal
@@ -262,7 +347,11 @@ export default function HomeScreen() {
             <Text style={styles.cardTitle}>Recent Tasks</Text>
           </View>
           {tasks.map((task) => (
-            <TouchableOpacity key={task.id} style={styles.taskItem} onPress={() => router.push('/tasks')}>
+            <TouchableOpacity
+              key={task.id}
+              style={styles.taskItem}
+              onPress={() => router.push('/tasks')}
+            >
               <View style={styles.taskInfo}>
                 <Text style={styles.taskTitle}>{task.title}</Text>
                 <Text style={styles.taskMeta}>Step {task.step_number}</Text>
@@ -272,19 +361,28 @@ export default function HomeScreen() {
               </View>
             </TouchableOpacity>
           ))}
-          <TouchableOpacity style={styles.viewAllButton} onPress={() => router.push('/tasks')}>
+          <TouchableOpacity
+            style={styles.viewAllButton}
+            onPress={() => router.push('/tasks')}
+          >
             <Text style={styles.viewAllText}>View All Tasks</Text>
           </TouchableOpacity>
         </View>
       )}
 
       <View style={styles.quickActions}>
-        <TouchableOpacity style={styles.actionCard} onPress={() => router.push('/steps')}>
+        <TouchableOpacity
+          style={styles.actionCard}
+          onPress={() => router.push('/steps')}
+        >
           <BookOpen size={32} color={theme.primary} />
           <Text style={styles.actionTitle}>12 Steps</Text>
           <Text style={styles.actionSubtitle}>Learn & Reflect</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionCard} onPress={() => router.push('/manage-tasks')}>
+        <TouchableOpacity
+          style={styles.actionCard}
+          onPress={() => router.push('/manage-tasks')}
+        >
           <ClipboardList size={32} color={theme.primary} />
           <Text style={styles.actionTitle}>Manage Tasks</Text>
           <Text style={styles.actionSubtitle}>Guide Progress</Text>
@@ -296,247 +394,248 @@ export default function HomeScreen() {
 
 import { BookOpen, ClipboardList } from 'lucide-react-native';
 
-const createStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
-  header: {
-    padding: 24,
-    paddingTop: 60,
-  },
-  greeting: {
-    fontSize: 28,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.text,
-    marginBottom: 4,
-  },
-  date: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-  },
-  sobrietyCard: {
-    backgroundColor: theme.card,
-    margin: 16,
-    marginTop: 0,
-    padding: 24,
-    borderRadius: 16,
-    shadowColor: theme.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  sobrietyHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  sobrietyInfo: {
-    marginLeft: 16,
-    flex: 1,
-  },
-  sobrietyTitle: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-  },
-  sobrietyDate: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 4,
-  },
-  daysSoberContainer: {
-    alignItems: 'center',
-  },
-  daysSoberCount: {
-    fontSize: 64,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.primary,
-  },
-  daysSoberLabel: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 8,
-  },
-  milestoneBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginTop: 16,
-  },
-  milestoneText: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    marginLeft: 6,
-  },
-  card: {
-    backgroundColor: theme.card,
-    margin: 16,
-    marginTop: 0,
-    padding: 20,
-    borderRadius: 16,
-    shadowColor: theme.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginLeft: 12,
-  },
-  relationshipItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: theme.borderLight,
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: theme.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarText: {
-    fontSize: 20,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-  relationshipInfo: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  relationshipName: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-  },
-  relationshipMeta: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 2,
-  },
-  emptyText: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    textAlign: 'center',
-    paddingVertical: 16,
-  },
-  taskItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: theme.borderLight,
-  },
-  taskInfo: {
-    flex: 1,
-  },
-  taskTitle: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-  },
-  taskMeta: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 2,
-  },
-  taskBadge: {
-    backgroundColor: theme.primary,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  taskBadgeText: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-  viewAllButton: {
-    marginTop: 12,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  viewAllText: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.primary,
-  },
-  quickActions: {
-    flexDirection: 'row',
-    padding: 16,
-    paddingTop: 0,
-    gap: 12,
-  },
-  actionCard: {
-    flex: 1,
-    backgroundColor: theme.card,
-    padding: 20,
-    borderRadius: 16,
-    alignItems: 'center',
-    shadowColor: theme.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  actionTitle: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginTop: 12,
-  },
-  actionSubtitle: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 4,
-  },
-  assignTaskButton: {
-    padding: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.primaryLight,
-    backgroundColor: theme.primaryLight,
-    marginRight: 8,
-  },
-  disconnectButton: {
-    padding: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#fee2e2',
-    backgroundColor: '#fef2f2',
-  },
-});
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      padding: 24,
+      paddingTop: 60,
+    },
+    greeting: {
+      fontSize: 28,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.text,
+      marginBottom: 4,
+    },
+    date: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+    },
+    sobrietyCard: {
+      backgroundColor: theme.card,
+      margin: 16,
+      marginTop: 0,
+      padding: 24,
+      borderRadius: 16,
+      shadowColor: theme.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    sobrietyHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 24,
+    },
+    sobrietyInfo: {
+      marginLeft: 16,
+      flex: 1,
+    },
+    sobrietyTitle: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+    },
+    sobrietyDate: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 4,
+    },
+    daysSoberContainer: {
+      alignItems: 'center',
+    },
+    daysSoberCount: {
+      fontSize: 64,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.primary,
+    },
+    daysSoberLabel: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 8,
+    },
+    milestoneBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+      marginTop: 16,
+    },
+    milestoneText: {
+      color: '#ffffff',
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      marginLeft: 6,
+    },
+    card: {
+      backgroundColor: theme.card,
+      margin: 16,
+      marginTop: 0,
+      padding: 20,
+      borderRadius: 16,
+      shadowColor: theme.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    cardTitle: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginLeft: 12,
+    },
+    relationshipItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 12,
+      borderTopWidth: 1,
+      borderTopColor: theme.borderLight,
+    },
+    avatar: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: theme.primary,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    avatarText: {
+      fontSize: 20,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#ffffff',
+    },
+    relationshipInfo: {
+      marginLeft: 12,
+      flex: 1,
+    },
+    relationshipName: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+    },
+    relationshipMeta: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 2,
+    },
+    emptyText: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      textAlign: 'center',
+      paddingVertical: 16,
+    },
+    taskItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 12,
+      borderTopWidth: 1,
+      borderTopColor: theme.borderLight,
+    },
+    taskInfo: {
+      flex: 1,
+    },
+    taskTitle: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+    },
+    taskMeta: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 2,
+    },
+    taskBadge: {
+      backgroundColor: theme.primary,
+      paddingHorizontal: 12,
+      paddingVertical: 4,
+      borderRadius: 12,
+    },
+    taskBadgeText: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#ffffff',
+    },
+    viewAllButton: {
+      marginTop: 12,
+      paddingVertical: 12,
+      alignItems: 'center',
+    },
+    viewAllText: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.primary,
+    },
+    quickActions: {
+      flexDirection: 'row',
+      padding: 16,
+      paddingTop: 0,
+      gap: 12,
+    },
+    actionCard: {
+      flex: 1,
+      backgroundColor: theme.card,
+      padding: 20,
+      borderRadius: 16,
+      alignItems: 'center',
+      shadowColor: theme.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    actionTitle: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginTop: 12,
+    },
+    actionSubtitle: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 4,
+    },
+    assignTaskButton: {
+      padding: 8,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.primaryLight,
+      backgroundColor: theme.primaryLight,
+      marginRight: 8,
+    },
+    disconnectButton: {
+      padding: 8,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#fee2e2',
+      backgroundColor: '#fef2f2',
+    },
+  });
