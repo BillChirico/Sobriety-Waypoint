@@ -9,7 +9,7 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string) => Promise<void>;
+  signUp: (email: string, password: string, firstName: string, lastInitial: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) throw error;
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (email: string, password: string, firstName: string, lastInitial: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -108,7 +108,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error: profileError } = await supabase.from('profiles').insert({
         id: data.user.id,
         email: email,
-        full_name: fullName,
+        first_name: firstName,
+        last_initial: lastInitial.toUpperCase(),
         role: 'sponsee',
         sobriety_date: new Date().toISOString().split('T')[0],
       });

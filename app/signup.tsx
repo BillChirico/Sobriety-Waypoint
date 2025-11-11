@@ -5,7 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Heart, ArrowLeft } from 'lucide-react-native';
 
 export default function SignupScreen() {
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastInitial, setLastInitial] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -14,8 +15,13 @@ export default function SignupScreen() {
   const router = useRouter();
 
   const handleSignup = async () => {
-    if (!fullName || !email || !password || !confirmPassword) {
+    if (!firstName || !lastInitial || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (lastInitial.length !== 1) {
+      Alert.alert('Error', 'Last initial must be a single letter');
       return;
     }
 
@@ -31,7 +37,7 @@ export default function SignupScreen() {
 
     setLoading(true);
     try {
-      await signUp(email, password, fullName);
+      await signUp(email, password, firstName, lastInitial);
       Alert.alert('Success', 'Account created successfully!', [
         { text: 'OK', onPress: () => router.replace('/onboarding') },
       ]);
@@ -65,12 +71,25 @@ export default function SignupScreen() {
 
         <View style={styles.form}>
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Full Name</Text>
+            <Text style={styles.label}>First Name</Text>
             <TextInput
               style={styles.input}
-              placeholder="John Doe"
-              value={fullName}
-              onChangeText={setFullName}
+              placeholder="John"
+              value={firstName}
+              onChangeText={setFirstName}
+              editable={!loading}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Last Initial</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="D"
+              value={lastInitial}
+              onChangeText={(text) => setLastInitial(text.toUpperCase())}
+              maxLength={1}
+              autoCapitalize="characters"
               editable={!loading}
             />
           </View>

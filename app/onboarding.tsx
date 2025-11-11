@@ -53,7 +53,7 @@ export default function OnboardingScreen() {
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.title}>Welcome to Serenity Path</Text>
+          <Text style={styles.title}>Welcome to 12-Step Tracker</Text>
           <Text style={styles.subtitle}>Let's set up your recovery journey</Text>
 
           <View style={styles.roleContainer}>

@@ -6,7 +6,8 @@ export type NotificationType = 'task_assigned' | 'milestone' | 'message' | 'conn
 export interface Profile {
   id: string;
   email: string;
-  full_name: string;
+  first_name: string;
+  last_initial: string;
   phone?: string;
   avatar_url?: string;
   role: UserRole;
