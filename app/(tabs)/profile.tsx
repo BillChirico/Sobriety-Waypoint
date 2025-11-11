@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { User, LogOut, Heart, Calendar, Share2, QrCode, Bell, Moon, Sun, Monitor } from 'lucide-react-native';
+import packageJson from '../../package.json';
 
 export default function ProfileScreen() {
   const { profile, signOut, refreshProfile } = useAuth();
@@ -326,7 +327,7 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>12-Step Tracker v1.0</Text>
+        <Text style={styles.footerText}>12-Step Tracker v{packageJson.version}</Text>
         <Text style={styles.footerSubtext}>Supporting recovery, one day at a time</Text>
       </View>
     </ScrollView>
