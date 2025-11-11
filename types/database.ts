@@ -116,3 +116,13 @@ export interface UserStepProgress {
   created_at: string;
   updated_at: string;
 }
+
+export interface TaskTemplate {
+  id: string;
+  step_number: number;
+  title: string;
+  description: string;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}

@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Alert,
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
-import { LogOut, Heart, Share2, QrCode, Bell, Moon, Sun, Monitor, UserMinus, Edit2, Calendar, AlertCircle } from 'lucide-react-native';
+import { LogOut, Heart, Share2, QrCode, Bell, Moon, Sun, Monitor, UserMinus, Edit2, Calendar, AlertCircle, CheckCircle } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import packageJson from '../../package.json';
 
@@ -31,6 +31,7 @@ export default function ProfileScreen() {
   const [showSlipUpDatePicker, setShowSlipUpDatePicker] = useState(false);
   const [showRecoveryDatePicker, setShowRecoveryDatePicker] = useState(false);
   const [isLoggingSlipUp, setIsLoggingSlipUp] = useState(false);
+  const [sponseeTaskStats, setSponseeTaskStats] = useState<{[key: string]: {total: number, completed: number}}>({});
 
   const fetchRelationships = async () => {
     if (!profile) return;
@@ -51,6 +52,23 @@ export default function ProfileScreen() {
 
       setSponsorRelationships(asSponsee || []);
       setSponseeRelationships(asSponsor || []);
+
+      if ((profile.role === 'sponsor' || profile.role === 'both') && asSponsor && asSponsor.length > 0) {
+        const stats: {[key: string]: {total: number, completed: number}} = {};
+
+        for (const rel of asSponsor) {
+          const { data: tasks } = await supabase
+            .from('tasks')
+            .select('status')
+            .eq('sponsee_id', rel.sponsee_id);
+
+          const total = tasks?.length || 0;
+          const completed = tasks?.filter(t => t.status === 'completed').length || 0;
+          stats[rel.sponsee_id] = { total, completed };
+        }
+
+        setSponseeTaskStats(stats);
+      }
     } catch (error) {
       console.error('Error fetching relationships:', error);
     } finally {
@@ -631,6 +649,14 @@ export default function ProfileScreen() {
                             <Heart size={14} color={theme.primary} fill={theme.primary} />
                             <Text style={styles.sobrietyText}>
                               {daysSober} days sober
+                            </Text>
+                          </View>
+                        )}
+                        {sponseeTaskStats[rel.sponsee_id] && (
+                          <View style={styles.taskStatsInfo}>
+                            <CheckCircle size={14} color="#10b981" />
+                            <Text style={styles.taskStatsText}>
+                              {sponseeTaskStats[rel.sponsee_id].completed}/{sponseeTaskStats[rel.sponsee_id].total} tasks completed
                             </Text>
                           </View>
                         )}
@@ -1430,6 +1456,18 @@ const createStyles = (theme: any) => StyleSheet.create({
     fontSize: 12,
     fontFamily: theme.fontRegular,
     color: theme.primary,
+    fontWeight: '600',
+  },
+  taskStatsInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 6,
+  },
+  taskStatsText: {
+    fontSize: 12,
+    fontFamily: theme.fontRegular,
+    color: '#10b981',
     fontWeight: '600',
   },
   disconnectButton: {

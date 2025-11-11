@@ -3,9 +3,10 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, RefreshControl, A
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
-import { SponsorSponseeRelationship, Task } from '@/types/database';
-import { Heart, CheckCircle, Users, Award, UserMinus } from 'lucide-react-native';
+import { SponsorSponseeRelationship, Task, Profile } from '@/types/database';
+import { Heart, CheckCircle, Users, Award, UserMinus, Plus } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import TaskCreationModal from '@/components/TaskCreationModal';
 
 export default function HomeScreen() {
   const { profile } = useAuth();
@@ -13,6 +14,9 @@ export default function HomeScreen() {
   const [relationships, setRelationships] = useState<SponsorSponseeRelationship[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [selectedSponseeId, setSelectedSponseeId] = useState<string>('');
+  const [sponseeProfiles, setSponseeProfiles] = useState<Profile[]>([]);
   const router = useRouter();
 
   const fetchData = async () => {
@@ -24,6 +28,8 @@ export default function HomeScreen() {
         .select('*, sponsee:sponsee_id(*)').eq('sponsor_id', profile.id)
         .eq('status', 'active');
       setRelationships(data || []);
+      const profiles = (data || []).map((rel) => rel.sponsee).filter(Boolean) as Profile[];
+      setSponseeProfiles(profiles);
     } else {
       const { data } = await supabase
         .from('sponsor_sponsee_relationships')
@@ -220,6 +226,15 @@ export default function HomeScreen() {
                   </Text>
                 </View>
                 <TouchableOpacity
+                  style={styles.assignTaskButton}
+                  onPress={() => {
+                    setSelectedSponseeId(rel.sponsee_id);
+                    setShowTaskModal(true);
+                  }}
+                >
+                  <Plus size={16} color={theme.primary} />
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.disconnectButton}
                   onPress={() => handleDisconnect(rel.id, true, `${rel.sponsee?.first_name} ${rel.sponsee?.last_initial}.`)}
                 >
@@ -230,6 +245,19 @@ export default function HomeScreen() {
           )}
         </View>
       )}
+
+      <TaskCreationModal
+        visible={showTaskModal}
+        onClose={() => {
+          setShowTaskModal(false);
+          setSelectedSponseeId('');
+        }}
+        onTaskCreated={fetchData}
+        sponsorId={profile?.id || ''}
+        sponsees={sponseeProfiles}
+        preselectedSponseeId={selectedSponseeId}
+        theme={theme}
+      />
 
       {tasks.length > 0 && (
         <View style={styles.card}>
@@ -499,6 +527,14 @@ const createStyles = (theme: any) => StyleSheet.create({
     fontFamily: theme.fontRegular,
     color: theme.textSecondary,
     marginTop: 4,
+  },
+  assignTaskButton: {
+    padding: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: theme.primaryLight,
+    backgroundColor: theme.primaryLight,
+    marginRight: 8,
   },
   disconnectButton: {
     padding: 8,

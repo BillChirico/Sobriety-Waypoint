@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, RefreshControl, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, RefreshControl, Alert, Modal, TextInput, ActivityIndicator, Platform } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { Task } from '@/types/database';
-import { CheckCircle, Circle, Clock } from 'lucide-react-native';
+import { CheckCircle, Circle, Clock, X, Calendar } from 'lucide-react-native';
 
 export default function TasksScreen() {
   const { profile } = useAuth();
   const { theme } = useTheme();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [completionNotes, setCompletionNotes] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchTasks = async () => {
     if (!profile) return;
@@ -32,19 +36,56 @@ export default function TasksScreen() {
     setRefreshing(false);
   };
 
-  const handleCompleteTask = async (taskId: string) => {
-    const { error } = await supabase
-      .from('tasks')
-      .update({
-        status: 'completed',
-        completed_at: new Date().toISOString(),
-      })
-      .eq('id', taskId);
+  const handleCompleteTask = (task: Task) => {
+    setSelectedTask(task);
+    setCompletionNotes('');
+    setShowCompleteModal(true);
+  };
 
-    if (error) {
-      Alert.alert('Error', 'Failed to complete task');
-    } else {
-      fetchTasks();
+  const submitTaskCompletion = async () => {
+    if (!selectedTask) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .update({
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          completion_notes: completionNotes.trim() || null,
+        })
+        .eq('id', selectedTask.id);
+
+      if (error) throw error;
+
+      await supabase.from('notifications').insert({
+        user_id: selectedTask.sponsor_id,
+        type: 'task_completed',
+        title: 'Task Completed',
+        content: `${profile?.first_name} ${profile?.last_initial}. has completed: ${selectedTask.title}`,
+        data: { task_id: selectedTask.id, step_number: selectedTask.step_number },
+      });
+
+      setShowCompleteModal(false);
+      setSelectedTask(null);
+      setCompletionNotes('');
+      await fetchTasks();
+
+      if (Platform.OS === 'web') {
+        window.alert('Task marked as completed!');
+      } else {
+        Alert.alert('Success', 'Task marked as completed!');
+      }
+    } catch (error: any) {
+      console.error('Error completing task:', error);
+      if (Platform.OS === 'web') {
+        window.alert('Failed to complete task');
+      } else {
+        Alert.alert('Error', 'Failed to complete task');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -78,11 +119,19 @@ export default function TasksScreen() {
                 </View>
                 <Text style={styles.taskTitle}>{task.title}</Text>
                 <Text style={styles.taskDescription}>{task.description}</Text>
+                {task.due_date && (
+                  <View style={styles.dueDateContainer}>
+                    <Calendar size={14} color={theme.textSecondary} />
+                    <Text style={styles.dueDateText}>
+                      Due {new Date(task.due_date).toLocaleDateString()}
+                    </Text>
+                  </View>
+                )}
                 <View style={styles.taskFooter}>
                   <Text style={styles.sponsorText}>From: {task.sponsor?.first_name} {task.sponsor?.last_initial}.</Text>
                   <TouchableOpacity
                     style={styles.completeButton}
-                    onPress={() => handleCompleteTask(task.id)}
+                    onPress={() => handleCompleteTask(task)}
                   >
                     <CheckCircle size={20} color={theme.primary} />
                     <Text style={styles.completeButtonText}>Complete</Text>
@@ -109,6 +158,12 @@ export default function TasksScreen() {
                 <Text style={styles.completedDate}>
                   Completed {new Date(task.completed_at!).toLocaleDateString()}
                 </Text>
+                {task.completion_notes && (
+                  <View style={styles.completionNotesContainer}>
+                    <Text style={styles.completionNotesLabel}>Your Notes:</Text>
+                    <Text style={styles.completionNotesText}>{task.completion_notes}</Text>
+                  </View>
+                )}
               </View>
             ))}
           </View>
@@ -124,6 +179,70 @@ export default function TasksScreen() {
           </View>
         )}
       </ScrollView>
+
+      <Modal visible={showCompleteModal} transparent animationType="slide" onRequestClose={() => setShowCompleteModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Complete Task</Text>
+              <TouchableOpacity onPress={() => setShowCompleteModal(false)} style={styles.closeButton}>
+                <X size={24} color={theme.textSecondary} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalBody}>
+              {selectedTask && (
+                <>
+                  <View style={styles.taskSummary}>
+                    <View style={styles.stepBadge}>
+                      <Text style={styles.stepBadgeText}>Step {selectedTask.step_number}</Text>
+                    </View>
+                    <Text style={styles.taskSummaryTitle}>{selectedTask.title}</Text>
+                  </View>
+
+                  <View style={styles.formGroup}>
+                    <Text style={styles.label}>Completion Notes (Optional)</Text>
+                    <Text style={styles.helpText}>
+                      Share your reflections, insights, or any challenges you faced with this task.
+                    </Text>
+                    <TextInput
+                      style={styles.textArea}
+                      value={completionNotes}
+                      onChangeText={setCompletionNotes}
+                      placeholder="What did you learn? How do you feel?"
+                      placeholderTextColor={theme.textTertiary}
+                      multiline
+                      numberOfLines={6}
+                      textAlignVertical="top"
+                    />
+                  </View>
+                </>
+              )}
+            </View>
+
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setShowCompleteModal(false)}
+                disabled={isSubmitting}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.submitButton, isSubmitting && styles.buttonDisabled]}
+                onPress={submitTaskCompletion}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <ActivityIndicator size="small" color="#ffffff" />
+                ) : (
+                  <Text style={styles.submitButtonText}>Mark Complete</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -248,6 +367,147 @@ const createStyles = (theme: any) => StyleSheet.create({
     fontFamily: theme.fontRegular,
     color: theme.primary,
     fontWeight: '600',
+    marginTop: 8,
+  },
+  completionNotesContainer: {
+    backgroundColor: theme.background,
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 12,
+    borderLeftWidth: 3,
+    borderLeftColor: theme.primary,
+  },
+  completionNotesLabel: {
+    fontSize: 12,
+    fontFamily: theme.fontRegular,
+    fontWeight: '600',
+    color: theme.text,
+    marginBottom: 4,
+  },
+  completionNotesText: {
+    fontSize: 13,
+    fontFamily: theme.fontRegular,
+    color: theme.textSecondary,
+    lineHeight: 18,
+  },
+  dueDateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 8,
+  },
+  dueDateText: {
+    fontSize: 12,
+    fontFamily: theme.fontRegular,
+    color: theme.textSecondary,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: theme.card,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.border,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontFamily: theme.fontRegular,
+    fontWeight: '700',
+    color: theme.text,
+  },
+  closeButton: {
+    padding: 4,
+  },
+  modalBody: {
+    padding: 20,
+  },
+  taskSummary: {
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  taskSummaryTitle: {
+    fontSize: 18,
+    fontFamily: theme.fontRegular,
+    fontWeight: '600',
+    color: theme.text,
+    marginTop: 12,
+    textAlign: 'center',
+  },
+  formGroup: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 14,
+    fontFamily: theme.fontRegular,
+    fontWeight: '600',
+    color: theme.text,
+    marginBottom: 4,
+  },
+  helpText: {
+    fontSize: 13,
+    fontFamily: theme.fontRegular,
+    color: theme.textSecondary,
+    marginBottom: 12,
+    lineHeight: 18,
+  },
+  textArea: {
+    backgroundColor: theme.background,
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    fontFamily: theme.fontRegular,
+    color: theme.text,
+    minHeight: 120,
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: theme.border,
+    gap: 12,
+  },
+  cancelButton: {
+    flex: 1,
+    padding: 14,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: theme.border,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontFamily: theme.fontRegular,
+    fontWeight: '600',
+    color: theme.textSecondary,
+  },
+  submitButton: {
+    flex: 1,
+    padding: 14,
+    borderRadius: 8,
+    backgroundColor: theme.primary,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    fontSize: 16,
+    fontFamily: theme.fontRegular,
+    fontWeight: '600',
+    color: '#ffffff',
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   emptyState: {
     alignItems: 'center',
