@@ -3,27 +3,64 @@
 ## Development Commands
 
 ### Start Development Server
+
 ```bash
-npm run dev
+pnpm dev
 ```
+
 Starts the Expo development server with telemetry disabled.
 
 ### Type Checking
+
 ```bash
-npm run typecheck
+pnpm typecheck
 ```
+
 Runs TypeScript type checking across the codebase.
 
 ### Linting
+
 ```bash
-npm run lint
+pnpm lint
 ```
+
 Runs ESLint to check code quality and style.
 
-### Build for Web
+## Git Hooks
+
+Pre-commit hooks are automatically installed via Husky and will run when you commit changes.
+
+The pre-commit hook will:
+
+- Format staged files with Prettier
+- Lint and auto-fix staged TypeScript/JavaScript files with ESLint
+
+To skip hooks (not recommended):
+
 ```bash
-npm run build:web
+git commit --no-verify
 ```
+
+## Code Formatting
+
+```bash
+pnpm format
+```
+
+Formats all code using Prettier.
+
+```bash
+pnpm format:check
+```
+
+Checks if code is properly formatted without making changes.
+
+### Build for Web
+
+```bash
+pnpm build:web
+```
+
 Creates a production web build.
 
 ## Git Usage with GitButler
@@ -31,6 +68,7 @@ Creates a production web build.
 **IMPORTANT**: This project is managed by GitButler.
 
 **DO NOT** run the following git commands:
+
 - `git commit`
 - `git checkout`
 - `git rebase`
@@ -39,6 +77,7 @@ Creates a production web build.
 All commits and branch operations must be done through the GitButler interface.
 
 You **MAY** run git commands that provide information:
+
 - `git status`
 - `git log`
 - `git diff`

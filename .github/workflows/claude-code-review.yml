@@ -48,7 +48,7 @@ jobs:
 
             Use the repository's CLAUDE.md for guidance on style and conventions. Be constructive and helpful in your feedback.
 
-            Use `gh pr comment` with your Bash tool to leave your review as a comment on the PR.
+            Use `gh pr comment` with your Bash tool to leave your review as a comment on the PR. If you've already left a comment, don't leave another one.
             Use `mcp__github_inline_comment__create_inline_comment` to highlight specific code issues.
             Commit any fixes, documentation, and more to this PR branch.
 

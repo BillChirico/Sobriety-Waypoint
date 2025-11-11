@@ -47,7 +47,7 @@ This is NOT optional - MCP tools provide significant benefits in efficiency, acc
 
 ## Tech Stack
 
-- **Framework**: Expo 54 with React Native 0.81.4 and React 19
+- **Framework**: Expo 54 with React Native 0.81.5 and React 19
 - **Router**: Expo Router v6 (file-based routing with typed routes)
 - **Backend**: Supabase (PostgreSQL with Row Level Security)
 - **Authentication**: Supabase Auth (email/password + Google OAuth)
@@ -59,16 +59,16 @@ This is NOT optional - MCP tools provide significant benefits in efficiency, acc
 
 ```bash
 # Start development server (with telemetry disabled)
-npm run dev
+pnpm dev
 
 # Type checking
-npm run typecheck
+pnpm typecheck
 
 # Linting
-npm run lint
+pnpm lint
 
 # Build for web
-npm run build:web
+pnpm build:web
 ```
 
 ## Architecture
@@ -168,10 +168,62 @@ Key details:
 
 Configuration in `eas.json`:
 - **development**: Development client with internal distribution
-- **preview**: Internal distribution for testing
+- **preview**: Internal distribution for CI/CD and testing (uses Release configuration)
+  - OTA update channel: `preview`
+  - iOS: Release build configuration
+  - Android: APK build type
+  - Includes Supabase environment variables
 - **production**: Auto-increment version numbers
 
 EAS project ID: `4652ad8b-2e44-4270-8612-64c4587219d8`
+
+## CI/CD Pipeline
+
+The project uses GitHub Actions for automated testing and multi-platform builds. See `.github/CICD.md` for comprehensive documentation.
+
+### Workflow Overview
+
+**Triggers**: Runs on push to `main`/`develop` branches and on all pull requests
+
+**Jobs** (run in parallel after linting passes):
+1. **Lint, Format, and Type Check**: Validates code quality, formatting, and TypeScript types
+2. **Build for Web**: Creates production web build with Supabase credentials
+3. **Build for Android**: Triggers EAS build for Android (preview profile, uses `--no-wait`)
+4. **Build for iOS**: Triggers EAS build for iOS (preview profile, uses `--no-wait`)
+
+**Key Features**:
+- **Concurrency Control**: Automatically cancels outdated workflow runs when new commits are pushed
+- **Dependency Caching**: Uses pnpm cache for faster builds
+- **Parallel Builds**: All three platforms build simultaneously
+- **EAS Integration**: Mobile builds run on EAS infrastructure (not GitHub runners)
+- **Build Artifacts**: Web builds stored as GitHub artifacts for 7 days
+
+### Required GitHub Secrets
+
+Configure these in repository settings (Settings → Secrets and variables → Actions):
+- `EXPO_PUBLIC_SUPABASE_URL`: Supabase project URL (used by all builds)
+- `EXPO_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous key (used by all builds)
+- `EXPO_TOKEN`: Expo access token for EAS builds (Android/iOS only)
+
+### Monitoring Builds
+
+**GitHub Actions**: Repository → Actions tab (view workflow runs, download web artifacts)
+**EAS Builds**: https://expo.dev/accounts/[account]/projects/12-step-tracker/builds
+
+Mobile builds are triggered by CI but complete asynchronously on EAS infrastructure. Check the Expo dashboard for build status, logs, and to download APK/IPA files.
+
+### Code Quality Tools
+
+- **Pre-commit Hooks**: Husky + lint-staged (auto-format and lint on commit)
+  - Configuration: `package.json` → `lint-staged` section
+  - Hook script: `.husky/pre-commit`
+  - Prettier formats **all** staged files (uses `--ignore-unknown`)
+  - ESLint fixes staged JavaScript/TypeScript files
+  - See `.github/GIT_HOOKS.md` for details
+- **Claude Code Review**: AI-powered PR reviews with sticky comments
+- **TypeScript Strict Mode**: Full type safety enforcement
+- **ESLint**: Expo configuration with custom rules
+- **Prettier**: Consistent code formatting
 
 ## Environment Variables
 
@@ -181,6 +233,33 @@ EXPO_PUBLIC_SUPABASE_URL=<your-supabase-url>
 EXPO_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 ```
 
+## Development Workflow
+
+### Before Committing
+
+1. Run `pnpm typecheck` to catch type errors (hooks don't run this)
+2. Run `pnpm lint` to check code quality (optional - hooks run this automatically)
+3. Pre-commit hooks will automatically:
+   - Format **all** staged files with Prettier
+   - Lint and auto-fix JavaScript/TypeScript with ESLint
+   - Only process staged files (fast!)
+
+### Creating Pull Requests
+
+1. Push your branch to trigger CI/CD pipeline
+2. Wait for all jobs to pass (lint, web build, Android build, iOS build)
+3. Check Expo dashboard for mobile build status if needed
+4. Claude Code Review will automatically analyze your PR
+5. Address any issues found by CI or code review
+6. Request human review once CI passes
+
+### Working with CI/CD
+
+- **Fast Feedback**: CI completes in ~2-3 minutes (plus async EAS builds)
+- **Parallel Builds**: All platforms build simultaneously
+- **Smart Cancellation**: New commits auto-cancel outdated workflow runs
+- **Build Monitoring**: Web artifacts in GitHub, mobile builds in Expo dashboard
+
 ## Code Patterns
 
 1. **Authentication Guards**: Root layout handles all auth routing logic centrally
@@ -188,6 +267,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 3. **Supabase Queries**: Import typed client from `@/lib/supabase` and use with database types from `@/types/database`
 4. **Cross-platform Storage**: Use the adapter pattern (see `lib/supabase.ts`) for platform-specific storage
 5. **Row Level Security**: All database operations respect RLS policies - no additional auth checks needed in client code
+6. **Testing Changes**: Use EAS local builds for native testing: `eas build --platform [ios|android] --profile development --local`
 
 ## Platform Considerations
 

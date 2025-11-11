@@ -89,7 +89,9 @@ export const useTheme = () => {
   return context;
 };
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const systemColorScheme = useColorScheme();
   const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
 
@@ -100,7 +102,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const loadThemePreference = async () => {
     try {
       const saved = await AsyncStorage.getItem('theme_mode');
-      if (saved && (saved === 'light' || saved === 'dark' || saved === 'system')) {
+      if (
+        saved &&
+        (saved === 'light' || saved === 'dark' || saved === 'system')
+      ) {
         setThemeModeState(saved as ThemeMode);
       }
     } catch (error) {
@@ -124,9 +129,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return themeMode === 'dark' ? darkTheme : lightTheme;
   };
 
-  const isDark = themeMode === 'system'
-    ? systemColorScheme === 'dark'
-    : themeMode === 'dark';
+  const isDark =
+    themeMode === 'system'
+      ? systemColorScheme === 'dark'
+      : themeMode === 'dark';
 
   return (
     <ThemeContext.Provider

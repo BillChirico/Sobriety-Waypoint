@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+web-build/
+.expo/
+ios/
+android/
+
+# Package manager files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Git
+.git/
+.gitignore
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# IDE
+.vscode/
+.idea/
+
+# Expo
+expo-env.d.ts
+
+# Generated files
+*.tsbuildinfo
+
+# Migration files (preserve formatting)
+supabase/migrations/**/*.sql
+
+# Documentation (preserve intentional formatting)
+CLAUDE.md

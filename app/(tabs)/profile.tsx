@@ -1,9 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Alert, Share, Switch, Platform, ActivityIndicator, Linking, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+  Share,
+  Switch,
+  Platform,
+  ActivityIndicator,
+  Linking,
+  Modal,
+} from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
-import { LogOut, Heart, Share2, QrCode, Bell, Moon, Sun, Monitor, UserMinus, Edit2, Calendar, AlertCircle, CheckCircle } from 'lucide-react-native';
+import {
+  LogOut,
+  Heart,
+  Share2,
+  QrCode,
+  Bell,
+  Moon,
+  Sun,
+  Monitor,
+  UserMinus,
+  Edit2,
+  Calendar,
+  AlertCircle,
+  CheckCircle,
+} from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import packageJson from '../../package.json';
 
@@ -23,7 +51,9 @@ export default function ProfileScreen() {
     daily: profile?.notification_preferences?.daily ?? true,
   });
   const [showSobrietyDatePicker, setShowSobrietyDatePicker] = useState(false);
-  const [selectedSobrietyDate, setSelectedSobrietyDate] = useState<Date>(new Date());
+  const [selectedSobrietyDate, setSelectedSobrietyDate] = useState<Date>(
+    new Date(),
+  );
   const [showSlipUpModal, setShowSlipUpModal] = useState(false);
   const [slipUpDate, setSlipUpDate] = useState<Date>(new Date());
   const [recoveryDate, setRecoveryDate] = useState<Date>(new Date());
@@ -31,7 +61,9 @@ export default function ProfileScreen() {
   const [showSlipUpDatePicker, setShowSlipUpDatePicker] = useState(false);
   const [showRecoveryDatePicker, setShowRecoveryDatePicker] = useState(false);
   const [isLoggingSlipUp, setIsLoggingSlipUp] = useState(false);
-  const [sponseeTaskStats, setSponseeTaskStats] = useState<{[key: string]: {total: number, completed: number}}>({});
+  const [sponseeTaskStats, setSponseeTaskStats] = useState<{
+    [key: string]: { total: number; completed: number };
+  }>({});
 
   const fetchRelationships = async () => {
     if (!profile) return;
@@ -53,8 +85,13 @@ export default function ProfileScreen() {
       setSponsorRelationships(asSponsee || []);
       setSponseeRelationships(asSponsor || []);
 
-      if ((profile.role === 'sponsor' || profile.role === 'both') && asSponsor && asSponsor.length > 0) {
-        const stats: {[key: string]: {total: number, completed: number}} = {};
+      if (
+        (profile.role === 'sponsor' || profile.role === 'both') &&
+        asSponsor &&
+        asSponsor.length > 0
+      ) {
+        const stats: { [key: string]: { total: number; completed: number } } =
+          {};
 
         for (const rel of asSponsor) {
           const { data: tasks } = await supabase
@@ -63,7 +100,8 @@ export default function ProfileScreen() {
             .eq('sponsee_id', rel.sponsee_id);
 
           const total = tasks?.length || 0;
-          const completed = tasks?.filter(t => t.status === 'completed').length || 0;
+          const completed =
+            tasks?.filter((t) => t.status === 'completed').length || 0;
           stats[rel.sponsee_id] = { total, completed };
         }
 
@@ -109,7 +147,9 @@ export default function ProfileScreen() {
       }
     } else {
       if (Platform.OS === 'web') {
-        const shouldShare = window.confirm(`Your invite code is: ${code}\n\nShare this with your sponsee to connect.\n\nClick OK to copy to clipboard.`);
+        const shouldShare = window.confirm(
+          `Your invite code is: ${code}\n\nShare this with your sponsee to connect.\n\nClick OK to copy to clipboard.`,
+        );
         if (shouldShare) {
           navigator.clipboard.writeText(code);
           window.alert('Invite code copied to clipboard!');
@@ -121,10 +161,13 @@ export default function ProfileScreen() {
           [
             {
               text: 'Share',
-              onPress: () => Share.share({ message: `Join me on 12-Step Tracker! Use invite code: ${code}` }),
+              onPress: () =>
+                Share.share({
+                  message: `Join me on 12-Step Tracker! Use invite code: ${code}`,
+                }),
             },
             { text: 'OK' },
-          ]
+          ],
         );
       }
     }
@@ -229,15 +272,19 @@ export default function ProfileScreen() {
         return;
       }
 
-      const { error: relationshipError } = await supabase.from('sponsor_sponsee_relationships').insert({
-        sponsor_id: invite.sponsor_id,
-        sponsee_id: profile.id,
-        status: 'active',
-      });
+      const { error: relationshipError } = await supabase
+        .from('sponsor_sponsee_relationships')
+        .insert({
+          sponsor_id: invite.sponsor_id,
+          sponsee_id: profile.id,
+          status: 'active',
+        });
 
       if (relationshipError) {
         console.error('Relationship creation error:', relationshipError);
-        const errorMessage = relationshipError.message || 'Failed to connect with sponsor. Please try again.';
+        const errorMessage =
+          relationshipError.message ||
+          'Failed to connect with sponsor. Please try again.';
         if (Platform.OS === 'web') {
           window.alert(`Failed to connect: ${errorMessage}`);
         } else {
@@ -276,9 +323,14 @@ export default function ProfileScreen() {
       await fetchRelationships();
 
       if (Platform.OS === 'web') {
-        window.alert(`Connected with ${sponsorProfile.first_name} ${sponsorProfile.last_initial}.`);
+        window.alert(
+          `Connected with ${sponsorProfile.first_name} ${sponsorProfile.last_initial}.`,
+        );
       } else {
-        Alert.alert('Success', `Connected with ${sponsorProfile.first_name} ${sponsorProfile.last_initial}.`);
+        Alert.alert(
+          'Success',
+          `Connected with ${sponsorProfile.first_name} ${sponsorProfile.last_initial}.`,
+        );
       }
 
       setShowInviteInput(false);
@@ -286,9 +338,14 @@ export default function ProfileScreen() {
     } catch (error: any) {
       console.error('Error joining with invite code:', error);
       if (Platform.OS === 'web') {
-        window.alert('Network error. Please check your connection and try again.');
+        window.alert(
+          'Network error. Please check your connection and try again.',
+        );
       } else {
-        Alert.alert('Error', 'Network error. Please check your connection and try again.');
+        Alert.alert(
+          'Error',
+          'Network error. Please check your connection and try again.',
+        );
       }
     } finally {
       setIsConnecting(false);
@@ -314,23 +371,32 @@ export default function ProfileScreen() {
     }
   };
 
-  const disconnectRelationship = async (relationshipId: string, isSponsor: boolean, otherUserName: string) => {
+  const disconnectRelationship = async (
+    relationshipId: string,
+    isSponsor: boolean,
+    otherUserName: string,
+  ) => {
     const confirmMessage = isSponsor
       ? `Are you sure you want to disconnect from ${otherUserName}? This will end your sponsee relationship.`
       : `Are you sure you want to disconnect from ${otherUserName}? This will end your sponsor relationship.`;
 
-    const confirmed = Platform.OS === 'web'
-      ? window.confirm(confirmMessage)
-      : await new Promise<boolean>((resolve) => {
-          Alert.alert(
-            'Confirm Disconnection',
-            confirmMessage,
-            [
-              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
-              { text: 'Disconnect', style: 'destructive', onPress: () => resolve(true) },
-            ]
-          );
-        });
+    const confirmed =
+      Platform.OS === 'web'
+        ? window.confirm(confirmMessage)
+        : await new Promise<boolean>((resolve) => {
+            Alert.alert('Confirm Disconnection', confirmMessage, [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+                onPress: () => resolve(false),
+              },
+              {
+                text: 'Disconnect',
+                style: 'destructive',
+                onPress: () => resolve(true),
+              },
+            ]);
+          });
 
     if (!confirmed) return;
 
@@ -346,11 +412,13 @@ export default function ProfileScreen() {
       if (error) throw error;
 
       const relationship = isSponsor
-        ? sponseeRelationships.find(r => r.id === relationshipId)
-        : sponsorRelationships.find(r => r.id === relationshipId);
+        ? sponseeRelationships.find((r) => r.id === relationshipId)
+        : sponsorRelationships.find((r) => r.id === relationshipId);
 
       if (relationship) {
-        const notificationRecipientId = isSponsor ? relationship.sponsee_id : relationship.sponsor_id;
+        const notificationRecipientId = isSponsor
+          ? relationship.sponsee_id
+          : relationship.sponsor_id;
         const notificationSenderName = `${profile?.first_name} ${profile?.last_initial}.`;
 
         await supabase.from('notifications').insert([
@@ -407,18 +475,19 @@ export default function ProfileScreen() {
 
     const confirmMessage = `Update your sobriety date to ${newDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}?`;
 
-    const confirmed = Platform.OS === 'web'
-      ? window.confirm(confirmMessage)
-      : await new Promise<boolean>((resolve) => {
-          Alert.alert(
-            'Confirm Date Change',
-            confirmMessage,
-            [
-              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+    const confirmed =
+      Platform.OS === 'web'
+        ? window.confirm(confirmMessage)
+        : await new Promise<boolean>((resolve) => {
+            Alert.alert('Confirm Date Change', confirmMessage, [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+                onPress: () => resolve(false),
+              },
               { text: 'Update', onPress: () => resolve(true) },
-            ]
-          );
-        });
+            ]);
+          });
 
     if (!confirmed) return;
 
@@ -472,27 +541,38 @@ export default function ProfileScreen() {
 
     if (recoveryDate < slipUpDate) {
       if (Platform.OS === 'web') {
-        window.alert('Recovery restart date must be on or after the slip up date');
+        window.alert(
+          'Recovery restart date must be on or after the slip up date',
+        );
       } else {
-        Alert.alert('Invalid Date', 'Recovery restart date must be on or after the slip up date');
+        Alert.alert(
+          'Invalid Date',
+          'Recovery restart date must be on or after the slip up date',
+        );
       }
       return;
     }
 
-    const confirmMessage = 'This will log your slip up and update your sobriety date. Your sponsor will be notified. Continue?';
+    const confirmMessage =
+      'This will log your slip up and update your sobriety date. Your sponsor will be notified. Continue?';
 
-    const confirmed = Platform.OS === 'web'
-      ? window.confirm(confirmMessage)
-      : await new Promise<boolean>((resolve) => {
-          Alert.alert(
-            'Confirm Slip Up Log',
-            confirmMessage,
-            [
-              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
-              { text: 'Continue', style: 'destructive', onPress: () => resolve(true) },
-            ]
-          );
-        });
+    const confirmed =
+      Platform.OS === 'web'
+        ? window.confirm(confirmMessage)
+        : await new Promise<boolean>((resolve) => {
+            Alert.alert('Confirm Slip Up Log', confirmMessage, [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+                onPress: () => resolve(false),
+              },
+              {
+                text: 'Continue',
+                style: 'destructive',
+                onPress: () => resolve(true),
+              },
+            ]);
+          });
 
     if (!confirmed) return;
 
@@ -522,12 +602,15 @@ export default function ProfileScreen() {
         .eq('status', 'active');
 
       if (sponsors && sponsors.length > 0) {
-        const notifications = sponsors.map(rel => ({
+        const notifications = sponsors.map((rel) => ({
           user_id: rel.sponsor_id,
           type: 'milestone',
           title: 'Sponsee Slip Up',
           content: `${profile.first_name} ${profile.last_initial}. has logged a slip up and restarted their recovery journey.`,
-          data: { sponsee_id: profile.id, slip_up_date: slipUpDate.toISOString() },
+          data: {
+            sponsee_id: profile.id,
+            slip_up_date: slipUpDate.toISOString(),
+          },
         }));
 
         await supabase.from('notifications').insert(notifications);
@@ -537,9 +620,14 @@ export default function ProfileScreen() {
       setShowSlipUpModal(false);
 
       if (Platform.OS === 'web') {
-        window.alert('Your slip up has been logged. Remember, recovery is a journey. You are brave for being honest. Keep moving forward, one day at a time.');
+        window.alert(
+          'Your slip up has been logged. Remember, recovery is a journey. You are brave for being honest. Keep moving forward, one day at a time.',
+        );
       } else {
-        Alert.alert('Slip Up Logged', 'Your slip up has been logged. Remember, recovery is a journey. You are brave for being honest. Keep moving forward, one day at a time.');
+        Alert.alert(
+          'Slip Up Logged',
+          'Your slip up has been logged. Remember, recovery is a journey. You are brave for being honest. Keep moving forward, one day at a time.',
+        );
       }
     } catch (error: any) {
       console.error('Error logging slip up:', error);
@@ -587,9 +675,13 @@ export default function ProfileScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{profile?.first_name?.[0]?.toUpperCase() || '?'}</Text>
+          <Text style={styles.avatarText}>
+            {profile?.first_name?.[0]?.toUpperCase() || '?'}
+          </Text>
         </View>
-        <Text style={styles.name}>{profile?.first_name} {profile?.last_initial}.</Text>
+        <Text style={styles.name}>
+          {profile?.first_name} {profile?.last_initial}.
+        </Text>
         <Text style={styles.email}>{profile?.email}</Text>
       </View>
 
@@ -601,9 +693,16 @@ export default function ProfileScreen() {
         <Text style={styles.daysSober}>{getDaysSober()} Days</Text>
         <View style={styles.sobrietyDateContainer}>
           <Text style={styles.sobrietyDate}>
-            Since {new Date(profile?.sobriety_date || '').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            Since{' '}
+            {new Date(profile?.sobriety_date || '').toLocaleDateString(
+              'en-US',
+              { month: 'long', day: 'numeric', year: 'numeric' },
+            )}
           </Text>
-          <TouchableOpacity style={styles.editButton} onPress={handleEditSobrietyDate}>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={handleEditSobrietyDate}
+          >
             <Edit2 size={16} color={theme.primary} />
           </TouchableOpacity>
         </View>
@@ -615,102 +714,55 @@ export default function ProfileScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Your Sponsees</Text>
-          {loadingRelationships ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color={theme.primary} />
-            </View>
-          ) : sponseeRelationships.length > 0 ? (
-            <>
-{sponseeRelationships.map((rel) => {
-                const daysSober = rel.sponsee?.sobriety_date
-                  ? Math.floor((new Date().getTime() - new Date(rel.sponsee.sobriety_date).getTime()) / (1000 * 60 * 60 * 24))
-                  : 0;
-                return (
-                  <View key={rel.id} style={styles.relationshipCard}>
-                    <View style={styles.relationshipHeader}>
-                      <View style={styles.avatar}>
-                        <Text style={styles.avatarText}>
-                          {(rel.sponsee?.first_name || '?')[0].toUpperCase()}
-                        </Text>
-                      </View>
-                      <View style={styles.relationshipInfo}>
-                        <Text style={styles.relationshipName}>{rel.sponsee?.first_name} {rel.sponsee?.last_initial}.</Text>
-                        <Text style={styles.relationshipMeta}>
-                          Connected {new Date(rel.connected_at).toLocaleDateString()}
-                        </Text>
-                        {rel.sponsee?.sobriety_date && (
-                          <View style={styles.sobrietyInfo}>
-                            <Heart size={14} color={theme.primary} fill={theme.primary} />
-                            <Text style={styles.sobrietyText}>
-                              {daysSober} days sober
-                            </Text>
-                          </View>
-                        )}
-                        {sponseeTaskStats[rel.sponsee_id] && (
-                          <View style={styles.taskStatsInfo}>
-                            <CheckCircle size={14} color="#10b981" />
-                            <Text style={styles.taskStatsText}>
-                              {sponseeTaskStats[rel.sponsee_id].completed}/{sponseeTaskStats[rel.sponsee_id].total} tasks completed
-                            </Text>
-                          </View>
-                        )}
-                      </View>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.disconnectButton}
-                      onPress={() => disconnectRelationship(rel.id, true, `${rel.sponsee?.first_name} ${rel.sponsee?.last_initial}.`)}
-                    >
-                      <UserMinus size={18} color="#ef4444" />
-                      <Text style={styles.disconnectText}>Disconnect</Text>
-                    </TouchableOpacity>
-                  </View>
-                );
-              })}
-              <TouchableOpacity style={styles.actionButton} onPress={generateInviteCode}>
-                <Share2 size={20} color={theme.primary} />
-                <Text style={styles.actionButtonText}>Generate New Invite Code</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <View>
-              <Text style={styles.emptyStateText}>No sponsees yet. Generate an invite code to get started.</Text>
-              <TouchableOpacity style={styles.actionButton} onPress={generateInviteCode}>
-                <Share2 size={20} color={theme.primary} />
-                <Text style={styles.actionButtonText}>Generate Invite Code</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Your Sponsor</Text>
-          {loadingRelationships ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color={theme.primary} />
-            </View>
-          ) : sponsorRelationships.length > 0 ? (
-            sponsorRelationships.map((rel) => {
-              const daysSober = rel.sponsor?.sobriety_date
-                ? Math.floor((new Date().getTime() - new Date(rel.sponsor.sobriety_date).getTime()) / (1000 * 60 * 60 * 24))
+        {loadingRelationships ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="small" color={theme.primary} />
+          </View>
+        ) : sponseeRelationships.length > 0 ? (
+          <>
+            {sponseeRelationships.map((rel) => {
+              const daysSober = rel.sponsee?.sobriety_date
+                ? Math.floor(
+                    (new Date().getTime() -
+                      new Date(rel.sponsee.sobriety_date).getTime()) /
+                      (1000 * 60 * 60 * 24),
+                  )
                 : 0;
               return (
                 <View key={rel.id} style={styles.relationshipCard}>
                   <View style={styles.relationshipHeader}>
                     <View style={styles.avatar}>
                       <Text style={styles.avatarText}>
-                        {(rel.sponsor?.first_name || '?')[0].toUpperCase()}
+                        {(rel.sponsee?.first_name || '?')[0].toUpperCase()}
                       </Text>
                     </View>
                     <View style={styles.relationshipInfo}>
-                      <Text style={styles.relationshipName}>{rel.sponsor?.first_name} {rel.sponsor?.last_initial}.</Text>
-                      <Text style={styles.relationshipMeta}>
-                        Connected {new Date(rel.connected_at).toLocaleDateString()}
+                      <Text style={styles.relationshipName}>
+                        {rel.sponsee?.first_name} {rel.sponsee?.last_initial}.
                       </Text>
-                      {rel.sponsor?.sobriety_date && (
+                      <Text style={styles.relationshipMeta}>
+                        Connected{' '}
+                        {new Date(rel.connected_at).toLocaleDateString()}
+                      </Text>
+                      {rel.sponsee?.sobriety_date && (
                         <View style={styles.sobrietyInfo}>
-                          <Heart size={14} color={theme.primary} fill={theme.primary} />
+                          <Heart
+                            size={14}
+                            color={theme.primary}
+                            fill={theme.primary}
+                          />
                           <Text style={styles.sobrietyText}>
                             {daysSober} days sober
+                          </Text>
+                        </View>
+                      )}
+                      {sponseeTaskStats[rel.sponsee_id] && (
+                        <View style={styles.taskStatsInfo}>
+                          <CheckCircle size={14} color="#10b981" />
+                          <Text style={styles.taskStatsText}>
+                            {sponseeTaskStats[rel.sponsee_id].completed}/
+                            {sponseeTaskStats[rel.sponsee_id].total} tasks
+                            completed
                           </Text>
                         </View>
                       )}
@@ -718,66 +770,170 @@ export default function ProfileScreen() {
                   </View>
                   <TouchableOpacity
                     style={styles.disconnectButton}
-                    onPress={() => disconnectRelationship(rel.id, false, `${rel.sponsor?.first_name} ${rel.sponsor?.last_initial}.`)}
+                    onPress={() =>
+                      disconnectRelationship(
+                        rel.id,
+                        true,
+                        `${rel.sponsee?.first_name} ${rel.sponsee?.last_initial}.`,
+                      )
+                    }
                   >
                     <UserMinus size={18} color="#ef4444" />
                     <Text style={styles.disconnectText}>Disconnect</Text>
                   </TouchableOpacity>
                 </View>
               );
-            })
-          ) : (
-            <View>
-              <Text style={styles.emptyStateText}>No sponsor connected yet</Text>
-              {!showInviteInput ? (
-                <TouchableOpacity style={styles.actionButton} onPress={() => setShowInviteInput(true)}>
-                  <QrCode size={20} color={theme.primary} />
-                  <Text style={styles.actionButtonText}>Enter Invite Code</Text>
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.inviteInputContainer}>
-                  <TextInput
-                    style={styles.inviteInput}
-                    placeholder="Enter 8-character code"
-                    placeholderTextColor={theme.textTertiary}
-                    value={inviteCode}
-                    onChangeText={setInviteCode}
-                    autoCapitalize="characters"
-                    maxLength={8}
-                    editable={!isConnecting}
-                  />
-                  <TouchableOpacity
-                    style={[styles.inviteSubmitButton, isConnecting && styles.buttonDisabled]}
-                    onPress={joinWithInviteCode}
-                    disabled={isConnecting}
-                  >
-                    {isConnecting ? (
-                      <ActivityIndicator size="small" color="#ffffff" />
-                    ) : (
-                      <Text style={styles.inviteSubmitText}>Connect</Text>
+            })}
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={generateInviteCode}
+            >
+              <Share2 size={20} color={theme.primary} />
+              <Text style={styles.actionButtonText}>
+                Generate New Invite Code
+              </Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <View>
+            <Text style={styles.emptyStateText}>
+              No sponsees yet. Generate an invite code to get started.
+            </Text>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={generateInviteCode}
+            >
+              <Share2 size={20} color={theme.primary} />
+              <Text style={styles.actionButtonText}>Generate Invite Code</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Your Sponsor</Text>
+        {loadingRelationships ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="small" color={theme.primary} />
+          </View>
+        ) : sponsorRelationships.length > 0 ? (
+          sponsorRelationships.map((rel) => {
+            const daysSober = rel.sponsor?.sobriety_date
+              ? Math.floor(
+                  (new Date().getTime() -
+                    new Date(rel.sponsor.sobriety_date).getTime()) /
+                    (1000 * 60 * 60 * 24),
+                )
+              : 0;
+            return (
+              <View key={rel.id} style={styles.relationshipCard}>
+                <View style={styles.relationshipHeader}>
+                  <View style={styles.avatar}>
+                    <Text style={styles.avatarText}>
+                      {(rel.sponsor?.first_name || '?')[0].toUpperCase()}
+                    </Text>
+                  </View>
+                  <View style={styles.relationshipInfo}>
+                    <Text style={styles.relationshipName}>
+                      {rel.sponsor?.first_name} {rel.sponsor?.last_initial}.
+                    </Text>
+                    <Text style={styles.relationshipMeta}>
+                      Connected{' '}
+                      {new Date(rel.connected_at).toLocaleDateString()}
+                    </Text>
+                    {rel.sponsor?.sobriety_date && (
+                      <View style={styles.sobrietyInfo}>
+                        <Heart
+                          size={14}
+                          color={theme.primary}
+                          fill={theme.primary}
+                        />
+                        <Text style={styles.sobrietyText}>
+                          {daysSober} days sober
+                        </Text>
+                      </View>
                     )}
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.inviteCancelButton}
-                    onPress={() => {
-                      setShowInviteInput(false);
-                      setInviteCode('');
-                    }}
-                    disabled={isConnecting}
-                  >
-                    <Text style={styles.inviteCancelText}>Cancel</Text>
-                  </TouchableOpacity>
+                  </View>
                 </View>
-              )}
-            </View>
-          )}
+                <TouchableOpacity
+                  style={styles.disconnectButton}
+                  onPress={() =>
+                    disconnectRelationship(
+                      rel.id,
+                      false,
+                      `${rel.sponsor?.first_name} ${rel.sponsor?.last_initial}.`,
+                    )
+                  }
+                >
+                  <UserMinus size={18} color="#ef4444" />
+                  <Text style={styles.disconnectText}>Disconnect</Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })
+        ) : (
+          <View>
+            <Text style={styles.emptyStateText}>No sponsor connected yet</Text>
+            {!showInviteInput ? (
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => setShowInviteInput(true)}
+              >
+                <QrCode size={20} color={theme.primary} />
+                <Text style={styles.actionButtonText}>Enter Invite Code</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.inviteInputContainer}>
+                <TextInput
+                  style={styles.inviteInput}
+                  placeholder="Enter 8-character code"
+                  placeholderTextColor={theme.textTertiary}
+                  value={inviteCode}
+                  onChangeText={setInviteCode}
+                  autoCapitalize="characters"
+                  maxLength={8}
+                  editable={!isConnecting}
+                />
+                <TouchableOpacity
+                  style={[
+                    styles.inviteSubmitButton,
+                    isConnecting && styles.buttonDisabled,
+                  ]}
+                  onPress={joinWithInviteCode}
+                  disabled={isConnecting}
+                >
+                  {isConnecting ? (
+                    <ActivityIndicator size="small" color="#ffffff" />
+                  ) : (
+                    <Text style={styles.inviteSubmitText}>Connect</Text>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.inviteCancelButton}
+                  onPress={() => {
+                    setShowInviteInput(false);
+                    setInviteCode('');
+                  }}
+                  disabled={isConnecting}
+                >
+                  <Text style={styles.inviteCancelText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
       </View>
 
       {sponsorRelationships.length > 0 && !showInviteInput && (
         <View style={styles.section}>
-          <TouchableOpacity style={styles.actionButton} onPress={() => setShowInviteInput(true)}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => setShowInviteInput(true)}
+          >
             <QrCode size={20} color={theme.primary} />
-            <Text style={styles.actionButtonText}>Connect to Another Sponsor</Text>
+            <Text style={styles.actionButtonText}>
+              Connect to Another Sponsor
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -793,31 +949,70 @@ export default function ProfileScreen() {
 
           <View style={styles.themeOptions}>
             <TouchableOpacity
-              style={[styles.themeOption, themeMode === 'light' && styles.themeOptionSelected]}
+              style={[
+                styles.themeOption,
+                themeMode === 'light' && styles.themeOptionSelected,
+              ]}
               onPress={() => setThemeMode('light')}
             >
-              <Sun size={20} color={themeMode === 'light' ? theme.primary : theme.textSecondary} />
-              <Text style={[styles.themeOptionText, themeMode === 'light' && styles.themeOptionTextSelected]}>
+              <Sun
+                size={20}
+                color={
+                  themeMode === 'light' ? theme.primary : theme.textSecondary
+                }
+              />
+              <Text
+                style={[
+                  styles.themeOptionText,
+                  themeMode === 'light' && styles.themeOptionTextSelected,
+                ]}
+              >
                 Light
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.themeOption, themeMode === 'dark' && styles.themeOptionSelected]}
+              style={[
+                styles.themeOption,
+                themeMode === 'dark' && styles.themeOptionSelected,
+              ]}
               onPress={() => setThemeMode('dark')}
             >
-              <Moon size={20} color={themeMode === 'dark' ? theme.primary : theme.textSecondary} />
-              <Text style={[styles.themeOptionText, themeMode === 'dark' && styles.themeOptionTextSelected]}>
+              <Moon
+                size={20}
+                color={
+                  themeMode === 'dark' ? theme.primary : theme.textSecondary
+                }
+              />
+              <Text
+                style={[
+                  styles.themeOptionText,
+                  themeMode === 'dark' && styles.themeOptionTextSelected,
+                ]}
+              >
                 Dark
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.themeOption, themeMode === 'system' && styles.themeOptionSelected]}
+              style={[
+                styles.themeOption,
+                themeMode === 'system' && styles.themeOptionSelected,
+              ]}
               onPress={() => setThemeMode('system')}
             >
-              <Monitor size={20} color={themeMode === 'system' ? theme.primary : theme.textSecondary} />
-              <Text style={[styles.themeOptionText, themeMode === 'system' && styles.themeOptionTextSelected]}>
+              <Monitor
+                size={20}
+                color={
+                  themeMode === 'system' ? theme.primary : theme.textSecondary
+                }
+              />
+              <Text
+                style={[
+                  styles.themeOptionText,
+                  themeMode === 'system' && styles.themeOptionTextSelected,
+                ]}
+              >
                 System
               </Text>
             </TouchableOpacity>
@@ -834,9 +1029,13 @@ export default function ProfileScreen() {
             <Text style={styles.settingSubLabel}>Task assignments</Text>
             <Switch
               value={notificationSettings.tasks}
-              onValueChange={(value) => updateNotificationSetting('tasks', value)}
+              onValueChange={(value) =>
+                updateNotificationSetting('tasks', value)
+              }
               trackColor={{ false: '#d1d5db', true: '#80c0ff' }}
-              thumbColor={notificationSettings.tasks ? theme.primary : '#f3f4f6'}
+              thumbColor={
+                notificationSettings.tasks ? theme.primary : '#f3f4f6'
+              }
             />
           </View>
 
@@ -844,9 +1043,13 @@ export default function ProfileScreen() {
             <Text style={styles.settingSubLabel}>Messages</Text>
             <Switch
               value={notificationSettings.messages}
-              onValueChange={(value) => updateNotificationSetting('messages', value)}
+              onValueChange={(value) =>
+                updateNotificationSetting('messages', value)
+              }
               trackColor={{ false: '#d1d5db', true: '#80c0ff' }}
-              thumbColor={notificationSettings.messages ? theme.primary : '#f3f4f6'}
+              thumbColor={
+                notificationSettings.messages ? theme.primary : '#f3f4f6'
+              }
             />
           </View>
 
@@ -854,9 +1057,13 @@ export default function ProfileScreen() {
             <Text style={styles.settingSubLabel}>Milestones</Text>
             <Switch
               value={notificationSettings.milestones}
-              onValueChange={(value) => updateNotificationSetting('milestones', value)}
+              onValueChange={(value) =>
+                updateNotificationSetting('milestones', value)
+              }
               trackColor={{ false: '#d1d5db', true: '#80c0ff' }}
-              thumbColor={notificationSettings.milestones ? theme.primary : '#f3f4f6'}
+              thumbColor={
+                notificationSettings.milestones ? theme.primary : '#f3f4f6'
+              }
             />
           </View>
 
@@ -864,9 +1071,13 @@ export default function ProfileScreen() {
             <Text style={styles.settingSubLabel}>Daily reminders</Text>
             <Switch
               value={notificationSettings.daily}
-              onValueChange={(value) => updateNotificationSetting('daily', value)}
+              onValueChange={(value) =>
+                updateNotificationSetting('daily', value)
+              }
               trackColor={{ false: '#d1d5db', true: '#80c0ff' }}
-              thumbColor={notificationSettings.daily ? theme.primary : '#f3f4f6'}
+              thumbColor={
+                notificationSettings.daily ? theme.primary : '#f3f4f6'
+              }
             />
           </View>
         </View>
@@ -881,15 +1092,25 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>12-Step Tracker v{packageJson.version}</Text>
-        <Text style={styles.footerSubtext}>Supporting recovery, one day at a time</Text>
-        <TouchableOpacity onPress={() => Linking.openURL('https://billchirico.dev')}>
+        <Text style={styles.footerText}>
+          12-Step Tracker v{packageJson.version}
+        </Text>
+        <Text style={styles.footerSubtext}>
+          Supporting recovery, one day at a time
+        </Text>
+        <TouchableOpacity
+          onPress={() => Linking.openURL('https://billchirico.dev')}
+        >
           <Text style={styles.footerCredit}>By Bill Chirico</Text>
         </TouchableOpacity>
       </View>
 
       {Platform.OS === 'web' && showSobrietyDatePicker && (
-        <Modal visible={showSobrietyDatePicker} transparent animationType="fade">
+        <Modal
+          visible={showSobrietyDatePicker}
+          transparent
+          animationType="fade"
+        >
           <View style={styles.modalOverlay}>
             <View style={styles.datePickerModal}>
               <Text style={styles.modalTitle}>Edit Sobriety Date</Text>
@@ -897,7 +1118,9 @@ export default function ProfileScreen() {
                 type="date"
                 value={selectedSobrietyDate.toISOString().split('T')[0]}
                 max={new Date().toISOString().split('T')[0]}
-                onChange={(e) => setSelectedSobrietyDate(new Date(e.target.value))}
+                onChange={(e) =>
+                  setSelectedSobrietyDate(new Date(e.target.value))
+                }
                 style={{
                   padding: 12,
                   fontSize: 16,
@@ -931,7 +1154,11 @@ export default function ProfileScreen() {
       )}
 
       {Platform.OS !== 'web' && showSobrietyDatePicker && (
-        <Modal visible={showSobrietyDatePicker} transparent animationType="slide">
+        <Modal
+          visible={showSobrietyDatePicker}
+          transparent
+          animationType="slide"
+        >
           <View style={styles.modalOverlay}>
             <View style={styles.datePickerModal}>
               <Text style={styles.modalTitle}>Edit Sobriety Date</Text>
@@ -971,7 +1198,8 @@ export default function ProfileScreen() {
           <View style={styles.slipUpModal}>
             <Text style={styles.modalTitle}>Log a Slip Up</Text>
             <Text style={styles.modalSubtitle}>
-              Recovery is a journey, not a destination. Logging a slip up is an act of courage and honesty.
+              Recovery is a journey, not a destination. Logging a slip up is an
+              act of courage and honesty.
             </Text>
 
             <View style={styles.dateSection}>
@@ -998,7 +1226,11 @@ export default function ProfileScreen() {
                   >
                     <Calendar size={20} color={theme.textSecondary} />
                     <Text style={styles.dateButtonText}>
-                      {slipUpDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                      {slipUpDate.toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
                     </Text>
                   </TouchableOpacity>
                   {showSlipUpDatePicker && (
@@ -1041,7 +1273,11 @@ export default function ProfileScreen() {
                   >
                     <Calendar size={20} color={theme.textSecondary} />
                     <Text style={styles.dateButtonText}>
-                      {recoveryDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                      {recoveryDate.toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
                     </Text>
                   </TouchableOpacity>
                   {showRecoveryDatePicker && (
@@ -1087,7 +1323,11 @@ export default function ProfileScreen() {
                 <Text style={styles.modalCancelText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalConfirmButton, styles.slipUpConfirmButton, isLoggingSlipUp && styles.buttonDisabled]}
+                style={[
+                  styles.modalConfirmButton,
+                  styles.slipUpConfirmButton,
+                  isLoggingSlipUp && styles.buttonDisabled,
+                ]}
                 onPress={submitSlipUp}
                 disabled={isLoggingSlipUp}
               >
@@ -1105,504 +1345,505 @@ export default function ProfileScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.background,
-  },
-  header: {
-    alignItems: 'center',
-    padding: 24,
-    paddingTop: 60,
-    backgroundColor: theme.surface,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: theme.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  avatarText: {
-    fontSize: 32,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: '#ffffff',
-  },
-  name: {
-    fontSize: 24,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.text,
-    marginBottom: 4,
-  },
-  email: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginBottom: 12,
-  },
-  roleBadge: {
-    backgroundColor: theme.primaryLight,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  roleText: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.primary,
-  },
-  sobrietyCard: {
-    backgroundColor: theme.card,
-    margin: 16,
-    padding: 20,
-    borderRadius: 16,
-    alignItems: 'center',
-    shadowColor: theme.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  sobrietyHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  sobrietyTitle: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginLeft: 8,
-  },
-  daysSober: {
-    fontSize: 48,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.primary,
-  },
-  sobrietyDateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-    gap: 8,
-  },
-  sobrietyDate: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-  },
-  editButton: {
-    padding: 6,
-    borderRadius: 8,
-    backgroundColor: theme.primaryLight,
-  },
-  slipUpButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ef4444',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginTop: 20,
-    gap: 8,
-  },
-  slipUpButtonText: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-  section: {
-    padding: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginBottom: 12,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.card,
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: theme.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  actionButtonText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginLeft: 12,
-  },
-  inviteInputContainer: {
-    backgroundColor: theme.card,
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: theme.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  inviteInput: {
-    backgroundColor: theme.borderLight,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    marginBottom: 12,
-    color: theme.text,
-  },
-  inviteSubmitButton: {
-    backgroundColor: theme.primary,
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  inviteSubmitText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-  inviteCancelButton: {
-    padding: 12,
-    alignItems: 'center',
-  },
-  inviteCancelText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.textSecondary,
-  },
-  signOutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.card,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#fee2e2',
-    shadowColor: theme.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  signOutText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#ef4444',
-    marginLeft: 12,
-  },
-  footer: {
-    alignItems: 'center',
-    padding: 32,
-  },
-  footerText: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textTertiary,
-    fontWeight: '600',
-  },
-  footerSubtext: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    color: theme.textTertiary,
-    marginTop: 4,
-  },
-  footerCredit: {
-    fontSize: 11,
-    fontFamily: theme.fontRegular,
-    color: theme.textTertiary,
-    marginTop: 12,
-    fontStyle: 'italic',
-    opacity: 0.7,
-  },
-  settingsCard: {
-    backgroundColor: theme.card,
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: theme.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.borderLight,
-  },
-  settingLabel: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginLeft: 12,
-  },
-  settingSubRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-  },
-  settingSubLabel: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-  },
-  themeOptions: {
-    flexDirection: 'row',
-    gap: 8,
-    paddingTop: 8,
-  },
-  themeOption: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: theme.border,
-    backgroundColor: theme.background,
-  },
-  themeOptionSelected: {
-    borderColor: theme.primary,
-    backgroundColor: theme.primaryLight,
-  },
-  themeOptionText: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.textSecondary,
-    marginTop: 6,
-  },
-  themeOptionTextSelected: {
-    color: theme.primary,
-  },
-  loadingContainer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  relationshipCard: {
-    backgroundColor: theme.card,
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: theme.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  relationshipHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  relationshipInfo: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  relationshipName: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-  },
-  relationshipMeta: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 2,
-  },
-  sobrietyInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 8,
-  },
-  sobrietyText: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    color: theme.primary,
-    fontWeight: '600',
-  },
-  taskStatsInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 6,
-  },
-  taskStatsText: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    color: '#10b981',
-    fontWeight: '600',
-  },
-  disconnectButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#fee2e2',
-    backgroundColor: '#fef2f2',
-  },
-  disconnectText: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#ef4444',
-    marginLeft: 6,
-  },
-  emptyStateText: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    textAlign: 'center',
-    marginBottom: 16,
-    paddingVertical: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  datePickerModal: {
-    backgroundColor: theme.card,
-    borderRadius: 16,
-    padding: 24,
-    width: '100%',
-    maxWidth: 400,
-  },
-  slipUpModal: {
-    backgroundColor: theme.card,
-    borderRadius: 16,
-    padding: 24,
-    width: '100%',
-    maxWidth: 500,
-    maxHeight: '90%',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.text,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  modalSubtitle: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    textAlign: 'center',
-    marginBottom: 24,
-    lineHeight: 20,
-  },
-  dateSection: {
-    marginBottom: 20,
-  },
-  dateLabel: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginBottom: 8,
-  },
-  dateButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.borderLight,
-    padding: 12,
-    borderRadius: 8,
-    gap: 8,
-  },
-  dateButtonText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: theme.text,
-  },
-  notesSection: {
-    marginBottom: 20,
-  },
-  notesInput: {
-    backgroundColor: theme.borderLight,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: theme.text,
-    minHeight: 100,
-  },
-  privacyNote: {
-    fontSize: 12,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    textAlign: 'center',
-    fontStyle: 'italic',
-    marginBottom: 20,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  modalCancelButton: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.border,
-    alignItems: 'center',
-  },
-  modalCancelText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.textSecondary,
-  },
-  modalConfirmButton: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 8,
-    backgroundColor: theme.primary,
-    alignItems: 'center',
-  },
-  slipUpConfirmButton: {
-    backgroundColor: '#ef4444',
-  },
-  modalConfirmText: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-});
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      alignItems: 'center',
+      padding: 24,
+      paddingTop: 60,
+      backgroundColor: theme.surface,
+    },
+    avatar: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: theme.primary,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    avatarText: {
+      fontSize: 32,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: '#ffffff',
+    },
+    name: {
+      fontSize: 24,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.text,
+      marginBottom: 4,
+    },
+    email: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginBottom: 12,
+    },
+    roleBadge: {
+      backgroundColor: theme.primaryLight,
+      paddingHorizontal: 16,
+      paddingVertical: 6,
+      borderRadius: 16,
+    },
+    roleText: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.primary,
+    },
+    sobrietyCard: {
+      backgroundColor: theme.card,
+      margin: 16,
+      padding: 20,
+      borderRadius: 16,
+      alignItems: 'center',
+      shadowColor: theme.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    sobrietyHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    sobrietyTitle: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginLeft: 8,
+    },
+    daysSober: {
+      fontSize: 48,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.primary,
+    },
+    sobrietyDateContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 8,
+      gap: 8,
+    },
+    sobrietyDate: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+    },
+    editButton: {
+      padding: 6,
+      borderRadius: 8,
+      backgroundColor: theme.primaryLight,
+    },
+    slipUpButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#ef4444',
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      borderRadius: 8,
+      marginTop: 20,
+      gap: 8,
+    },
+    slipUpButtonText: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#ffffff',
+    },
+    section: {
+      padding: 16,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginBottom: 12,
+    },
+    actionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.card,
+      padding: 16,
+      borderRadius: 12,
+      shadowColor: theme.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    actionButtonText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginLeft: 12,
+    },
+    inviteInputContainer: {
+      backgroundColor: theme.card,
+      padding: 16,
+      borderRadius: 12,
+      shadowColor: theme.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    inviteInput: {
+      backgroundColor: theme.borderLight,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      marginBottom: 12,
+      color: theme.text,
+    },
+    inviteSubmitButton: {
+      backgroundColor: theme.primary,
+      borderRadius: 8,
+      padding: 12,
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    inviteSubmitText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#ffffff',
+    },
+    inviteCancelButton: {
+      padding: 12,
+      alignItems: 'center',
+    },
+    inviteCancelText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.textSecondary,
+    },
+    signOutButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.card,
+      padding: 16,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: '#fee2e2',
+      shadowColor: theme.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    signOutText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#ef4444',
+      marginLeft: 12,
+    },
+    footer: {
+      alignItems: 'center',
+      padding: 32,
+    },
+    footerText: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textTertiary,
+      fontWeight: '600',
+    },
+    footerSubtext: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      color: theme.textTertiary,
+      marginTop: 4,
+    },
+    footerCredit: {
+      fontSize: 11,
+      fontFamily: theme.fontRegular,
+      color: theme.textTertiary,
+      marginTop: 12,
+      fontStyle: 'italic',
+      opacity: 0.7,
+    },
+    settingsCard: {
+      backgroundColor: theme.card,
+      padding: 16,
+      borderRadius: 12,
+      shadowColor: theme.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    settingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 16,
+      paddingBottom: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.borderLight,
+    },
+    settingLabel: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginLeft: 12,
+    },
+    settingSubRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: 12,
+    },
+    settingSubLabel: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+    },
+    themeOptions: {
+      flexDirection: 'row',
+      gap: 8,
+      paddingTop: 8,
+    },
+    themeOption: {
+      flex: 1,
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: 12,
+      borderRadius: 8,
+      borderWidth: 2,
+      borderColor: theme.border,
+      backgroundColor: theme.background,
+    },
+    themeOptionSelected: {
+      borderColor: theme.primary,
+      backgroundColor: theme.primaryLight,
+    },
+    themeOptionText: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.textSecondary,
+      marginTop: 6,
+    },
+    themeOptionTextSelected: {
+      color: theme.primary,
+    },
+    loadingContainer: {
+      padding: 20,
+      alignItems: 'center',
+    },
+    relationshipCard: {
+      backgroundColor: theme.card,
+      padding: 16,
+      borderRadius: 12,
+      marginBottom: 12,
+      shadowColor: theme.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    relationshipHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    relationshipInfo: {
+      marginLeft: 12,
+      flex: 1,
+    },
+    relationshipName: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+    },
+    relationshipMeta: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 2,
+    },
+    sobrietyInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      marginTop: 8,
+    },
+    sobrietyText: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      color: theme.primary,
+      fontWeight: '600',
+    },
+    taskStatsInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      marginTop: 6,
+    },
+    taskStatsText: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      color: '#10b981',
+      fontWeight: '600',
+    },
+    disconnectButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#fee2e2',
+      backgroundColor: '#fef2f2',
+    },
+    disconnectText: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#ef4444',
+      marginLeft: 6,
+    },
+    emptyStateText: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      textAlign: 'center',
+      marginBottom: 16,
+      paddingVertical: 8,
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    datePickerModal: {
+      backgroundColor: theme.card,
+      borderRadius: 16,
+      padding: 24,
+      width: '100%',
+      maxWidth: 400,
+    },
+    slipUpModal: {
+      backgroundColor: theme.card,
+      borderRadius: 16,
+      padding: 24,
+      width: '100%',
+      maxWidth: 500,
+      maxHeight: '90%',
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.text,
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    modalSubtitle: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      textAlign: 'center',
+      marginBottom: 24,
+      lineHeight: 20,
+    },
+    dateSection: {
+      marginBottom: 20,
+    },
+    dateLabel: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginBottom: 8,
+    },
+    dateButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.borderLight,
+      padding: 12,
+      borderRadius: 8,
+      gap: 8,
+    },
+    dateButtonText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.text,
+    },
+    notesSection: {
+      marginBottom: 20,
+    },
+    notesInput: {
+      backgroundColor: theme.borderLight,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.text,
+      minHeight: 100,
+    },
+    privacyNote: {
+      fontSize: 12,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      textAlign: 'center',
+      fontStyle: 'italic',
+      marginBottom: 20,
+    },
+    modalButtons: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    modalCancelButton: {
+      flex: 1,
+      padding: 14,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.border,
+      alignItems: 'center',
+    },
+    modalCancelText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.textSecondary,
+    },
+    modalConfirmButton: {
+      flex: 1,
+      padding: 14,
+      borderRadius: 8,
+      backgroundColor: theme.primary,
+      alignItems: 'center',
+    },
+    slipUpConfirmButton: {
+      backgroundColor: '#ef4444',
+    },
+    modalConfirmText: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#ffffff',
+    },
+  });

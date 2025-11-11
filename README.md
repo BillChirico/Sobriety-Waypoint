@@ -21,7 +21,7 @@ A React Native mobile application for tracking AA recovery progress and facilita
 
 ## Tech Stack
 
-- **Framework**: Expo 54 with React Native 0.81.4 and React 19
+- **Framework**: Expo 54 with React Native 0.81.5 and React 19
 - **Router**: Expo Router v6 (file-based routing with typed routes)
 - **Backend**: Supabase (PostgreSQL with Row Level Security)
 - **Authentication**: Supabase Auth (email/password + Google OAuth)
@@ -33,8 +33,8 @@ A React Native mobile application for tracking AA recovery progress and facilita
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js** (v18 or later recommended)
-- **npm** or **yarn**
+- **Node.js** (v22 or later recommended)
+- **pnpm** (latest version)
 - **Expo CLI**: Installed via `npx` or globally
 - **For iOS Development** (macOS only):
   - Xcode (latest version)
@@ -57,7 +57,7 @@ cd 12-Step-Tracker
 ### 2. Install Dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 3. Set Up Environment Variables
@@ -82,7 +82,7 @@ The database schema is located in `supabase/migrations/`. You'll need to:
 ### Start Development Server
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Starts the Expo development server with telemetry disabled. Scan the QR code with Expo Go app or use a simulator.
@@ -90,7 +90,7 @@ Starts the Expo development server with telemetry disabled. Scan the QR code wit
 ### Run on iOS
 
 ```bash
-npm run ios
+pnpm ios
 ```
 
 Builds and runs the app on iOS Simulator. **Requires macOS and Xcode.**
@@ -100,7 +100,7 @@ This compiles the native iOS code and installs the app on the simulator.
 ### Run on Android
 
 ```bash
-npm run android
+pnpm android
 ```
 
 Builds and runs the app on Android Emulator. **Requires Android Studio and Android SDK.**
@@ -110,7 +110,7 @@ This compiles the native Android code and installs the app on the emulator or co
 ### Build for Web
 
 ```bash
-npm run build:web
+pnpm build:web
 ```
 
 Exports the app for web deployment to the `dist` folder.
@@ -118,7 +118,7 @@ Exports the app for web deployment to the `dist` folder.
 ### Type Checking
 
 ```bash
-npm run typecheck
+pnpm typecheck
 ```
 
 Runs TypeScript compiler in check mode without emitting files.
@@ -126,10 +126,54 @@ Runs TypeScript compiler in check mode without emitting files.
 ### Linting
 
 ```bash
-npm run lint
+pnpm lint
 ```
 
 Runs ESLint using Expo's lint configuration.
+
+### Code Formatting
+
+```bash
+pnpm format
+```
+
+Formats all code using Prettier.
+
+```bash
+pnpm format:check
+```
+
+Checks if code is properly formatted without making changes.
+
+### Git Hooks
+
+This project uses [Husky](https://typicode.github.io/husky/) for Git hooks with [lint-staged](https://github.com/lint-staged/lint-staged) to ensure code quality before commits.
+
+**Pre-commit Hook**: Automatically runs on every commit to:
+
+- **Format code**: Prettier auto-formats **all** staged files (uses `--ignore-unknown` for unsupported types)
+- **Lint and fix**: ESLint auto-fixes staged JavaScript/TypeScript files
+- **Auto-stage**: Fixed files are automatically added back to staging
+
+**Configuration**:
+
+- Hook script: `.husky/pre-commit`
+- Lint-staged config: `package.json` → `lint-staged` section
+- Detailed documentation: `.github/GIT_HOOKS.md`
+
+The hooks run only on **staged files**, keeping commits fast (typically <1 second) and ensuring all committed code meets quality standards.
+
+**Setup**: Hooks are automatically installed when you run `pnpm install` (via the `prepare` script).
+
+**Skip hooks** (not recommended):
+
+```bash
+git commit --no-verify
+# or
+git commit -n
+```
+
+**Note**: Pre-commit hooks do NOT run TypeScript type checking (too slow). Run `pnpm typecheck` manually before pushing, or let CI catch type errors.
 
 ## Project Structure
 
@@ -173,6 +217,7 @@ Google Sign-In is integrated but requires additional configuration. See `GOOGLE_
 - Mobile deep linking configuration
 
 **App Details:**
+
 - Bundle ID (iOS): `com.billchirico.12steptracker`
 - Package name (Android): `com.billchirico.twelvesteptracker`
 - Deep link scheme: `12stepstracker://`
@@ -183,16 +228,35 @@ This project is configured for Expo Application Services (EAS) builds:
 
 ```bash
 # Development build
-eas build --profile development
+eas build --profile development --platform [ios|android]
 
-# Preview build
-eas build --profile preview
+# Preview build (used by CI/CD)
+eas build --profile preview --platform [ios|android]
 
 # Production build
-eas build --profile production
+eas build --profile production --platform [ios|android]
+
+# Build for both platforms
+eas build --profile preview --platform all
 ```
 
-EAS Project ID: `4652ad8b-2e44-4270-8612-64c4587219d8`
+**EAS Project ID**: `4652ad8b-2e44-4270-8612-64c4587219d8`
+
+### Build Profiles
+
+The project includes three build profiles configured in `eas.json`:
+
+- **development**: Development client with internal distribution for testing
+- **preview**: Internal distribution for CI/CD and QA testing (uses Release configuration)
+- **production**: Production builds with auto-increment version numbers
+
+The **preview** profile is used by the CI/CD pipeline and includes:
+
+- Internal distribution for easy testing
+- OTA update channel (`preview`)
+- Environment variables for Supabase integration
+- Release build configuration for iOS
+- APK output for Android (faster than AAB for testing)
 
 ## Database Schema
 
@@ -213,16 +277,90 @@ All tables are secured with Row Level Security (RLS) policies ensuring proper da
 
 This is a private project for recovery support. If you're contributing, please ensure:
 
-- All code passes TypeScript type checking (`npm run typecheck`)
-- Code follows the linting rules (`npm run lint`)
+- All code passes TypeScript type checking (`pnpm typecheck`)
+- Code follows the linting rules (`pnpm lint`)
+- Code is properly formatted (`pnpm format:check` or run `pnpm format`)
 - Test thoroughly on both iOS and Android platforms
 - Respect user privacy and data security
+
+## Continuous Integration
+
+This project uses GitHub Actions for automated testing and builds.
+
+### CI Pipeline
+
+The CI workflow runs on every push to `main` and `develop` as well as on all pull requests:
+
+1. **Lint, Format, and Type Check** - Validates code quality, formatting, and TypeScript types
+2. **Build for Web** - Creates production web build
+3. **Build for Android** - Triggers EAS build for Android (preview profile)
+4. **Build for iOS** - Triggers EAS build for iOS (preview profile)
+
+### Claude Code Review
+
+Pull requests automatically trigger an AI-powered code review workflow that:
+
+- 🔄 **Updates in real-time** - Uses a sticky comment that tracks review progress
+- ⚡ **Cancels outdated reviews** - New commits automatically cancel previous reviews
+- 🔍 **Comprehensive analysis** - Checks TypeScript types, ESLint rules, and Prettier formatting
+- 🤖 **AI insights** - Detects common issues like `any` types, console.logs, and TODO comments
+- 📊 **Quality report** - Provides detailed pass/fail status for all checks
+
+The review comment updates throughout the process, showing progress from "in progress" to final results with actionable recommendations.
+
+### GitHub Secrets Required
+
+For the build jobs to work, configure these secrets in your GitHub repository settings (Settings → Secrets and variables → Actions):
+
+| Secret Name                     | Description                      | How to Get It                                                                                         |
+| ------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `EXPO_PUBLIC_SUPABASE_URL`      | Your Supabase project URL        | From your Supabase project settings                                                                   |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anonymous key      | From your Supabase project API settings                                                               |
+| `EXPO_TOKEN`                    | Expo access token for EAS builds | Run `eas login && eas whoami` or create at https://expo.dev/accounts/[account]/settings/access-tokens |
+
+**Setting up `EXPO_TOKEN`**:
+
+1. Login to Expo: `eas login`
+2. Create a token: Visit https://expo.dev/accounts/[your-account]/settings/access-tokens
+3. Click "Create Token" and give it a descriptive name (e.g., "GitHub Actions")
+4. Copy the token immediately (it won't be shown again)
+5. Add it to GitHub: Repository Settings → Secrets and variables → Actions → New repository secret
+
+### Workflow Features
+
+- ✅ **Dependency Caching** - Uses pnpm cache for faster builds
+- ✅ **Parallel Jobs** - Lint/typecheck and build jobs run in parallel after linting passes
+- ✅ **Multi-Platform Builds** - Builds for Web, Android, and iOS in parallel
+- ✅ **EAS Build Integration** - Uses Expo Application Services for native mobile builds
+- ✅ **Build Artifacts** - Web builds are stored as artifacts for 7 days
+- ✅ **Node.js 22** - Uses latest LTS version of Node.js
+- ✅ **Latest pnpm** - Automatically uses the latest pnpm version
+- ✅ **Concurrency Control** - Automatically cancels outdated workflow runs when new commits are pushed
+
+### Monitoring Builds
+
+**GitHub Actions Workflow**:
+
+- View workflow runs: Repository → Actions tab
+- Check individual job logs for detailed output
+- Download web build artifacts from completed workflow runs
+
+**EAS Mobile Builds**:
+
+- Monitor builds: https://expo.dev/accounts/[account]/projects/12-step-tracker/builds
+- View detailed build logs and download APK/IPA files
+- Builds are triggered by CI but complete asynchronously on EAS infrastructure
+- Receive build notifications via email (configure in Expo account settings)
 
 ## Additional Documentation
 
 - `CLAUDE.md` - Detailed project architecture and code patterns
 - `GOOGLE_OAUTH_SETUP.md` - Google OAuth configuration guide
+- `.github/CICD.md` - Comprehensive CI/CD documentation including Claude Code Review
+- `.github/GIT_HOOKS.md` - Git hooks setup and troubleshooting guide
 - `supabase/migrations/` - Database schema and RLS policies
+- `.github/workflows/ci.yml` - Main CI/CD pipeline configuration
+- `.github/workflows/claude-code-review.yml` - AI code review workflow configuration
 
 ## License
 

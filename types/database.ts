@@ -1,7 +1,12 @@
 export type UserRole = 'sponsor' | 'sponsee' | 'both';
 export type RelationshipStatus = 'pending' | 'active' | 'inactive';
 export type TaskStatus = 'assigned' | 'in_progress' | 'completed';
-export type NotificationType = 'task_assigned' | 'milestone' | 'message' | 'connection_request' | 'task_completed';
+export type NotificationType =
+  | 'task_assigned'
+  | 'milestone'
+  | 'message'
+  | 'connection_request'
+  | 'task_completed';
 
 export interface Profile {
   id: string;
@@ -62,7 +67,7 @@ export interface Task {
   id: string;
   sponsor_id: string;
   sponsee_id: string;
-  step_number: number;
+  step_number?: number;
   title: string;
   description: string;
   due_date?: string;

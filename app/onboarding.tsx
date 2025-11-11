@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Platform, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  Platform,
+  TextInput,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -75,7 +84,10 @@ export default function OnboardingScreen() {
 
           <View style={styles.nameContainer}>
             <Text style={styles.sectionTitle}>What&apos;s your name?</Text>
-            <Text style={styles.sectionSubtitle}>We only ask for your first name and last initial to protect your privacy.</Text>
+            <Text style={styles.sectionSubtitle}>
+              We only ask for your first name and last initial to protect your
+              privacy.
+            </Text>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>First Name</Text>
@@ -104,7 +116,11 @@ export default function OnboardingScreen() {
           </View>
 
           <TouchableOpacity
-            style={[styles.button, (!firstName || !lastInitial || lastInitial.length !== 1) && styles.buttonDisabled]}
+            style={[
+              styles.button,
+              (!firstName || !lastInitial || lastInitial.length !== 1) &&
+                styles.buttonDisabled,
+            ]}
             onPress={() => setStep(2)}
             disabled={!firstName || !lastInitial || lastInitial.length !== 1}
           >
@@ -119,7 +135,9 @@ export default function OnboardingScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Your Sobriety Date</Text>
-        <Text style={styles.subtitle}>When did you begin your sobriety journey?</Text>
+        <Text style={styles.subtitle}>
+          When did you begin your sobriety journey?
+        </Text>
 
         <View style={styles.dateContainer}>
           <TouchableOpacity
@@ -136,15 +154,16 @@ export default function OnboardingScreen() {
             </Text>
           </TouchableOpacity>
 
-          {(showDatePicker || Platform.OS === 'web') && Platform.OS !== 'web' && (
-            <DateTimePicker
-              value={sobrietyDate}
-              mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={onDateChange}
-              maximumDate={new Date()}
-            />
-          )}
+          {(showDatePicker || Platform.OS === 'web') &&
+            Platform.OS !== 'web' && (
+              <DateTimePicker
+                value={sobrietyDate}
+                mode="date"
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={onDateChange}
+                maximumDate={new Date()}
+              />
+            )}
 
           {Platform.OS === 'web' && showDatePicker && (
             <View style={styles.webDatePicker}>
@@ -159,7 +178,7 @@ export default function OnboardingScreen() {
                 style={{
                   padding: '12px',
                   fontSize: '16px',
-    fontFamily: theme.fontRegular,
+                  fontFamily: theme.fontRegular,
                   borderRadius: '8px',
                   border: '2px solid #007AFF',
                   marginBottom: '16px',
@@ -170,7 +189,10 @@ export default function OnboardingScreen() {
 
           <View style={styles.daysContainer}>
             <Text style={styles.daysCount}>
-              {Math.floor((new Date().getTime() - sobrietyDate.getTime()) / (1000 * 60 * 60 * 24))}
+              {Math.floor(
+                (new Date().getTime() - sobrietyDate.getTime()) /
+                  (1000 * 60 * 60 * 24),
+              )}
             </Text>
             <Text style={styles.daysLabel}>Days Sober</Text>
           </View>
@@ -188,7 +210,11 @@ export default function OnboardingScreen() {
           )}
 
           <TouchableOpacity
-            style={[styles.button, needsName ? styles.flexButton : styles.fullWidthButton, loading && styles.buttonDisabled]}
+            style={[
+              styles.button,
+              needsName ? styles.flexButton : styles.fullWidthButton,
+              loading && styles.buttonDisabled,
+            ]}
             onPress={handleComplete}
             disabled={loading}
           >
@@ -202,182 +228,183 @@ export default function OnboardingScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: theme.background,
-  },
-  content: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 32,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: theme.text,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    textAlign: 'center',
-    marginBottom: 40,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginBottom: 8,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginBottom: 24,
-    lineHeight: 20,
-  },
-  nameContainer: {
-    marginBottom: 32,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: theme.card,
-    borderWidth: 2,
-    borderColor: theme.border,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    color: theme.text,
-  },
-  roleContainer: {
-    marginBottom: 32,
-  },
-  roleCard: {
-    flexDirection: 'row',
-    backgroundColor: theme.card,
-    borderWidth: 2,
-    borderColor: theme.border,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-  },
-  roleCardSelected: {
-    borderColor: '#007AFF',
-    backgroundColor: '#f0fdf4',
-  },
-  roleIcon: {
-    marginRight: 16,
-  },
-  roleContent: {
-    flex: 1,
-  },
-  roleTitle: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 4,
-  },
-  roleTextSelected: {
-    color: '#007AFF',
-  },
-  roleDescription: {
-    fontSize: 14,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    lineHeight: 20,
-  },
-  dateContainer: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  dateButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.card,
-    borderWidth: 2,
-    borderColor: '#007AFF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 32,
-  },
-  webDatePicker: {
-    marginBottom: 24,
-  },
-  dateText: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-    color: theme.text,
-    marginLeft: 12,
-  },
-  daysContainer: {
-    alignItems: 'center',
-  },
-  daysCount: {
-    fontSize: 64,
-    fontFamily: theme.fontRegular,
-    fontWeight: '700',
-    color: '#007AFF',
-  },
-  daysLabel: {
-    fontSize: 18,
-    fontFamily: theme.fontRegular,
-    color: theme.textSecondary,
-    marginTop: 8,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-  },
-  buttonGroup: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  secondaryButton: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    flex: 1,
-  },
-  secondaryButtonText: {
-    color: '#374151',
-    fontSize: 16,
-    fontFamily: theme.fontRegular,
-    fontWeight: '600',
-  },
-  flexButton: {
-    flex: 2,
-  },
-  fullWidthButton: {
-    flex: 1,
-  },
-});
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flexGrow: 1,
+      backgroundColor: theme.background,
+    },
+    content: {
+      flex: 1,
+      padding: 24,
+      justifyContent: 'center',
+    },
+    title: {
+      fontSize: 32,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: theme.text,
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    subtitle: {
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      textAlign: 'center',
+      marginBottom: 40,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginBottom: 8,
+    },
+    sectionSubtitle: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginBottom: 24,
+      lineHeight: 20,
+    },
+    nameContainer: {
+      marginBottom: 32,
+    },
+    inputContainer: {
+      marginBottom: 20,
+    },
+    label: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginBottom: 8,
+    },
+    input: {
+      backgroundColor: theme.card,
+      borderWidth: 2,
+      borderColor: theme.border,
+      borderRadius: 12,
+      padding: 16,
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      color: theme.text,
+    },
+    roleContainer: {
+      marginBottom: 32,
+    },
+    roleCard: {
+      flexDirection: 'row',
+      backgroundColor: theme.card,
+      borderWidth: 2,
+      borderColor: theme.border,
+      borderRadius: 16,
+      padding: 20,
+      marginBottom: 16,
+    },
+    roleCardSelected: {
+      borderColor: '#007AFF',
+      backgroundColor: '#f0fdf4',
+    },
+    roleIcon: {
+      marginRight: 16,
+    },
+    roleContent: {
+      flex: 1,
+    },
+    roleTitle: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: '#374151',
+      marginBottom: 4,
+    },
+    roleTextSelected: {
+      color: '#007AFF',
+    },
+    roleDescription: {
+      fontSize: 14,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      lineHeight: 20,
+    },
+    dateContainer: {
+      alignItems: 'center',
+      marginBottom: 32,
+    },
+    dateButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.card,
+      borderWidth: 2,
+      borderColor: '#007AFF',
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 32,
+    },
+    webDatePicker: {
+      marginBottom: 24,
+    },
+    dateText: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+      color: theme.text,
+      marginLeft: 12,
+    },
+    daysContainer: {
+      alignItems: 'center',
+    },
+    daysCount: {
+      fontSize: 64,
+      fontFamily: theme.fontRegular,
+      fontWeight: '700',
+      color: '#007AFF',
+    },
+    daysLabel: {
+      fontSize: 18,
+      fontFamily: theme.fontRegular,
+      color: theme.textSecondary,
+      marginTop: 8,
+    },
+    button: {
+      backgroundColor: '#007AFF',
+      borderRadius: 12,
+      padding: 16,
+      alignItems: 'center',
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+    },
+    buttonText: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+    },
+    buttonGroup: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    secondaryButton: {
+      borderWidth: 1,
+      borderColor: '#d1d5db',
+      borderRadius: 12,
+      padding: 16,
+      alignItems: 'center',
+      flex: 1,
+    },
+    secondaryButtonText: {
+      color: '#374151',
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+    },
+    flexButton: {
+      flex: 2,
+    },
+    fullWidthButton: {
+      flex: 1,
+    },
+  });

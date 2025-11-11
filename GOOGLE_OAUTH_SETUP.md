@@ -18,14 +18,17 @@ To enable Google Sign-In in your app, you need to configure Google OAuth in your
 Add the following redirect URIs to your Google OAuth client:
 
 **For Supabase (Required):**
+
 - `https://vzwdsjphpabtxhmffous.supabase.co/auth/v1/callback`
 
 **For Local Development (Optional):**
+
 - `http://localhost:8081`
 - `http://localhost:19006`
 
 **For Mobile App (Optional):**
-- `myapp://auth/callback`
+
+- `12stepstracker://auth/callback`
 
 ### 3. Configure Supabase
 
@@ -58,7 +61,7 @@ After configuration:
 
 For the mobile app to work with Google OAuth:
 
-1. The app uses the deep link scheme `myapp://`
+1. The app uses the deep link scheme `12stepstracker://`
 2. Make sure this matches the scheme in `app.json`
 3. For iOS, ensure the bundle identifier is correct: `com.billchirico.12steptracker`
 4. For Android, ensure the package name is correct: `com.billchirico.twelvesteptracker`
