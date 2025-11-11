@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Alert, Share, Switch, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Alert, Share, Switch, Platform, ActivityIndicator, Linking } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
@@ -649,7 +649,9 @@ export default function ProfileScreen() {
       <View style={styles.footer}>
         <Text style={styles.footerText}>12-Step Tracker v{packageJson.version}</Text>
         <Text style={styles.footerSubtext}>Supporting recovery, one day at a time</Text>
-        <Text style={styles.footerCredit}>By Bill Chirico</Text>
+        <TouchableOpacity onPress={() => Linking.openURL('https://billchirico.dev')}>
+          <Text style={styles.footerCredit}>By Bill Chirico</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
