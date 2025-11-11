@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Alert, Share } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, Alert, Share, Switch } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
-import { User, LogOut, Heart, Calendar, Share2, QrCode } from 'lucide-react-native';
+import { User, LogOut, Heart, Calendar, Share2, QrCode, Bell } from 'lucide-react-native';
 
 export default function ProfileScreen() {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, refreshProfile } = useAuth();
   const [inviteCode, setInviteCode] = useState('');
   const [showInviteInput, setShowInviteInput] = useState(false);
+  const [notificationSettings, setNotificationSettings] = useState({
+    tasks: profile?.notification_preferences?.tasks ?? true,
+    messages: profile?.notification_preferences?.messages ?? true,
+    milestones: profile?.notification_preferences?.milestones ?? true,
+    daily: profile?.notification_preferences?.daily ?? true,
+  });
 
   const getDaysSober = () => {
     if (!profile?.sobriety_date) return 0;
@@ -88,9 +94,28 @@ export default function ProfileScreen() {
       .eq('id', invite.id);
 
     if (!updateError) {
-      Alert.alert('Success', `Connected with ${invite.sponsor?.full_name}!`);
+      Alert.alert('Success', `Connected with ${invite.sponsor?.first_name} ${invite.sponsor?.last_initial}.!`);
       setShowInviteInput(false);
       setInviteCode('');
+    }
+  };
+
+  const updateNotificationSetting = async (key: string, value: boolean) => {
+    if (!profile) return;
+
+    const newSettings = { ...notificationSettings, [key]: value };
+    setNotificationSettings(newSettings);
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ notification_preferences: newSettings })
+      .eq('id', profile.id);
+
+    if (error) {
+      Alert.alert('Error', 'Failed to update notification settings');
+      setNotificationSettings(notificationSettings);
+    } else {
+      await refreshProfile();
     }
   };
 
@@ -111,9 +136,9 @@ export default function ProfileScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{profile?.full_name?.[0]?.toUpperCase() || '?'}</Text>
+          <Text style={styles.avatarText}>{profile?.first_name?.[0]?.toUpperCase() || '?'}</Text>
         </View>
-        <Text style={styles.name}>{profile?.full_name}</Text>
+        <Text style={styles.name}>{profile?.first_name} {profile?.last_initial}.</Text>
         <Text style={styles.email}>{profile?.email}</Text>
         <View style={styles.roleBadge}>
           <Text style={styles.roleText}>
@@ -172,6 +197,57 @@ export default function ProfileScreen() {
       )}
 
       <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Settings</Text>
+
+        <View style={styles.settingsCard}>
+          <View style={styles.settingRow}>
+            <Bell size={20} color="#6b7280" />
+            <Text style={styles.settingLabel}>Notifications</Text>
+          </View>
+
+          <View style={styles.settingSubRow}>
+            <Text style={styles.settingSubLabel}>Task assignments</Text>
+            <Switch
+              value={notificationSettings.tasks}
+              onValueChange={(value) => updateNotificationSetting('tasks', value)}
+              trackColor={{ false: '#d1d5db', true: '#86efac' }}
+              thumbColor={notificationSettings.tasks ? '#10b981' : '#f3f4f6'}
+            />
+          </View>
+
+          <View style={styles.settingSubRow}>
+            <Text style={styles.settingSubLabel}>Messages</Text>
+            <Switch
+              value={notificationSettings.messages}
+              onValueChange={(value) => updateNotificationSetting('messages', value)}
+              trackColor={{ false: '#d1d5db', true: '#86efac' }}
+              thumbColor={notificationSettings.messages ? '#10b981' : '#f3f4f6'}
+            />
+          </View>
+
+          <View style={styles.settingSubRow}>
+            <Text style={styles.settingSubLabel}>Milestones</Text>
+            <Switch
+              value={notificationSettings.milestones}
+              onValueChange={(value) => updateNotificationSetting('milestones', value)}
+              trackColor={{ false: '#d1d5db', true: '#86efac' }}
+              thumbColor={notificationSettings.milestones ? '#10b981' : '#f3f4f6'}
+            />
+          </View>
+
+          <View style={styles.settingSubRow}>
+            <Text style={styles.settingSubLabel}>Daily reminders</Text>
+            <Switch
+              value={notificationSettings.daily}
+              onValueChange={(value) => updateNotificationSetting('daily', value)}
+              trackColor={{ false: '#d1d5db', true: '#86efac' }}
+              thumbColor={notificationSettings.daily ? '#10b981' : '#f3f4f6'}
+            />
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account</Text>
         <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
           <LogOut size={20} color="#ef4444" />
@@ -180,7 +256,7 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Serenity Path v1.0</Text>
+        <Text style={styles.footerText}>12-Step Tracker v1.0</Text>
         <Text style={styles.footerSubtext}>Supporting recovery, one day at a time</Text>
       </View>
     </ScrollView>
@@ -365,5 +441,39 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#9ca3af',
     marginTop: 4,
+  },
+  settingsCard: {
+    backgroundColor: '#ffffff',
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+  },
+  settingLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    marginLeft: 12,
+  },
+  settingSubRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+  },
+  settingSubLabel: {
+    fontSize: 14,
+    color: '#6b7280',
   },
 });

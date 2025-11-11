@@ -99,10 +99,10 @@ export default function MessagesScreen() {
                   onPress={() => setSelectedChat(person?.id || null)}
                 >
                   <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>{person?.full_name?.[0]?.toUpperCase()}</Text>
+                    <Text style={styles.avatarText}>{person?.first_name?.[0]?.toUpperCase()}</Text>
                   </View>
                   <View style={styles.chatInfo}>
-                    <Text style={styles.chatName}>{person?.full_name}</Text>
+                    <Text style={styles.chatName}>{person?.first_name} {person?.last_initial}.</Text>
                     <Text style={styles.chatRole}>
                       {rel.sponsor_id === profile?.id ? 'Sponsee' : 'Sponsor'}
                     </Text>
@@ -129,7 +129,7 @@ export default function MessagesScreen() {
         <TouchableOpacity onPress={() => setSelectedChat(null)} style={styles.backButton}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.chatHeaderTitle}>{chatPerson?.full_name}</Text>
+        <Text style={styles.chatHeaderTitle}>{chatPerson?.first_name} {chatPerson?.last_initial}.</Text>
       </View>
 
       <ScrollView style={styles.messagesContainer}>

@@ -75,7 +75,7 @@ export default function TasksScreen() {
                 <Text style={styles.taskTitle}>{task.title}</Text>
                 <Text style={styles.taskDescription}>{task.description}</Text>
                 <View style={styles.taskFooter}>
-                  <Text style={styles.sponsorText}>From: {task.sponsor?.full_name}</Text>
+                  <Text style={styles.sponsorText}>From: {task.sponsor?.first_name} {task.sponsor?.last_initial}.</Text>
                   <TouchableOpacity
                     style={styles.completeButton}
                     onPress={() => handleCompleteTask(task.id)}

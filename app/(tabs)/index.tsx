@@ -78,7 +78,7 @@ export default function HomeScreen() {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#10b981" />}
     >
       <View style={styles.header}>
-        <Text style={styles.greeting}>Hello, {profile?.full_name?.split(' ')[0] || 'Friend'}</Text>
+        <Text style={styles.greeting}>Hello, {profile?.first_name || 'Friend'}</Text>
         <Text style={styles.date}>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</Text>
       </View>
 
@@ -112,11 +112,11 @@ export default function HomeScreen() {
             <View key={rel.id} style={styles.relationshipItem}>
               <View style={styles.avatar}>
                 <Text style={styles.avatarText}>
-                  {(rel.sponsor?.full_name || '?')[0].toUpperCase()}
+                  {(rel.sponsor?.first_name || '?')[0].toUpperCase()}
                 </Text>
               </View>
               <View style={styles.relationshipInfo}>
-                <Text style={styles.relationshipName}>{rel.sponsor?.full_name}</Text>
+                <Text style={styles.relationshipName}>{rel.sponsor?.first_name} {rel.sponsor?.last_initial}.</Text>
                 <Text style={styles.relationshipMeta}>
                   Connected {new Date(rel.connected_at).toLocaleDateString()}
                 </Text>
@@ -139,11 +139,11 @@ export default function HomeScreen() {
               <View key={rel.id} style={styles.relationshipItem}>
                 <View style={styles.avatar}>
                   <Text style={styles.avatarText}>
-                    {(rel.sponsee?.full_name || '?')[0].toUpperCase()}
+                    {(rel.sponsee?.first_name || '?')[0].toUpperCase()}
                   </Text>
                 </View>
                 <View style={styles.relationshipInfo}>
-                  <Text style={styles.relationshipName}>{rel.sponsee?.full_name}</Text>
+                  <Text style={styles.relationshipName}>{rel.sponsee?.first_name} {rel.sponsee?.last_initial}.</Text>
                   <Text style={styles.relationshipMeta}>
                     Connected {new Date(rel.connected_at).toLocaleDateString()}
                   </Text>
