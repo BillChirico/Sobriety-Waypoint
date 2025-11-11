@@ -1,79 +1,59 @@
-import { Tabs } from 'expo-router';
+import { Tabs, usePathname, useRouter } from 'expo-router';
 import { Home, BookOpen, TrendingUp, CheckSquare, User, ClipboardList } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Platform } from 'react-native';
+import AnimatedBottomNav, { AnimatedNavItem } from '@/components/AnimatedBottomNav';
+import { useEffect, useState } from 'react';
+
+const tabRoutes = [
+  { route: '/', name: 'index', title: 'Home', icon: Home },
+  { route: '/steps', name: 'steps', title: 'Steps', icon: BookOpen },
+  { route: '/journey', name: 'journey', title: 'Journey', icon: TrendingUp },
+  { route: '/tasks', name: 'tasks', title: 'Tasks', icon: CheckSquare },
+  { route: '/manage-tasks', name: 'manage-tasks', title: 'Manage', icon: ClipboardList },
+  { route: '/profile', name: 'profile', title: 'Profile', icon: User },
+];
 
 export default function TabLayout() {
   const { theme } = useTheme();
+  const pathname = usePathname();
+  const router = useRouter();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const index = tabRoutes.findIndex(tab => pathname === tab.route || pathname.startsWith(`/${tab.name}`));
+    if (index !== -1 && index !== activeIndex) {
+      setActiveIndex(index);
+    }
+  }, [pathname]);
+
+  const navItems: AnimatedNavItem[] = tabRoutes.map((tab, index) => ({
+    label: tab.title,
+    icon: tab.icon,
+    onPress: () => {
+      router.push(tab.route as any);
+    },
+  }));
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: theme.primary,
-        tabBarInactiveTintColor: theme.textTertiary,
-        tabBarStyle: {
-          backgroundColor: theme.surface,
-          borderTopWidth: 1,
-          borderTopColor: theme.border,
-          height: Platform.OS === 'web' ? 90 : 85,
-          paddingBottom: Platform.OS === 'web' ? 20 : 12,
-          paddingTop: Platform.OS === 'web' ? 12 : 8,
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-    fontFamily: theme.fontRegular,
-          fontWeight: '600',
-          marginTop: 4,
-          marginBottom: 2,
-        },
-        tabBarIconStyle: {
-          marginTop: 4,
-        },
       }}
+      tabBar={() => (
+        <AnimatedBottomNav
+          items={navItems}
+          activeIndex={activeIndex}
+          onActiveIndexChange={setActiveIndex}
+          accentColor={theme.primary}
+        />
+      )}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="steps"
-        options={{
-          title: 'Steps',
-          tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="journey"
-        options={{
-          title: 'Journey',
-          tabBarIcon: ({ color, size }) => <TrendingUp size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="tasks"
-        options={{
-          title: 'Tasks',
-          tabBarIcon: ({ color, size }) => <CheckSquare size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="manage-tasks"
-        options={{
-          title: 'Manage',
-          tabBarIcon: ({ color, size }) => <ClipboardList size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-        }}
-      />
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="steps" />
+      <Tabs.Screen name="journey" />
+      <Tabs.Screen name="tasks" />
+      <Tabs.Screen name="manage-tasks" />
+      <Tabs.Screen name="profile" />
     </Tabs>
   );
 }
