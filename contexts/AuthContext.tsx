@@ -2,6 +2,10 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { Profile } from '@/types/database';
+import * as WebBrowser from 'expo-web-browser';
+import { makeRedirectUri } from 'expo-auth-session';
+
+WebBrowser.maybeCompleteAuthSession();
 
 interface AuthContextType {
   session: Session | null;
@@ -9,6 +13,7 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signUp: (email: string, password: string, firstName: string, lastInitial: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -20,6 +25,7 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   signIn: async () => {},
+  signInWithGoogle: async () => {},
   signUp: async () => {},
   signOut: async () => {},
   refreshProfile: async () => {},
@@ -97,6 +103,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) throw error;
   };
 
+  const signInWithGoogle = async () => {
+    const redirectUrl = makeRedirectUri();
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectUrl,
+        skipBrowserRedirect: false,
+      },
+    });
+
+    if (error) throw error;
+
+    if (data?.url) {
+      const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+
+      if (result.type === 'success' && result.url) {
+        const url = new URL(result.url);
+        const access_token = url.searchParams.get('access_token');
+        const refresh_token = url.searchParams.get('refresh_token');
+
+        if (access_token && refresh_token) {
+          const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+            access_token,
+            refresh_token,
+          });
+
+          if (sessionError) throw sessionError;
+
+          if (sessionData.user) {
+            const { data: existingProfile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', sessionData.user.id)
+              .maybeSingle();
+
+            if (!existingProfile) {
+              const nameParts = sessionData.user.user_metadata?.full_name?.split(' ') || ['User', 'U'];
+              const firstName = nameParts[0] || 'User';
+              const lastInitial = nameParts[nameParts.length - 1]?.[0] || 'U';
+
+              const { error: profileError } = await supabase.from('profiles').insert({
+                id: sessionData.user.id,
+                email: sessionData.user.email || '',
+                first_name: firstName,
+                last_initial: lastInitial.toUpperCase(),
+              });
+
+              if (profileError) throw profileError;
+            }
+          }
+        }
+      }
+    }
+  };
+
   const signUp = async (email: string, password: string, firstName: string, lastInitial: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -129,6 +191,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         profile,
         loading,
         signIn,
+        signInWithGoogle,
         signUp,
         signOut,
         refreshProfile,

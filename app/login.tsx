@@ -8,12 +8,17 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const { signIn, signInWithGoogle } = useAuth();
   const router = useRouter();
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      if (Platform.OS === 'web') {
+        window.alert('Please fill in all fields');
+      } else {
+        Alert.alert('Error', 'Please fill in all fields');
+      }
       return;
     }
 
@@ -21,9 +26,28 @@ export default function LoginScreen() {
     try {
       await signIn(email, password);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to sign in');
+      if (Platform.OS === 'web') {
+        window.alert('Error: ' + (error.message || 'Failed to sign in'));
+      } else {
+        Alert.alert('Error', error.message || 'Failed to sign in');
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+    } catch (error: any) {
+      if (Platform.OS === 'web') {
+        window.alert('Error: ' + (error.message || 'Failed to sign in with Google'));
+      } else {
+        Alert.alert('Error', error.message || 'Failed to sign in with Google');
+      }
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -70,7 +94,7 @@ export default function LoginScreen() {
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleLogin}
-            disabled={loading}
+            disabled={loading || googleLoading}
           >
             <Text style={styles.buttonText}>
               {loading ? 'Signing in...' : 'Sign In'}
@@ -84,9 +108,19 @@ export default function LoginScreen() {
           </View>
 
           <TouchableOpacity
+            style={[styles.googleButton, googleLoading && styles.buttonDisabled]}
+            onPress={handleGoogleSignIn}
+            disabled={loading || googleLoading}
+          >
+            <Text style={styles.googleButtonText}>
+              {googleLoading ? 'Signing in with Google...' : '🔐 Continue with Google'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={styles.secondaryButton}
             onPress={() => router.push('/signup')}
-            disabled={loading}
+            disabled={loading || googleLoading}
           >
             <Text style={styles.secondaryButtonText}>Create New Account</Text>
           </TouchableOpacity>
@@ -175,6 +209,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     color: '#9ca3af',
     fontSize: 14,
+  },
+  googleButton: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  googleButtonText: {
+    color: '#374151',
+    fontSize: 16,
+    fontWeight: '600',
   },
   secondaryButton: {
     borderWidth: 1,
