@@ -124,7 +124,7 @@ export default function ProfileScreen() {
     fetchRelationships();
   }, [fetchRelationships]);
 
-  const getDaysSober = useCallback(() => {
+  const daysSober = useMemo(() => {
     if (!profile?.sobriety_date) return 0;
     const sobrietyDate = new Date(profile.sobriety_date);
     const today = new Date();
@@ -686,7 +686,7 @@ export default function ProfileScreen() {
           <Heart size={24} color={theme.primary} fill={theme.primary} />
           <Text style={styles.sobrietyTitle}>Sobriety Journey</Text>
         </View>
-        <Text style={styles.daysSober}>{getDaysSober()} Days</Text>
+        <Text style={styles.daysSober}>{daysSober} Days</Text>
         <View style={styles.sobrietyDateContainer}>
           <Text style={styles.sobrietyDate}>
             Since{' '}

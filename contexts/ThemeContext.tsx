@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -108,14 +108,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const setThemeMode = async (mode: ThemeMode) => {
+  const setThemeMode = useCallback(async (mode: ThemeMode) => {
     try {
       await AsyncStorage.setItem('theme_mode', mode);
       setThemeModeState(mode);
     } catch (error) {
       console.error('Failed to save theme preference:', error);
     }
-  };
+  }, []);
 
   const effectiveTheme = useMemo((): ThemeColors => {
     if (themeMode === 'system') {
