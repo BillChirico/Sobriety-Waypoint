@@ -121,7 +121,7 @@ export default function ProfileScreen() {
     try {
       const { data: invite, error: fetchError } = await supabase
         .from('invite_codes')
-        .select('*, sponsor:sponsor_id(*)')
+        .select('*')
         .eq('code', trimmedCode)
         .maybeSingle();
 
@@ -130,6 +130,24 @@ export default function ProfileScreen() {
           window.alert('Invalid or expired invite code');
         } else {
           Alert.alert('Error', 'Invalid or expired invite code');
+        }
+        setIsConnecting(false);
+        return;
+      }
+
+      // Fetch sponsor profile separately (we can't access it via join due to RLS)
+      const { data: sponsorProfile, error: sponsorError } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_initial')
+        .eq('id', invite.sponsor_id)
+        .single();
+
+      if (sponsorError || !sponsorProfile) {
+        console.error('Error fetching sponsor profile:', sponsorError);
+        if (Platform.OS === 'web') {
+          window.alert('Unable to fetch sponsor information');
+        } else {
+          Alert.alert('Error', 'Unable to fetch sponsor information');
         }
         setIsConnecting(false);
         return;
@@ -222,7 +240,7 @@ export default function ProfileScreen() {
           user_id: profile.id,
           type: 'connection_request',
           title: 'Connected to Sponsor',
-          content: `You are now connected with ${invite.sponsor?.first_name} ${invite.sponsor?.last_initial}. as your sponsor.`,
+          content: `You are now connected with ${sponsorProfile.first_name} ${sponsorProfile.last_initial}. as your sponsor.`,
           data: { sponsor_id: invite.sponsor_id },
         },
       ]);
@@ -230,9 +248,9 @@ export default function ProfileScreen() {
       await fetchRelationships();
 
       if (Platform.OS === 'web') {
-        window.alert(`Connected with ${invite.sponsor?.first_name} ${invite.sponsor?.last_initial}.`);
+        window.alert(`Connected with ${sponsorProfile.first_name} ${sponsorProfile.last_initial}.`);
       } else {
-        Alert.alert('Success', `Connected with ${invite.sponsor?.first_name} ${invite.sponsor?.last_initial}.`);
+        Alert.alert('Success', `Connected with ${sponsorProfile.first_name} ${sponsorProfile.last_initial}.`);
       }
 
       setShowInviteInput(false);
