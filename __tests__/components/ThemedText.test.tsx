@@ -1,24 +1,12 @@
 /**
  * Component Test: ThemedText
  * Purpose: Validate React Native Testing Library 13.3.3 works with React 19
- * This is a minimal test to verify the testing stack is functional
+ * This test demonstrates using the custom render function with ThemeProvider
  */
 
 import React from 'react';
-import { render, screen } from '@testing-library/react-native';
+import { render, screen } from '@/test-utils';
 import ThemedText from '@/components/ThemedText';
-
-// Mock the ThemeContext hook
-jest.mock('@/contexts/ThemeContext', () => ({
-  useTheme: () => ({
-    theme: {
-      text: '#000000',
-      textSecondary: '#666666',
-      primary: '#007AFF',
-    },
-    isDark: false,
-  }),
-}));
 
 describe('ThemedText', () => {
   it('should render with text', () => {

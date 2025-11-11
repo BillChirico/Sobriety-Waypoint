@@ -44,3 +44,16 @@ console.error = (...args) => {
   }
   originalConsoleError(...args);
 };
+
+// ==============================================
+// MSW Setup for API Mocking
+// ==============================================
+// Note: MSW is configured but not automatically enabled globally due to ESM compatibility issues.
+// To use MSW in a test file, import and set up the server manually:
+//
+// import { server } from '@/mocks/server';
+// import { resetDb } from '@/mocks/db';
+//
+// beforeAll(() => server.listen());
+// afterEach(() => { server.resetHandlers(); resetDb(); });
+// afterAll(() => server.close());

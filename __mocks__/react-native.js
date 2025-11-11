@@ -138,6 +138,9 @@ const AccessibilityInfo = {
   setAccessibilityFocus: jest.fn(),
 };
 
+// Mock useColorScheme hook
+const useColorScheme = jest.fn(() => 'light');
+
 // Export everything
 module.exports = {
   // Components
@@ -157,6 +160,9 @@ module.exports = {
   Keyboard,
   Alert,
   AccessibilityInfo,
+
+  // Hooks
+  useColorScheme,
 
   // Add other commonly used exports as needed
   TouchableHighlight: TouchableOpacity,
