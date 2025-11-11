@@ -13,7 +13,6 @@ The CI pipeline runs automatically on:
 - **Push events** to:
   - `main` branch
   - `develop` branch
-  - Any `gitbutler/**` branch
 - **Pull requests** targeting:
   - `main` branch
   - `develop` branch

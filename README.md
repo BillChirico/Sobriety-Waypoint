@@ -21,7 +21,7 @@ A React Native mobile application for tracking AA recovery progress and facilita
 
 ## Tech Stack
 
-- **Framework**: Expo 54 with React Native 0.81.4 and React 19
+- **Framework**: Expo 54 with React Native 0.81.5 and React 19
 - **Router**: Expo Router v6 (file-based routing with typed routes)
 - **Backend**: Supabase (PostgreSQL with Row Level Security)
 - **Authentication**: Supabase Auth (email/password + Google OAuth)
