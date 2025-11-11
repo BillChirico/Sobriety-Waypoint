@@ -1,35 +1,130 @@
 # dependencies
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# expo
+# Expo
 .expo/
 dist/
 web-build/
 expo-env.d.ts
 
-# native
+# Native
 *.orig.*
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
+*.keystore
+!debug.keystore
 
-# metro
+# iOS
+ios/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace/
+*.xcworkspace/
+
+# Pods
+ios/Pods/
+Podfile.lock
+
+# Android
+android/
+*.apk
+*.aab
+*.ap_
+*.dex
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+.gradle
+captures/
+.externalNativeBuild/
+.cxx/
+google-services.json
+
+# Metro
 .metro-health-check*
 
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macos
+# macOS
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
-.env
+# Windows
+Thumbs.db
 
-# typescript
+# Environment variables
+.env
+.env*.local
+.env.development
+.env.test
+.env.production
+
+# TypeScript
 *.tsbuildinfo
+*.tsbuildinfo.*
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# IDE
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*.swn
+*.sublime-project
+*.sublime-workspace
+.history/
+
+# Testing
+coverage/
+.nyc_output/
+
+# EAS
+.easignore
+eas-build-pre-install.sh
+eas-build-post-install.sh
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
