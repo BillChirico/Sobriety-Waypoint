@@ -130,7 +130,7 @@ export default function HomeScreen() {
     if (days >= 30) return { text: '30 Days', color: '#007AFF' };
     if (days >= 7) return { text: '1 Week', color: '#007AFF' };
     if (days >= 1) return { text: '24 Hours', color: '#007AFF' };
-    return { text: 'Just Starting', color: '#6b7280' };
+    return { text: '< 24 Hours', color: '#6b7280' };
   };
 
   const daysSober = getDaysSober();
