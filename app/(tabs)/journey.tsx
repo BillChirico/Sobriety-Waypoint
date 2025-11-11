@@ -446,6 +446,7 @@ const createStyles = (theme: any) =>
     statMain: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'center',
       gap: 16,
       marginBottom: 20,
       paddingBottom: 20,
@@ -453,7 +454,7 @@ const createStyles = (theme: any) =>
       borderBottomColor: theme.border,
     },
     statMainContent: {
-      flex: 1,
+      alignItems: 'center',
     },
     statMainNumber: {
       fontSize: 40,
