@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
-import { StepContent } from '@/types/database';
-import { BookOpen, X } from 'lucide-react-native';
+import { StepContent, UserStepProgress } from '@/types/database';
+import { BookOpen, X, CheckCircle, Circle } from 'lucide-react-native';
 
 export default function StepsScreen() {
   const { theme } = useTheme();
+  const { profile } = useAuth();
   const [steps, setSteps] = useState<StepContent[]>([]);
+  const [progress, setProgress] = useState<Record<number, UserStepProgress>>({});
   const [selectedStep, setSelectedStep] = useState<StepContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSteps();
-  }, []);
+    fetchProgress();
+  }, [profile]);
 
   const fetchSteps = async () => {
     try {
@@ -37,6 +41,67 @@ export default function StepsScreen() {
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchProgress = async () => {
+    if (!profile) return;
+
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('user_step_progress')
+        .select('*')
+        .eq('user_id', profile.id);
+
+      if (fetchError) {
+        console.error('Error fetching progress:', fetchError);
+      } else {
+        const progressMap: Record<number, UserStepProgress> = {};
+        data?.forEach((p) => {
+          progressMap[p.step_number] = p;
+        });
+        setProgress(progressMap);
+      }
+    } catch (err) {
+      console.error('Exception fetching progress:', err);
+    }
+  };
+
+  const toggleStepCompletion = async (stepNumber: number) => {
+    if (!profile) return;
+
+    const existingProgress = progress[stepNumber];
+
+    try {
+      if (existingProgress) {
+        const { error: deleteError } = await supabase
+          .from('user_step_progress')
+          .delete()
+          .eq('id', existingProgress.id);
+
+        if (deleteError) throw deleteError;
+
+        const newProgress = { ...progress };
+        delete newProgress[stepNumber];
+        setProgress(newProgress);
+      } else {
+        const { data, error: insertError } = await supabase
+          .from('user_step_progress')
+          .insert({
+            user_id: profile.id,
+            step_number: stepNumber,
+            completed: true,
+            completed_at: new Date().toISOString(),
+          })
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+
+        setProgress({ ...progress, [stepNumber]: data });
+      }
+    } catch (err) {
+      console.error('Error toggling step completion:', err);
     }
   };
 
@@ -68,23 +133,43 @@ export default function StepsScreen() {
             <Text style={styles.emptyText}>No steps content available</Text>
           </View>
         )}
-        {!loading && !error && steps.map((step) => (
-          <TouchableOpacity
-            key={step.id}
-            style={styles.stepCard}
-            onPress={() => setSelectedStep(step)}
-          >
-            <View style={styles.stepNumber}>
-              <Text style={styles.stepNumberText}>{step.step_number}</Text>
+        {!loading && !error && steps.map((step) => {
+          const isCompleted = !!progress[step.step_number];
+          return (
+            <View key={step.id} style={styles.stepCardContainer}>
+              <TouchableOpacity
+                style={[styles.stepCard, isCompleted && styles.stepCardCompleted]}
+                onPress={() => setSelectedStep(step)}
+              >
+                <View style={[styles.stepNumber, isCompleted && styles.stepNumberCompleted]}>
+                  <Text style={styles.stepNumberText}>{step.step_number}</Text>
+                </View>
+                <View style={styles.stepContent}>
+                  <Text style={styles.stepTitle}>{step.title}</Text>
+                  <Text style={styles.stepDescription} numberOfLines={2}>
+                    {step.description}
+                  </Text>
+                  {isCompleted && (
+                    <View style={styles.completedBadge}>
+                      <CheckCircle size={14} color="#10b981" />
+                      <Text style={styles.completedText}>Completed</Text>
+                    </View>
+                  )}
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.checkButton}
+                onPress={() => toggleStepCompletion(step.step_number)}
+              >
+                {isCompleted ? (
+                  <CheckCircle size={28} color="#10b981" fill="#10b981" />
+                ) : (
+                  <Circle size={28} color={theme.textTertiary} />
+                )}
+              </TouchableOpacity>
             </View>
-            <View style={styles.stepContent}>
-              <Text style={styles.stepTitle}>{step.title}</Text>
-              <Text style={styles.stepDescription} numberOfLines={2}>
-                {step.description}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+          );
+        })}
       </ScrollView>
 
       <Modal
@@ -105,6 +190,30 @@ export default function StepsScreen() {
           <ScrollView style={styles.modalContent}>
             <Text style={styles.modalTitle}>{selectedStep?.title}</Text>
             <Text style={styles.modalDescription}>{selectedStep?.description}</Text>
+
+            {selectedStep && (
+              <TouchableOpacity
+                style={[
+                  styles.completeButton,
+                  progress[selectedStep.step_number] && styles.completeButtonActive
+                ]}
+                onPress={() => {
+                  toggleStepCompletion(selectedStep.step_number);
+                }}
+              >
+                {progress[selectedStep.step_number] ? (
+                  <>
+                    <CheckCircle size={20} color="#ffffff" />
+                    <Text style={styles.completeButtonText}>Marked as Complete</Text>
+                  </>
+                ) : (
+                  <>
+                    <Circle size={20} color="#ffffff" />
+                    <Text style={styles.completeButtonText}>Mark as Complete</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            )}
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Understanding This Step</Text>
@@ -157,17 +266,27 @@ const createStyles = (theme: any) => StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  stepCardContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 12,
+  },
   stepCard: {
+    flex: 1,
     flexDirection: 'row',
     backgroundColor: theme.card,
     borderRadius: 16,
     padding: 16,
-    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
+  },
+  stepCardCompleted: {
+    borderWidth: 2,
+    borderColor: '#10b981',
   },
   stepNumber: {
     width: 48,
@@ -177,6 +296,12 @@ const createStyles = (theme: any) => StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+  },
+  stepNumberCompleted: {
+    backgroundColor: '#10b981',
+  },
+  checkButton: {
+    padding: 8,
   },
   stepNumberText: {
     fontSize: 20,
@@ -307,6 +432,39 @@ const createStyles = (theme: any) => StyleSheet.create({
   },
   retryText: {
     fontSize: 14,
+    fontFamily: theme.fontRegular,
+    fontWeight: '600',
+    color: '#ffffff',
+  },
+  completedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 8,
+  },
+  completedText: {
+    fontSize: 12,
+    fontFamily: theme.fontRegular,
+    color: '#10b981',
+    fontWeight: '600',
+  },
+  completeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.primary,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginTop: 16,
+    marginBottom: 24,
+    gap: 8,
+  },
+  completeButtonActive: {
+    backgroundColor: '#10b981',
+  },
+  completeButtonText: {
+    fontSize: 16,
     fontFamily: theme.fontRegular,
     fontWeight: '600',
     color: '#ffffff',
