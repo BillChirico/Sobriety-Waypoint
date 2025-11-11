@@ -175,6 +175,37 @@ git commit -n
 
 **Note**: Pre-commit hooks do NOT run TypeScript type checking (too slow). Run `pnpm typecheck` manually before pushing, or let CI catch type errors.
 
+## Testing
+
+### Unit and Component Tests
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode (for development)
+pnpm test:watch
+
+# Run tests in CI mode
+pnpm test:ci
+```
+
+### E2E Tests with Maestro
+
+See [.maestro/README.md](.maestro/README.md) for E2E testing documentation.
+
+```bash
+# Run all E2E flows
+maestro test .maestro/flows
+
+# Run specific flow
+maestro test .maestro/flows/00-smoke-test.yaml
+```
+
+### Coverage
+
+Currently tracking 2 tests as baseline. See [docs/plans/2025-01-11-testing-infrastructure-design.md](docs/plans/2025-01-11-testing-infrastructure-design.md) for expansion plan.
+
 ## Project Structure
 
 ```
