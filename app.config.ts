@@ -20,6 +20,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       ITSAppUsesNonExemptEncryption: false,
     },
   },
+  android: {
+    package: 'com.volvoxllc.twelvesteptracker',
+    icon: './assets/images/logo.png',
+  },
   plugins: [
     ...(config.plugins || []),
     [
