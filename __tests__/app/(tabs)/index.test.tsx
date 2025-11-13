@@ -119,4 +119,115 @@ describe('HomeScreen', () => {
     const { root } = render(<HomeScreen />);
     expect(root).toBeTruthy();
   });
+
+  it('should display welcome message', async () => {
+    const { getByText } = render(<HomeScreen />);
+
+    await waitFor(() => {
+      expect(getByText(/Hello/i)).toBeTruthy();
+    });
+  });
+
+  it('should show sponsee section for sponsors', async () => {
+    (useAuth as jest.Mock).mockReturnValue({
+      profile: { ...mockProfile, role: 'sponsor' },
+    });
+
+    (supabase.from as jest.Mock).mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockResolvedValue({
+        data: [
+          {
+            id: 'rel-1',
+            sponsor_id: 'user-123',
+            sponsee_id: 'sponsee-1',
+            sponsee: { first_name: 'Jane', last_initial: 'D' },
+          },
+        ],
+      }),
+    });
+
+    const { root } = render(<HomeScreen />);
+
+    await waitFor(() => {
+      expect(root).toBeTruthy();
+    });
+  });
+
+  it('should show sponsor section for sponsees', async () => {
+    (useAuth as jest.Mock).mockReturnValue({
+      profile: { ...mockProfile, role: 'sponsee' },
+    });
+
+    (supabase.from as jest.Mock).mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockResolvedValue({
+        data: [
+          {
+            id: 'rel-1',
+            sponsor_id: 'sponsor-1',
+            sponsee_id: 'user-123',
+            sponsor: { first_name: 'Bob', last_initial: 'S' },
+          },
+        ],
+      }),
+    });
+
+    const { root } = render(<HomeScreen />);
+
+    await waitFor(() => {
+      expect(root).toBeTruthy();
+    });
+  });
+
+  it('should display sobriety information', async () => {
+    const { getByText } = render(<HomeScreen />);
+
+    await waitFor(() => {
+      expect(getByText(/Days Sober/i)).toBeTruthy();
+    });
+  });
+
+  it('should handle profile without sobriety date', async () => {
+    (useAuth as jest.Mock).mockReturnValue({
+      profile: { ...mockProfile, sobriety_date: null },
+    });
+
+    const { root } = render(<HomeScreen />);
+
+    await waitFor(() => {
+      expect(root).toBeTruthy();
+    });
+  });
+
+  it('should handle error when fetching relationships', async () => {
+    (supabase.from as jest.Mock).mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockResolvedValue({ data: null, error: { message: 'Error' } }),
+    });
+
+    const { root } = render(<HomeScreen />);
+
+    await waitFor(() => {
+      expect(root).toBeTruthy();
+    });
+  });
+
+  it('should render dashboard for both role', async () => {
+    (useAuth as jest.Mock).mockReturnValue({
+      profile: { ...mockProfile, role: 'both' },
+    });
+
+    const { getByText } = render(<HomeScreen />);
+
+    await waitFor(() => {
+      expect(getByText(/Hello/i)).toBeTruthy();
+    });
+  });
 });

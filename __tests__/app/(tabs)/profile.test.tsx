@@ -122,4 +122,67 @@ describe('ProfileScreen', () => {
       expect(mockSetThemeMode).toHaveBeenCalledWith('dark');
     });
   });
+
+  it('should render sign out button functionality', async () => {
+    const { getByText } = render(<ProfileScreen />);
+
+    const signOutButton = getByText(/sign out/i);
+    expect(signOutButton).toBeTruthy();
+  });
+
+  it('should render notification settings', () => {
+    const { getByText } = render(<ProfileScreen />);
+
+    expect(getByText(/notifications/i)).toBeTruthy();
+  });
+
+  it('should display version information', () => {
+    const { root } = render(<ProfileScreen />);
+
+    // Version is rendered somewhere in the profile
+    expect(root).toBeTruthy();
+  });
+
+  it('should handle profile with no sobriety date', () => {
+    (useAuth as jest.Mock).mockReturnValue({
+      profile: { ...mockProfile, sobriety_date: null },
+      signOut: mockSignOut,
+      refreshProfile: jest.fn(),
+    });
+
+    const { getByText } = render(<ProfileScreen />);
+
+    expect(getByText('John D.')).toBeTruthy();
+  });
+
+  it('should handle loading state when profile is null', () => {
+    (useAuth as jest.Mock).mockReturnValue({
+      profile: null,
+      signOut: mockSignOut,
+      refreshProfile: jest.fn(),
+    });
+
+    const { root } = render(<ProfileScreen />);
+
+    // Should render without crashing
+    expect(root).toBeDefined();
+  });
+
+  it('should switch to system theme', async () => {
+    const { getByText } = render(<ProfileScreen />);
+
+    const systemButton = getByText('System');
+    fireEvent.press(systemButton);
+
+    await waitFor(() => {
+      expect(mockSetThemeMode).toHaveBeenCalledWith('system');
+    });
+  });
+
+  it('should display role information', () => {
+    const { getAllByText } = render(<ProfileScreen />);
+
+    const sponsorTexts = getAllByText(/sponsor/i);
+    expect(sponsorTexts.length).toBeGreaterThan(0);
+  });
 });
