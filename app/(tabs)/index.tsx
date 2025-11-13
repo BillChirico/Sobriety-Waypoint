@@ -13,6 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { SponsorSponseeRelationship, Task, Profile } from '@/types/database';
+import { useDaysSober } from '@/hooks/useDaysSober';
 import {
   Heart,
   CheckCircle,
@@ -36,6 +37,7 @@ export default function HomeScreen() {
   const [selectedSponseeId, setSelectedSponseeId] = useState<string>('');
   const [sponseeProfiles, setSponseeProfiles] = useState<Profile[]>([]);
   const router = useRouter();
+  const { daysSober, currentStreakStartDate, loading: loadingDaysSober } = useDaysSober();
 
   const fetchData = async () => {
     if (!profile) return;
@@ -151,14 +153,6 @@ export default function HomeScreen() {
     }
   };
 
-  const getDaysSober = () => {
-    if (!profile?.sobriety_date) return 0;
-    const sobrietyDate = new Date(profile.sobriety_date);
-    const today = new Date();
-    const diff = today.getTime() - sobrietyDate.getTime();
-    return Math.floor(diff / (1000 * 60 * 60 * 24));
-  };
-
   const getMilestone = (days: number) => {
     if (days >= 365)
       return {
@@ -173,7 +167,6 @@ export default function HomeScreen() {
     return { text: '< 24 Hours', color: '#6b7280' };
   };
 
-  const daysSober = getDaysSober();
   const milestone = getMilestone(daysSober);
   const styles = createStyles(theme);
 
@@ -202,16 +195,18 @@ export default function HomeScreen() {
             <Text style={styles.sobrietyTitle}>Your Sobriety Journey</Text>
             <Text style={styles.sobrietyDate}>
               Since{' '}
-              {new Date(profile?.sobriety_date || '').toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
+              {currentStreakStartDate
+                ? new Date(currentStreakStartDate).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })
+                : 'Not set'}
             </Text>
           </View>
         </View>
         <View style={styles.daysSoberContainer}>
-          <Text style={styles.daysSoberCount}>{daysSober}</Text>
+          <Text style={styles.daysSoberCount}>{loadingDaysSober ? '...' : daysSober}</Text>
           <Text style={styles.daysSoberLabel}>Days Sober</Text>
           <View style={[styles.milestoneBadge, { backgroundColor: milestone.color }]}>
             <Award size={16} color="#ffffff" />
