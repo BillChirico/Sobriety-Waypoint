@@ -37,6 +37,38 @@ A React Native mobile application for tracking AA recovery progress and facilita
 - **Language**: TypeScript with strict mode
 - **Icons**: lucide-react-native
 
+## Error Tracking
+
+This project uses [Sentry](https://sentry.io) for production error monitoring and crash reporting.
+
+### Features
+
+- 🔒 **Privacy-first**: Automatically scrubs sensitive recovery data (messages, sobriety dates, personal information)
+- 🎯 **Production-only**: Sentry is disabled in development to avoid noise
+- 📊 **Full observability**: Error tracking, performance monitoring, and crash reporting
+- 🗺️ **Source maps**: Automatic upload via EAS builds for readable stack traces
+- 👤 **User context**: Tracks user ID and role for better debugging (no PII)
+
+### Setup
+
+See [docs/SENTRY_SETUP.md](docs/SENTRY_SETUP.md) for complete setup instructions including:
+
+- Creating a Sentry account and project
+- Configuring environment variables
+- Setting up EAS secrets
+- Configuring GitHub Actions
+
+### Environment Variables
+
+For production builds:
+
+```
+EXPO_PUBLIC_SENTRY_DSN=<your-sentry-dsn>
+SENTRY_ORG=<your-sentry-org>
+SENTRY_PROJECT=<your-sentry-project>
+SENTRY_AUTH_TOKEN=<your-sentry-auth-token>
+```
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
