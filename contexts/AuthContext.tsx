@@ -142,6 +142,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSentryContext('profile', {
         role: profile.role,
       });
+    } else {
+      clearSentryUser();
     }
   }, [profile]);
 
