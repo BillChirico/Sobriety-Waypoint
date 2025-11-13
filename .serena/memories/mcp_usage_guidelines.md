@@ -22,6 +22,7 @@ Semantic code navigation and editing with symbol-based operations
 - Editing code by symbol
 - Understanding code structure
 - **Prefer this over reading entire files**
+- Key tools: `find_symbol`, `get_symbols_overview`, `replace_symbol_body`, `find_referencing_symbols`, `search_for_pattern`
 
 ### Memory Keeper (`mcp__memory-keeper__*`)
 
@@ -31,14 +32,40 @@ Context and session management with git tracking
 - Tracking decisions
 - Managing development sessions
 - Creating checkpoints
+- Key tools: `context_save`, `context_get`, `context_checkpoint`, `context_search`, `context_timeline`
+- Supports channels, categories, priorities, and relationships between context items
 
-### Fetch (`mcp__fetch__*`)
+### Brave Search (`mcp__MCP_DOCKER__brave_*`)
+
+Comprehensive search engine capabilities
+
+- Web search for current information
+- News articles and breaking stories
+- Image search
+- Video search
+- Local business and location search
+- Key tools: `brave_web_search`, `brave_news_search`, `brave_image_search`, `brave_video_search`, `brave_local_search`
+- **brave_summarizer**: AI-generated summaries of web search results (requires Pro AI subscription)
+
+### Expo MCP (`mcp__expo-mcp__*`)
+
+Expo framework-specific development tools
+
+- Adding Expo libraries with usage instructions
+- Searching official Expo documentation
+- Generating project documentation (AGENTS.md, CLAUDE.md)
+- Learning Expo-specific topics
+- Key tools: `add_library`, `search_documentation`, `generate_agents_md`, `generate_claude_md`, `learn`
+- **Always use** `search_documentation` for Expo-specific questions before implementing solutions
+
+### Fetch (`mcp__MCP_DOCKER__fetch`)
 
 Advanced web content fetching with image support
 
 - Fetching web content
 - Extracting images
 - Converting HTML to Markdown
+- Supports raw HTML or simplified markdown output
 
 ### ToolHive (`mcp__toolhive-mcp-optimizer__*`)
 
@@ -46,6 +73,7 @@ Tool discovery and execution optimization
 
 - **Use this FIRST** when you need to find the right tool for a task
 - Functions: `find_tool`, `call_tool`, `list_tools`
+- Provides token efficiency metrics showing savings from tool filtering
 
 ### Sequential Thinking (`mcp__sequential-thinking__*`)
 
@@ -53,7 +81,19 @@ Complex problem-solving with chain-of-thought reasoning
 
 - Breaking down complex problems
 - Planning multi-step solutions
-- Iterative problem solving with hypothesis generation and verification
+- Hypothesis generation and verification
+- Dynamic thought adjustment and revision
+- Supports branching and backtracking in reasoning
+
+### MCP Management (`mcp__MCP_DOCKER__mcp-*`)
+
+Dynamic MCP server management
+
+- Adding/removing MCP servers at runtime
+- Configuring server settings
+- Discovering available servers in catalog
+- Executing tools from any server
+- Key tools: `mcp-find`, `mcp-add`, `mcp-remove`, `mcp-config-set`, `mcp-exec`
 
 ## Recommended Workflow
 

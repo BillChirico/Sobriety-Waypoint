@@ -16,7 +16,11 @@ A React Native mobile application for tracking AA recovery progress and facilita
 - **Sobriety Tracking**: Track sobriety dates and recovery milestones
 - **Relapse Support**: Private relapse tracking and recovery restart functionality
 - **Cross-Platform**: Runs on iOS, Android, and web
-- **Secure Authentication**: Email/password and Google OAuth sign-in
+- **Secure Authentication**: Multiple sign-in options
+  - Email/password authentication
+  - Google OAuth (configured)
+  - Facebook Sign In (configured)
+  - Apple Sign In (planned)
 - **Theme Support**: Light and dark mode with system preference detection
 
 ## Tech Stack
@@ -24,7 +28,11 @@ A React Native mobile application for tracking AA recovery progress and facilita
 - **Framework**: Expo 54 with React Native 0.81.5 and React 19
 - **Router**: Expo Router v6 (file-based routing with typed routes)
 - **Backend**: Supabase (PostgreSQL with Row Level Security)
-- **Authentication**: Supabase Auth (email/password + Google OAuth)
+- **Authentication**: Supabase Auth with multiple providers
+  - Email/password
+  - Google OAuth (see GOOGLE_OAUTH_SETUP.md)
+  - Facebook Sign In (see FACEBOOK_SIGNIN_SETUP.md)
+  - Apple Sign In (planned, design in docs/plans/)
 - **Storage**: expo-secure-store (native) / localStorage (web)
 - **Language**: TypeScript with strict mode
 - **Icons**: lucide-react-native
@@ -67,6 +75,7 @@ Create a `.env` file in the project root with your Supabase credentials:
 ```env
 EXPO_PUBLIC_SUPABASE_URL=<your-supabase-url>
 EXPO_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+EXPO_PUBLIC_FACEBOOK_APP_ID=<your-facebook-app-id>  # Optional, for Facebook Sign In
 ```
 
 ### 4. Set Up Supabase
@@ -299,7 +308,11 @@ The app enforces a strict navigation flow:
 3. **Authenticated with incomplete profile** → `/onboarding`
 4. **Fully set up users** → `/(tabs)` (main app)
 
-## Google OAuth Setup
+## OAuth and Social Sign In Setup
+
+The app supports multiple authentication providers beyond email/password:
+
+### Google OAuth
 
 Google Sign-In is integrated but requires additional configuration. See `GOOGLE_OAUTH_SETUP.md` for detailed setup instructions including:
 
@@ -307,6 +320,19 @@ Google Sign-In is integrated but requires additional configuration. See `GOOGLE_
 - Supabase provider setup
 - OAuth redirect URIs
 - Mobile deep linking configuration
+
+### Facebook Sign In
+
+Facebook Sign In is integrated but requires additional configuration. See `FACEBOOK_SIGNIN_SETUP.md` for detailed setup instructions including:
+
+- Facebook App creation and configuration
+- Supabase provider setup
+- Native app configuration (iOS/Android)
+- Environment variable setup
+
+### Apple Sign In
+
+Apple Sign In design is complete and implementation is planned. See `docs/plans/2025-11-12-apple-signin-design.md` for the implementation plan.
 
 **App Details:**
 
@@ -446,11 +472,14 @@ For the build jobs to work, configure these secrets in your GitHub repository se
 
 ## Additional Documentation
 
-- `CLAUDE.md` - Detailed project architecture and code patterns
+- `CLAUDE.md` - Detailed project architecture, MCP server usage, and code patterns
 - `GOOGLE_OAUTH_SETUP.md` - Google OAuth configuration guide
+- `FACEBOOK_SIGNIN_SETUP.md` - Facebook Sign In configuration guide
+- `docs/TESTING.md` - Comprehensive testing guide and best practices
 - `.github/CICD.md` - Comprehensive CI/CD documentation including Claude Code Review
 - `.github/GIT_HOOKS.md` - Git hooks setup and troubleshooting guide
 - `supabase/migrations/` - Database schema and RLS policies
+- `docs/plans/` - Design documents for features (including Apple Sign In)
 - `.github/workflows/ci.yml` - Main CI/CD pipeline configuration
 - `.github/workflows/claude-code-review.yml` - AI code review workflow configuration
 

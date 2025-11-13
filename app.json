@@ -10,10 +10,10 @@
     "slug": "twelve-step-tracker",
     "scheme": "twelvesteptracker",
     "userInterfaceStyle": "automatic",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.png",
     "ios": {
       "bundleIdentifier": "com.volvoxllc.twelvesteptracker",
-      "icon": "./assets/images/icon.png",
+      "icon": "./assets/images/logo.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }

@@ -45,13 +45,19 @@
 - Supabase Auth with custom storage adapter
 - Platform-aware session persistence
 - Auto-refresh and session management
-- Google OAuth integration with deep linking
+- Multiple authentication providers:
+  - Email/password authentication
+  - Google OAuth integration with deep linking (configured, see GOOGLE_OAUTH_SETUP.md)
+  - Facebook Sign In with native SDK support (configured, see FACEBOOK_SIGNIN_SETUP.md)
+  - Apple Sign In (design complete, implementation pending, see docs/plans/2025-11-12-apple-signin-design.md)
+- Auto-creates user profiles for OAuth sign-ins
 
 ## Platform Support
 
 - iOS (Bundle ID: `com.billchirico.12steptracker`)
 - Android (Package: `com.billchirico.twelvesteptracker`)
 - Web (responsive design)
+- App Icon: ./assets/images/logo.png
 
 ## Key Libraries
 

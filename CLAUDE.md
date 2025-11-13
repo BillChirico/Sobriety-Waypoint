@@ -21,19 +21,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Serena** (`mcp__serena__*`): Semantic code navigation and editing with symbol-based operations
   - Use for: Finding symbols, searching code patterns, editing code by symbol, understanding code structure
   - Prefer this over reading entire files
+  - Key tools: `find_symbol`, `get_symbols_overview`, `replace_symbol_body`, `find_referencing_symbols`, `search_for_pattern`
 
 - **Memory Keeper** (`mcp__memory-keeper__*`): Context and session management with git tracking
-  - Use for: Saving project context, tracking decisions, managing development sessions
+  - Use for: Saving project context, tracking decisions, managing development sessions, creating checkpoints
+  - Key tools: `context_save`, `context_get`, `context_checkpoint`, `context_search`, `context_timeline`
+  - Supports channels, categories, priorities, and relationships between context items
 
-- **Fetch** (`mcp__fetch__*`): Advanced web content fetching with image support
+- **Brave Search** (`mcp__MCP_DOCKER__brave_*`): Comprehensive search engine capabilities
+  - Use for: Web search, news articles, image search, video search, local business search
+  - Key tools: `brave_web_search`, `brave_news_search`, `brave_image_search`, `brave_video_search`, `brave_local_search`
+  - **brave_summarizer**: AI-generated summaries of web search results (requires Pro AI subscription)
+
+- **Expo MCP** (`mcp__expo-mcp__*`): Expo framework-specific development tools
+  - Use for: Adding Expo libraries, searching Expo documentation, generating project documentation
+  - Key tools: `add_library`, `search_documentation`, `generate_agents_md`, `generate_claude_md`, `learn`
+  - **Always use** `search_documentation` for Expo-specific questions before implementing solutions
+
+- **Fetch** (`mcp__MCP_DOCKER__fetch`): Advanced web content fetching with markdown conversion
   - Use for: Fetching web content, extracting images, converting HTML to Markdown
+  - Supports raw HTML or simplified markdown output
 
 - **ToolHive** (`mcp__toolhive-mcp-optimizer__*`): Tool discovery and execution optimization
   - **Use this FIRST** when you need to find the right tool for a task
   - Functions: `find_tool`, `call_tool`, `list_tools`
+  - Provides token efficiency metrics showing savings from tool filtering
 
 - **Sequential Thinking** (`mcp__sequential-thinking__*`): Complex problem-solving with chain-of-thought reasoning
-  - Use for: Breaking down complex problems, planning multi-step solutions
+  - Use for: Breaking down complex problems, planning multi-step solutions, hypothesis generation and verification
+  - Supports dynamic thought adjustment, revision of previous thinking, and branching
+
+- **MCP Management** (`mcp__MCP_DOCKER__mcp-*`): Dynamic MCP server management
+  - Use for: Adding/removing MCP servers at runtime, configuring servers, discovering available servers
+  - Key tools: `mcp-find`, `mcp-add`, `mcp-remove`, `mcp-config-set`
 
 ### Example Workflow
 
@@ -53,10 +73,15 @@ This is NOT optional - MCP tools provide significant benefits in efficiency, acc
 - **Framework**: Expo 54 with React Native 0.81.5 and React 19
 - **Router**: Expo Router v6 (file-based routing with typed routes)
 - **Backend**: Supabase (PostgreSQL with Row Level Security)
-- **Authentication**: Supabase Auth (email/password + Google OAuth)
+- **Authentication**: Supabase Auth with multiple providers
+  - Email/password authentication
+  - Google OAuth (configured, see GOOGLE_OAUTH_SETUP.md)
+  - Facebook Sign In (configured, see FACEBOOK_SIGNIN_SETUP.md)
+  - Apple Sign In (design complete, implementation pending, see docs/plans/2025-11-12-apple-signin-design.md)
 - **Storage**: expo-secure-store (native) / localStorage (web)
 - **Language**: TypeScript with strict mode
 - **Icons**: lucide-react-native
+- **App Icon**: ./assets/images/logo.png
 
 ## Development Commands
 
@@ -106,6 +131,7 @@ The root layout (`app/_layout.tsx`) enforces a strict navigation flow:
 - Handles sign in/up/out operations
 - Provides Google OAuth integration (see GOOGLE_OAUTH_SETUP.md)
 - Provides Facebook Sign In integration (see FACEBOOK_SIGNIN_SETUP.md)
+- Apple Sign In support planned (design complete, see docs/plans/2025-11-12-apple-signin-design.md)
 - Auto-creates profiles for new OAuth users
 - Exposes: `session`, `user`, `profile`, `loading`, auth methods
 
@@ -193,7 +219,10 @@ Configuration in `eas.json`:
   - iOS: Release build configuration
   - Android: APK build type
   - Includes Supabase environment variables
-- **production**: Auto-increment version numbers
+- **production**: Production builds with automatic version increment
+  - Auto-increment version numbers
+  - Environment: `APP_ENV=production`
+  - OTA update channel: `production`
 
 EAS project ID: `4652ad8b-2e44-4270-8612-64c4587219d8`
 

@@ -136,3 +136,6 @@ eas-build-post-install.sh
 
 # Optional stylelint cache
 .stylelintcache
+
+# Custom
+build-1763052024252.tar.gz
