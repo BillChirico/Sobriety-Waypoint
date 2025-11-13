@@ -19,11 +19,37 @@ export function useDaysSober(userId?: string): DaysSoberResult {
   const [mostRecentSlipUp, setMostRecentSlipUp] = useState<SlipUp | null>(null);
 
   const targetUserId = userId || user?.id;
-  const targetProfile = userId ? null : profile; // Will need to fetch if different user
+  const targetProfile = userId ? null : profile;
 
   useEffect(() => {
-    // TODO: Implement fetching logic
-    setLoading(false);
+    async function fetchSlipUps() {
+      if (!targetUserId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const { data, error: fetchError } = await supabase
+          .from('slip_ups')
+          .select('*')
+          .eq('user_id', targetUserId)
+          .order('slip_up_date', { ascending: false })
+          .limit(1);
+
+        if (fetchError) throw fetchError;
+
+        setMostRecentSlipUp(data && data.length > 0 ? data[0] : null);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSlipUps();
   }, [targetUserId]);
 
   const result = useMemo(() => {
@@ -31,11 +57,11 @@ export function useDaysSober(userId?: string): DaysSoberResult {
       daysSober: 0,
       journeyStartDate: null,
       currentStreakStartDate: null,
-      hasSlipUps: false,
+      hasSlipUps: mostRecentSlipUp !== null,
       loading,
       error,
     };
-  }, [loading, error]);
+  }, [mostRecentSlipUp, loading, error]);
 
   return result;
 }
