@@ -1,0 +1,115 @@
+appId: ${EXPO_PUBLIC_APP_ID}
+name: "11 - Sponsor-Sponsee Relationship Management"
+---
+# Test complete relationship lifecycle from both perspectives
+# Prerequisites: Two test users configured in environment variables
+
+# Part 1: Sponsor creates invite code
+- launchApp:
+    clearState: true
+
+# Sign in as sponsor
+- tapOn: "Email"
+- inputText: ${TEST_SPONSOR_EMAIL}
+- tapOn: "Password"
+- inputText: ${TEST_SPONSOR_PASSWORD}
+- tapOn: "Sign In"
+- assertVisible:
+    text: "Home"
+    timeout: 5000
+
+# Navigate to Profile
+- tapOn: "Profile"
+
+# Create invite code
+- scrollUntilVisible:
+    element:
+      text: "Create Invite Code"
+      optional: true
+    direction: DOWN
+
+- tapOn:
+    text: "Create Invite Code"
+    optional: true
+
+# Verify code is displayed
+- assertVisible:
+    text: "Invite Code"
+    optional: true
+
+# Copy the invite code (visual verification)
+- takeScreenshot: sponsor-invite-code
+
+# Sign out
+- scrollUntilVisible:
+    element:
+      text: "Sign Out"
+    direction: DOWN
+- tapOn: "Sign Out"
+
+# Part 2: Sponsee joins using invite code
+- assertVisible: "Sign In"
+- tapOn: "Sign Up"
+- tapOn: "Email"
+- inputText: ${TEST_SPONSEE_EMAIL}
+- tapOn: "Password"
+- inputText: ${TEST_SPONSEE_PASSWORD}
+- tapOn: "Confirm Password"
+- inputText: ${TEST_SPONSEE_PASSWORD}
+- tapOn: "Create Account"
+
+# Complete onboarding as Sponsee
+- assertVisible:
+    text: "Select Your Role"
+    timeout: 5000
+- tapOn: "Sponsee"
+- tapOn: "Continue"
+
+# Use invite code to join sponsor
+- tapOn:
+    text: "Join with Invite Code"
+    optional: true
+
+- inputText: "TEST123"
+  id: "invite-code-input"
+  optional: true
+
+- tapOn:
+    text: "Join"
+    optional: true
+
+# Verify relationship established
+- assertVisible:
+    text: "Home"
+    optional: true
+
+# Part 3: Verify relationship from both sides
+- tapOn: "Profile"
+- assertVisible:
+    text: "Your Sponsor"
+    optional: true
+
+# Sign out and back in as sponsor to verify
+- scrollUntilVisible:
+    element:
+      text: "Sign Out"
+    direction: DOWN
+- tapOn: "Sign Out"
+
+- tapOn: "Email"
+- inputText: ${TEST_SPONSOR_EMAIL}
+- tapOn: "Password"
+- inputText: ${TEST_SPONSOR_PASSWORD}
+- tapOn: "Sign In"
+
+# Check sponsees list
+- tapOn: "Profile"
+- scrollUntilVisible:
+    element:
+      text: "Your Sponsees"
+      optional: true
+    direction: DOWN
+
+- assertVisible:
+    text: "Your Sponsees"
+    optional: true

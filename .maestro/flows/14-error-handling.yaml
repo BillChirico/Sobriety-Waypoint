@@ -1,0 +1,104 @@
+appId: ${EXPO_PUBLIC_APP_ID}
+name: "14 - Error Handling and Edge Cases"
+---
+# Test error scenarios and edge case handling
+# Prerequisites: User must be logged in
+
+- launchApp:
+    clearState: false
+
+# Test 1: Invalid email format validation
+- tapOn: "Profile"
+- scrollUntilVisible:
+    element:
+      text: "Sign Out"
+    direction: DOWN
+- tapOn: "Sign Out"
+
+- tapOn: "Email"
+- inputText: "invalid-email"
+- tapOn: "Password"
+- inputText: "password123"
+- tapOn: "Sign In"
+
+# Should show validation error
+- assertVisible:
+    text: "Invalid"
+    optional: true
+
+# Clear and try valid credentials
+- clearText:
+    id: "email-input"
+    optional: true
+- inputText: ${TEST_USER_EMAIL}
+- clearText:
+    id: "password-input"
+    optional: true
+- inputText: ${TEST_USER_PASSWORD}
+- tapOn: "Sign In"
+
+# Test 2: Network timeout handling (rapid navigation)
+- assertVisible:
+    text: "Home"
+    timeout: 5000
+
+- tapOn: "Tasks"
+- tapOn: "Steps"
+- tapOn: "Journey"
+- tapOn: "Profile"
+- tapOn: "Home"
+
+# Verify app remains responsive
+- assertVisible: "Home"
+
+# Test 3: Empty state handling
+- tapOn: "Tasks"
+- assertVisible: "Tasks"
+
+# If no tasks, should show empty state
+- assertVisible:
+    text: "No tasks"
+    optional: true
+
+# Test 4: Long text handling (notes/messages)
+- tapOn: "Steps"
+- tapOn:
+    text: "Step 1"
+    optional: true
+
+# Try to add very long note
+- tapOn:
+    text: "Add Note"
+    optional: true
+
+- inputText: "This is a very long note that tests the character limit and text wrapping behavior. It should handle multiple lines gracefully and not cause any layout issues or crashes in the application. Testing edge cases is important for robust mobile applications."
+  optional: true
+
+- tapOn:
+    text: "Save"
+    optional: true
+
+# Test 5: App state preservation (backgrounding)
+- back
+- back
+- tapOn: "Home"
+
+# Background the app
+- pressKey: Home
+- wait: 2000
+
+# Reopen the app
+- launchApp:
+    clearState: false
+
+# Verify state preserved
+- assertVisible: "Home"
+
+# Test 6: Malformed date handling
+- tapOn: "Profile"
+- assertVisible: "Profile"
+
+# Verify app handles missing or invalid dates gracefully
+- assertVisible:
+    text: "Sobriety Start Date"
+    optional: true

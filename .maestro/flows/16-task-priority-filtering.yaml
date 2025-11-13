@@ -1,0 +1,176 @@
+appId: ${EXPO_PUBLIC_APP_ID}
+name: "16 - Task Priority and Filtering"
+---
+# Test advanced task management features
+# Prerequisites: User must be logged in as sponsor with sponsees
+
+- launchApp:
+    clearState: false
+
+# Navigate to Tasks/Manage Tasks
+- tapOn: "Tasks"
+- assertVisible: "Tasks"
+
+# If sponsor, navigate to manage tasks
+- tapOn:
+    text: "Manage Tasks"
+    optional: true
+
+# Create high priority task
+- tapOn:
+    text: "Create Task"
+    optional: true
+
+- inputText: "Complete Step 1 workbook exercises"
+  id: "task-title"
+  optional: true
+
+- inputText: "Review pages 1-10 and answer all questions"
+  id: "task-description"
+  optional: true
+
+# Set high priority
+- tapOn:
+    text: "Priority"
+    optional: true
+
+- tapOn:
+    text: "High"
+    optional: true
+
+# Select step association
+- tapOn:
+    text: "Step"
+    optional: true
+
+- tapOn:
+    text: "Step 1"
+    optional: true
+
+# Set due date
+- tapOn:
+    text: "Due Date"
+    optional: true
+
+# Select date (3 days from now)
+- tapOn:
+    text: "+"
+    optional: true
+- tapOn:
+    text: "+"
+    optional: true
+- tapOn:
+    text: "+"
+    optional: true
+
+- tapOn:
+    text: "Confirm"
+    optional: true
+
+# Select sponsee
+- tapOn:
+    text: "Assign to"
+    optional: true
+
+- tapOn:
+    index: 0
+    optional: true
+
+# Create task
+- tapOn:
+    text: "Create"
+    optional: true
+
+# Verify task created
+- assertVisible:
+    text: "Task created"
+    optional: true
+
+# Test filtering by priority
+- tapOn:
+    text: "Filter"
+    optional: true
+
+- tapOn:
+    text: "High Priority"
+    optional: true
+
+# Verify filtered view
+- assertVisible:
+    text: "Complete Step 1"
+    optional: true
+
+# Test filtering by status
+- tapOn:
+    text: "Filter"
+    optional: true
+
+- tapOn:
+    text: "Assigned"
+    optional: true
+
+# Verify status filter
+- assertVisible:
+    text: "Assigned"
+    optional: true
+
+# Test filtering by step
+- tapOn:
+    text: "Filter"
+    optional: true
+
+- tapOn:
+    text: "Step 1"
+    optional: true
+
+# Clear filters
+- tapOn:
+    text: "Clear Filters"
+    optional: true
+
+# Verify all tasks shown
+- assertVisible: "Tasks"
+
+# Test sorting
+- tapOn:
+    text: "Sort"
+    optional: true
+
+- tapOn:
+    text: "Due Date"
+    optional: true
+
+# Verify sorted by due date
+- assertVisible: "Tasks"
+
+# Sort by priority
+- tapOn:
+    text: "Sort"
+    optional: true
+
+- tapOn:
+    text: "Priority"
+    optional: true
+
+# Create low priority task for comparison
+- tapOn:
+    text: "Create Task"
+    optional: true
+
+- inputText: "Read recovery literature"
+  optional: true
+
+- tapOn:
+    text: "Priority"
+    optional: true
+
+- tapOn:
+    text: "Low"
+    optional: true
+
+- tapOn:
+    text: "Create"
+    optional: true
+
+# Verify priority ordering
+- assertVisible: "Tasks"

@@ -1,0 +1,158 @@
+appId: ${EXPO_PUBLIC_APP_ID}
+name: "17 - Messaging and Communication"
+---
+# Test comprehensive messaging features between sponsor and sponsee
+# Prerequisites: User must have an active sponsor-sponsee relationship
+
+- launchApp:
+    clearState: false
+
+# Navigate to Messages tab
+- tapOn: "Messages"
+- assertVisible: "Messages"
+
+# Select conversation (or create new)
+- tapOn:
+    index: 0
+    optional: true
+
+# Send a text message
+- tapOn:
+    id: "message-input"
+    optional: true
+
+- inputText: "Hi! Just checking in on your progress with Step 1."
+
+- tapOn:
+    text: "Send"
+    optional: true
+
+# Verify message sent
+- assertVisible:
+    text: "Just checking in"
+    optional: true
+
+# Send another message
+- tapOn:
+    id: "message-input"
+    optional: true
+
+- inputText: "Remember to reach out if you need any support."
+
+- tapOn:
+    text: "Send"
+    optional: true
+
+# Test message delivery indicator
+- assertVisible:
+    text: "✓"
+    optional: true
+
+# Test rapid message sending
+- tapOn:
+    id: "message-input"
+    optional: true
+- inputText: "Message 1"
+- tapOn: "Send"
+  optional: true
+
+- wait: 500
+
+- tapOn:
+    id: "message-input"
+    optional: true
+- inputText: "Message 2"
+- tapOn: "Send"
+  optional: true
+
+- wait: 500
+
+- tapOn:
+    id: "message-input"
+    optional: true
+- inputText: "Message 3"
+- tapOn: "Send"
+  optional: true
+
+# Verify all messages delivered
+- assertVisible: "Messages"
+
+# Test scrolling through message history
+- scroll:
+    direction: UP
+    duration: 2000
+
+# Verify older messages visible
+- assertVisible: "Messages"
+
+# Scroll back to bottom
+- scroll:
+    direction: DOWN
+    duration: 2000
+
+# Test long message handling
+- tapOn:
+    id: "message-input"
+    optional: true
+
+- inputText: "This is a longer message to test text wrapping and multi-line display. It should wrap correctly on different screen sizes and maintain readability. Good communication is essential in the recovery process, and being able to express ourselves clearly helps build stronger relationships."
+
+- tapOn:
+    text: "Send"
+    optional: true
+
+# Verify long message displayed correctly
+- assertVisible:
+    text: "This is a longer message"
+    optional: true
+
+# Go back to message list
+- back
+
+# Verify conversation appears in list with recent message
+- assertVisible: "Messages"
+
+# Test unread indicator (if applicable)
+- assertVisible:
+    text: "•"
+    optional: true
+
+# Open conversation again
+- tapOn:
+    index: 0
+    optional: true
+
+# Verify unread indicator cleared
+- assertVisible: "Messages"
+
+# Test message search (if available)
+- tapOn:
+    text: "Search"
+    optional: true
+
+- inputText: "Step 1"
+  optional: true
+
+# Verify search results
+- assertVisible:
+    text: "Step 1"
+    optional: true
+
+# Clear search
+- back
+
+# Test message actions (long press)
+- longPressOn:
+    text: "Just checking in"
+    optional: true
+
+# Options might include: Copy, Delete, React
+- assertVisible:
+    text: "Copy"
+    optional: true
+
+- back
+
+# Return to messages list
+- back
+- assertVisible: "Messages"

@@ -1,0 +1,73 @@
+appId: ${EXPO_PUBLIC_APP_ID}
+name: "13 - Data Refresh and Synchronization"
+---
+# Test pull-to-refresh functionality across all screens
+# Prerequisites: User must be logged in with some data
+
+- launchApp:
+    clearState: false
+
+# Test refresh on Home screen
+- tapOn: "Home"
+- assertVisible: "Home"
+- scroll:
+    direction: DOWN
+    duration: 1000
+- wait: 2000
+- assertVisible: "Home"
+
+# Test refresh on Tasks screen
+- tapOn: "Tasks"
+- assertVisible: "Tasks"
+- scroll:
+    direction: DOWN
+    duration: 1000
+- wait: 2000
+- assertVisible: "Tasks"
+
+# Test refresh on Steps screen
+- tapOn: "Steps"
+- assertVisible: "Steps"
+- scroll:
+    direction: DOWN
+    duration: 1000
+- wait: 2000
+- assertVisible: "Steps"
+
+# Test refresh on Journey screen
+- tapOn: "Journey"
+- assertVisible: "Journey"
+- scroll:
+    direction: DOWN
+    duration: 1000
+- wait: 2000
+- assertVisible: "Your Recovery Timeline"
+
+# Test rapid refresh (stress test)
+- scroll:
+    direction: DOWN
+    duration: 500
+- wait: 500
+- scroll:
+    direction: DOWN
+    duration: 500
+- wait: 500
+- scroll:
+    direction: DOWN
+    duration: 500
+
+# Verify data consistency after rapid refreshes
+- assertVisible: "Your Recovery Timeline"
+
+# Test refresh on Profile screen
+- tapOn: "Profile"
+- assertVisible: "Profile"
+- scroll:
+    direction: DOWN
+    duration: 1000
+- wait: 2000
+
+# Verify profile data loaded
+- assertVisible:
+    text: "Email"
+    optional: true

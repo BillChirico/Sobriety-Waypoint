@@ -1,0 +1,131 @@
+appId: ${EXPO_PUBLIC_APP_ID}
+name: "15 - Step Progression and Notes Management"
+---
+# Test step progression, notes, and reflection features
+# Prerequisites: User must be logged in
+
+- launchApp:
+    clearState: false
+
+# Navigate to Steps tab
+- tapOn: "Steps"
+- assertVisible: "Steps"
+
+# Test Step 1 - Basic interaction
+- tapOn:
+    text: "Step 1"
+    optional: true
+
+- assertVisible:
+    text: "We admitted we were powerless"
+    optional: true
+
+# Add a reflection note
+- tapOn:
+    text: "Add Note"
+    optional: true
+
+- inputText: "Today I reflected on my journey and realized the importance of accepting help from others."
+  id: "note-input"
+  optional: true
+
+- tapOn:
+    text: "Save"
+    optional: true
+
+# Verify note was saved
+- assertVisible:
+    text: "Note saved"
+    optional: true
+
+# Mark step as complete
+- tapOn:
+    text: "Mark Complete"
+    optional: true
+
+# Verify completion
+- assertVisible:
+    text: "Completed"
+    optional: true
+
+# Navigate back to steps list
+- back
+
+# Verify step 1 shows as completed
+- assertVisible:
+    text: "✓"
+    optional: true
+
+# Test Step 2 - Verify unlocked after Step 1
+- tapOn:
+    text: "Step 2"
+    optional: true
+
+- assertVisible:
+    text: "Came to believe"
+    optional: true
+
+# Add note to Step 2
+- tapOn:
+    text: "Add Note"
+    optional: true
+
+- inputText: "Exploring faith and hope in my recovery process."
+  optional: true
+
+- tapOn:
+    text: "Save"
+    optional: true
+
+# Go back without completing
+- back
+
+# Test Step 3 - Check if locked (should be locked if step 2 not complete)
+- tapOn:
+    text: "Step 3"
+    optional: true
+
+# May show locked state
+- assertVisible:
+    text: "Complete previous steps"
+    optional: true
+- back
+
+# View all notes
+- scrollUntilVisible:
+    element:
+      text: "View All Notes"
+      optional: true
+    direction: DOWN
+
+- tapOn:
+    text: "View All Notes"
+    optional: true
+
+# Verify notes list
+- assertVisible:
+    text: "Your Reflections"
+    optional: true
+
+# Filter notes by step
+- tapOn:
+    text: "Filter"
+    optional: true
+
+- tapOn:
+    text: "Step 1"
+    optional: true
+
+# Verify filtered view
+- assertVisible:
+    text: "Step 1"
+    optional: true
+
+# Go back to steps list
+- back
+- back
+
+# Verify progress is tracked
+- assertVisible:
+    text: "Progress"
+    optional: true

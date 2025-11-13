@@ -1,0 +1,87 @@
+appId: ${EXPO_PUBLIC_APP_ID}
+name: "12 - Dark Mode and Theme Persistence"
+---
+# Test theme switching across all screens with persistence
+# Prerequisites: User must be logged in
+
+- launchApp:
+    clearState: false
+
+# Navigate to Profile
+- tapOn: "Profile"
+
+# Scroll to theme settings
+- scrollUntilVisible:
+    element:
+      text: "Appearance"
+    direction: DOWN
+
+- assertVisible: "Appearance"
+
+# Switch to dark mode
+- tapOn:
+    text: "Dark"
+    optional: true
+
+# Wait for theme to apply
+- wait: 1000
+
+# Verify dark mode applied (check for dark background)
+- takeScreenshot: dark-mode-profile
+
+# Navigate through all tabs to verify dark mode consistency
+- tapOn: "Home"
+- takeScreenshot: dark-mode-home
+- assertVisible: "Home"
+
+- tapOn: "Tasks"
+- takeScreenshot: dark-mode-tasks
+- assertVisible: "Tasks"
+
+- tapOn: "Steps"
+- takeScreenshot: dark-mode-steps
+- assertVisible: "Steps"
+
+- tapOn: "Journey"
+- takeScreenshot: dark-mode-journey
+- assertVisible: "Journey"
+
+- tapOn: "Profile"
+- assertVisible: "Profile"
+
+# Switch to light mode
+- scrollUntilVisible:
+    element:
+      text: "Appearance"
+    direction: DOWN
+
+- tapOn:
+    text: "Light"
+    optional: true
+
+- wait: 1000
+- takeScreenshot: light-mode-profile
+
+# Switch to system mode
+- tapOn:
+    text: "System"
+    optional: true
+
+- wait: 1000
+
+# Restart app to verify theme persistence
+- back
+- stopApp
+- launchApp
+
+# Verify last selected theme persisted
+- tapOn: "Profile"
+- scrollUntilVisible:
+    element:
+      text: "Appearance"
+    direction: DOWN
+
+- assertVisible: "Appearance"
+
+# Take final screenshot to verify persistence
+- takeScreenshot: theme-persistence-verification

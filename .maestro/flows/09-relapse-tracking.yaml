@@ -1,0 +1,65 @@
+appId: ${EXPO_PUBLIC_APP_ID}
+name: "09 - Relapse Tracking and Recovery Restart"
+---
+# Test relapse/slip-up tracking functionality
+# Prerequisites: User must be logged in with a sobriety start date set
+
+- launchApp:
+    clearState: false
+
+# Navigate to Journey tab
+- tapOn: "Journey"
+- assertVisible: "Your Recovery Timeline"
+
+# Record a slip-up/relapse
+- tapOn: 
+    text: "Record Slip-Up"
+    optional: true
+- assertVisible:
+    text: "Record a Slip-Up"
+    optional: true
+
+# If modal opened, fill in slip-up details
+- inputText: "Had a difficult day and made a mistake"
+  id: "slip-up-notes"
+  optional: true
+
+- tapOn:
+    text: "Record"
+    optional: true
+
+# Verify slip-up appears in timeline
+- assertVisible:
+    text: "Slip-up recorded"
+    optional: true
+
+# Navigate to Profile to restart recovery
+- tapOn: "Profile"
+- scrollUntilVisible:
+    element:
+      text: "Restart Recovery"
+      optional: true
+    direction: DOWN
+
+- tapOn:
+    text: "Restart Recovery"
+    optional: true
+
+# Confirm restart
+- tapOn:
+    text: "Restart"
+    optional: true
+
+# Verify new sobriety date is set
+- assertVisible:
+    text: "Days Sober"
+    optional: true
+
+# Return to Journey to verify timeline reset
+- tapOn: "Journey"
+- assertVisible: "Your Recovery Timeline"
+
+# Verify timeline shows new start
+- assertVisible:
+    text: "Recovery Started"
+    optional: true

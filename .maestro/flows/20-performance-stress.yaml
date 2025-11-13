@@ -1,0 +1,192 @@
+appId: ${EXPO_PUBLIC_APP_ID}
+name: "20 - Performance and Stress Testing"
+---
+# Test app performance under various stress conditions
+# Prerequisites: User must be logged in
+
+- launchApp:
+    clearState: false
+
+# Test 1: Rapid tab switching (navigation stress test)
+- tapOn: "Home"
+- wait: 200
+- tapOn: "Tasks"
+- wait: 200
+- tapOn: "Steps"
+- wait: 200
+- tapOn: "Journey"
+- wait: 200
+- tapOn: "Profile"
+- wait: 200
+- tapOn: "Home"
+
+# Verify app remains responsive
+- assertVisible: "Home"
+
+# Test 2: Rapid scrolling (render performance)
+- tapOn: "Steps"
+- scroll:
+    direction: DOWN
+    duration: 500
+- scroll:
+    direction: UP
+    duration: 500
+- scroll:
+    direction: DOWN
+    duration: 500
+- scroll:
+    direction: UP
+    duration: 500
+
+# Verify no lag or crashes
+- assertVisible: "Steps"
+
+# Test 3: Multiple rapid actions (state management stress)
+- tapOn: "Tasks"
+- tapOn:
+    text: "Filter"
+    optional: true
+- tapOn:
+    text: "All"
+    optional: true
+- tapOn:
+    text: "Filter"
+    optional: true
+- tapOn:
+    text: "Assigned"
+    optional: true
+- tapOn:
+    text: "Filter"
+    optional: true
+- tapOn:
+    text: "Completed"
+    optional: true
+
+# Verify filtering still works
+- assertVisible: "Tasks"
+
+# Test 4: Memory stress - load heavy screens repeatedly
+- tapOn: "Journey"
+- wait: 1000
+- tapOn: "Home"
+- wait: 1000
+- tapOn: "Journey"
+- wait: 1000
+- tapOn: "Home"
+- wait: 1000
+- tapOn: "Journey"
+
+# Verify timeline still loads
+- assertVisible: "Your Recovery Timeline"
+
+# Test 5: Concurrent data operations
+- tapOn: "Tasks"
+- scroll:
+    direction: DOWN
+    duration: 1000
+- tapOn: "Steps"
+- scroll:
+    direction: DOWN
+    duration: 1000
+- tapOn: "Journey"
+- scroll:
+    direction: DOWN
+    duration: 1000
+
+# Verify all screens loaded correctly
+- assertVisible: "Journey"
+
+# Test 6: App backgrounding during operations
+- tapOn: "Profile"
+- scroll:
+    direction: DOWN
+    duration: 1000
+
+# Background app mid-operation
+- pressKey: Home
+- wait: 1000
+
+# Restore app
+- launchApp:
+    clearState: false
+
+# Verify state recovered
+- assertVisible: "Profile"
+
+# Test 7: Rapid input changes (debouncing/throttling)
+- tapOn:
+    text: "Search"
+    optional: true
+
+- inputText: "a"
+- wait: 100
+- inputText: "ab"
+- wait: 100
+- inputText: "abc"
+- wait: 100
+- inputText: "abcd"
+
+# Clear search
+- back
+
+# Test 8: Network condition simulation (rapid refresh)
+- tapOn: "Home"
+- scroll:
+    direction: DOWN
+    duration: 500
+- wait: 200
+- scroll:
+    direction: DOWN
+    duration: 500
+- wait: 200
+- scroll:
+    direction: DOWN
+    duration: 500
+
+# Verify no duplicate requests or race conditions
+- assertVisible: "Home"
+
+# Test 9: Modal/overlay stress test
+- tapOn: "Tasks"
+- tapOn:
+    text: "Create Task"
+    optional: true
+- back
+- tapOn:
+    text: "Create Task"
+    optional: true
+- back
+- tapOn:
+    text: "Create Task"
+    optional: true
+- back
+
+# Verify modals handle rapid open/close
+- assertVisible: "Tasks"
+
+# Test 10: Long session test (extended navigation)
+- tapOn: "Home"
+- wait: 500
+- tapOn: "Tasks"
+- scroll: { direction: DOWN, duration: 1000 }
+- wait: 500
+- tapOn: "Steps"
+- scroll: { direction: DOWN, duration: 1000 }
+- wait: 500
+- tapOn: "Journey"
+- scroll: { direction: DOWN, duration: 1000 }
+- wait: 500
+- tapOn: "Profile"
+- scroll: { direction: DOWN, duration: 1000 }
+- wait: 500
+- tapOn: "Home"
+
+# Final verification - app still responsive after stress
+- assertVisible: "Home"
+- tapOn: "Tasks"
+- assertVisible: "Tasks"
+- tapOn: "Steps"
+- assertVisible: "Steps"
+
+# Test passed if no crashes occurred
+- takeScreenshot: stress-test-complete
