@@ -89,7 +89,7 @@ jobs:
 
       - name: Upload Maestro test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: maestro-test-results
           path: |
@@ -99,7 +99,7 @@ jobs:
 
       - name: Upload Maestro logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: maestro-logs
           path: |
