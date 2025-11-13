@@ -54,15 +54,37 @@ export function useDaysSober(userId?: string): DaysSoberResult {
   }, [targetUserId]);
 
   const result = useMemo(() => {
+    const sobrietyDate = targetProfile?.sobriety_date;
+
+    // Determine which date to use for calculation
+    let calculationDate: string | null = null;
+    if (mostRecentSlipUp) {
+      calculationDate = mostRecentSlipUp.recovery_restart_date;
+    } else if (sobrietyDate) {
+      calculationDate = sobrietyDate;
+    }
+
+    // Calculate days sober
+    let daysSober = 0;
+    if (calculationDate) {
+      const startDate = new Date(calculationDate);
+      const today = new Date();
+      const diffTime = today.getTime() - startDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      // Prevent negative days (future dates)
+      daysSober = Math.max(0, diffDays);
+    }
+
     return {
-      daysSober: 0,
-      journeyStartDate: null,
-      currentStreakStartDate: null,
+      daysSober,
+      journeyStartDate: sobrietyDate || null,
+      currentStreakStartDate: calculationDate,
       hasSlipUps: mostRecentSlipUp !== null,
       loading,
       error,
     };
-  }, [mostRecentSlipUp, loading, error]);
+  }, [mostRecentSlipUp, targetProfile, loading, error]);
 
   return result;
 }
