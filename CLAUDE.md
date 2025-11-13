@@ -106,6 +106,7 @@ The root layout (`app/_layout.tsx`) enforces a strict navigation flow:
 - Handles sign in/up/out operations
 - Provides Google OAuth integration (see GOOGLE_OAUTH_SETUP.md)
 - Provides Facebook Sign In integration (see FACEBOOK_SIGNIN_SETUP.md)
+- Provides Apple Sign In integration (see APPLE_SIGNIN_SETUP.md)
 - Auto-creates profiles for new OAuth users
 - Exposes: `session`, `user`, `profile`, `loading`, auth methods
 
@@ -183,6 +184,23 @@ Key details:
 - Required environment variable: `EXPO_PUBLIC_FACEBOOK_APP_ID`
 - Implementation in `AuthContext.tsx` handles both web (OAuth) and native (expo-facebook SDK) flows
 - Auto-creates user profiles on first sign-in with name extracted from Facebook profile
+
+## Apple Sign In Setup
+
+Apple Sign In is integrated and requires configuration. See `APPLE_SIGNIN_SETUP.md` for:
+- Apple Developer Console setup (Services ID, private key)
+- Supabase provider configuration
+- OAuth redirect URI configuration
+- Native app configuration (iOS/Android)
+- Deep linking setup
+
+Key details:
+- Bundle ID (iOS): `com.billchirico.12steptracker`
+- Package name (Android): `com.billchirico.twelvesteptracker`
+- Services ID: `com.billchirico.12steptracker.signin`
+- Implementation in `AuthContext.tsx` handles both web (OAuth) and native (deep link) flows
+- Auto-creates user profiles on first sign-in
+- Handles Apple's private relay email addresses
 
 ## EAS Build Configuration
 
