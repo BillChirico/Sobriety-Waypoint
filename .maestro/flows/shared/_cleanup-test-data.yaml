@@ -1,0 +1,38 @@
+# Shared Subflow: Cleanup Test Data
+#
+# This subflow cleans up test data created during test execution.
+# Run this after test suites to maintain a clean test environment.
+#
+# Prerequisites:
+# - User should be logged in (optional)
+# - Test data exists to be cleaned up
+#
+# This subflow:
+# - Deletes test-created tasks
+# - Deletes test messages
+# - Removes test relationships
+# - Clears notifications
+#
+# Usage:
+# - runFlow: flows/shared/_cleanup-test-data.yaml
+#
+# Post-conditions:
+# - Test environment is clean for next test run
+
+appId: com.billchirico.twelvesteptracker
+
+---
+# This is a placeholder for future implementation
+# In Phase 1, we're documenting the structure
+# Actual implementation will be done when specific tests require it
+
+# Future implementation will include:
+# 1. Navigate to tasks and delete test tasks
+# 2. Navigate to messages and clear conversations
+# 3. Remove test relationships
+# 4. Clear notifications
+# 5. Delete temporary test accounts (if created during tests)
+
+# For now, we'll just log that cleanup was called
+- evalScript: |
+    console.log('Cleanup test data subflow executed')

@@ -120,16 +120,18 @@ export default function AnimatedBottomNav({
   );
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="tab-bar">
       <View style={styles.menu}>
         {items.map((item, index) => {
           const isActive = index === activeIndex;
           const IconComponent = item.icon;
           const animValues = animatedValuesRef.current[index];
+          const testID = `tab-${item.label.toLowerCase()}`;
 
           return (
             <TouchableOpacity
               key={`${item.label}-${index}`}
+              testID={testID}
               style={[styles.menuItem, isActive && styles.menuItemActive]}
               onPress={() => handleItemPress(index)}
               activeOpacity={0.8}

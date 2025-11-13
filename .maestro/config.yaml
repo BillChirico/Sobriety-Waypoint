@@ -1,0 +1,287 @@
+# Maestro Test Suite Configuration
+# 12-Step Tracker E2E Test Suite
+#
+# This configuration defines test execution order, tags, and environment setup
+# for comprehensive end-to-end testing of the 12-Step Tracker application.
+#
+# Tag Usage:
+# - smoke: Quick sanity checks (<1 minute) - Run on every commit
+# - critical: Essential user journeys (~5 minutes) - Run on every PR
+# - auth: Authentication and onboarding flows (~3 minutes)
+# - sponsee: Sponsee-specific features and journeys
+# - sponsor: Sponsor-specific features and journeys
+# - features: Individual feature tests
+# - full: Complete test suite (~30-45 minutes) - Run nightly
+#
+# Execution Strategy:
+# - PR Checks: smoke + critical (~6 minutes)
+# - Nightly: full suite (~30-45 minutes)
+# - Pre-release: full suite with all platforms
+#
+# Environment Variables:
+# All sensitive test data should be stored in .env.test (gitignored)
+# and passed via --env parameter during test execution.
+
+name: 12-Step Tracker E2E Test Suite
+appId: com.billchirico.twelvesteptracker
+
+# Test execution order and organization
+flows:
+  # =============================================================================
+  # SMOKE TESTS - Quick sanity checks (<1 minute)
+  # Run these on every commit to ensure basic functionality
+  # =============================================================================
+  - 00-smoke-test.yaml
+
+  # =============================================================================
+  # AUTHENTICATION FLOWS - Core user authentication (5 tests, ~3 minutes)
+  # Critical path for all users - must pass for PR approval
+  # =============================================================================
+  - auth/01-signup-sponsee.yaml
+  - auth/02-signup-sponsor.yaml
+  - auth/03-login.yaml
+  - auth/04-google-oauth.yaml
+  - auth/05-logout.yaml
+
+  # =============================================================================
+  # ONBOARDING FLOWS - New user setup (2 tests, ~2 minutes)
+  # Critical path for new users - must pass for PR approval
+  # =============================================================================
+  - onboarding/10-onboarding-sponsee.yaml
+  - onboarding/11-onboarding-sponsor.yaml
+
+  # =============================================================================
+  # COMPLETE USER JOURNEYS - End-to-end user experiences (2 tests, ~10 minutes)
+  # Critical path tests covering complete workflows
+  # =============================================================================
+  - sponsee-journeys/20-sponsee-complete-journey.yaml
+  - sponsor-journeys/30-sponsor-complete-journey.yaml
+
+  # =============================================================================
+  # SPONSEE FEATURE TESTS - Sponsee-specific functionality
+  # =============================================================================
+  - sponsee-journeys/21-sponsee-view-tasks.yaml
+  - sponsee-journeys/22-sponsee-complete-tasks.yaml
+  - sponsee-journeys/23-sponsee-track-progress.yaml
+
+  # =============================================================================
+  # SPONSOR FEATURE TESTS - Sponsor-specific functionality
+  # =============================================================================
+  - sponsor-journeys/31-sponsor-create-tasks.yaml
+  - sponsor-journeys/32-sponsor-manage-sponsees.yaml
+  - sponsor-journeys/33-sponsor-track-sponsees.yaml
+
+  # =============================================================================
+  # HOME/DASHBOARD FEATURE TESTS
+  # =============================================================================
+  - features/home/dashboard-overview.yaml
+  - features/home/quick-actions.yaml
+  - features/home/notifications.yaml
+
+  # =============================================================================
+  # STEPS FEATURE TESTS
+  # =============================================================================
+  - features/steps/browse-steps.yaml
+  - features/steps/step-details.yaml
+  - features/steps/reflection-prompts.yaml
+  - features/steps/step-completion.yaml
+
+  # =============================================================================
+  # JOURNEY FEATURE TESTS
+  # =============================================================================
+  - features/journey/timeline-view.yaml
+  - features/journey/milestones.yaml
+  - features/journey/progress-statistics.yaml
+  - features/journey/relapse-tracking.yaml
+  - features/journey/share-progress.yaml
+
+  # =============================================================================
+  # TASKS FEATURE TESTS (Sponsee)
+  # =============================================================================
+  - features/tasks/task-list-view.yaml
+  - features/tasks/task-details.yaml
+  - features/tasks/complete-task.yaml
+  - features/tasks/task-notifications.yaml
+  - features/tasks/task-history.yaml
+
+  # =============================================================================
+  # MANAGE TASKS FEATURE TESTS (Sponsor)
+  # =============================================================================
+  - features/manage-tasks/create-task.yaml
+  - features/manage-tasks/edit-task.yaml
+  - features/manage-tasks/delete-task.yaml
+  - features/manage-tasks/bulk-operations.yaml
+
+  # =============================================================================
+  # PROFILE FEATURE TESTS
+  # =============================================================================
+  - features/profile/view-profile.yaml
+  - features/profile/edit-profile.yaml
+  - features/profile/theme-settings.yaml
+  - features/profile/manage-connections.yaml
+  - features/profile/account-settings.yaml
+  - features/profile/delete-account.yaml
+
+  # =============================================================================
+  # MESSAGES FEATURE TESTS
+  # =============================================================================
+  - features/messages/direct-messaging.yaml
+  - features/messages/message-notifications.yaml
+  - features/messages/sponsor-sponsee-chat.yaml
+  - features/messages/message-history.yaml
+
+  # =============================================================================
+  # INVITE CODE FEATURE TESTS
+  # =============================================================================
+  - features/invite-codes/generate-invite-code.yaml
+  - features/invite-codes/use-invite-code.yaml
+  - features/invite-codes/invite-code-expiry.yaml
+
+  # =============================================================================
+  # EDGE CASES & ERROR HANDLING
+  # =============================================================================
+  - edge-cases/network-errors.yaml
+  - edge-cases/invalid-data.yaml
+  - edge-cases/permission-denied.yaml
+  - edge-cases/data-conflicts.yaml
+  - edge-cases/session-expiry.yaml
+
+  # =============================================================================
+  # PLATFORM-SPECIFIC TESTS
+  # =============================================================================
+  - platform-specific/ios-specific.yaml
+  - platform-specific/android-specific.yaml
+  - platform-specific/web-specific.yaml
+
+# Tag definitions for selective test execution
+tags:
+  # Quick smoke test - runs in <1 minute
+  smoke:
+    - 00-smoke-test.yaml
+
+  # Critical path tests - essential for PR approval (~6 minutes)
+  critical:
+    - 00-smoke-test.yaml
+    - auth/01-signup-sponsee.yaml
+    - auth/02-signup-sponsor.yaml
+    - auth/03-login.yaml
+    - auth/05-logout.yaml
+    - onboarding/10-onboarding-sponsee.yaml
+    - onboarding/11-onboarding-sponsor.yaml
+    - sponsee-journeys/20-sponsee-complete-journey.yaml
+    - sponsor-journeys/30-sponsor-complete-journey.yaml
+
+  # Authentication and onboarding tests (~5 minutes)
+  auth:
+    - auth/01-signup-sponsee.yaml
+    - auth/02-signup-sponsor.yaml
+    - auth/03-login.yaml
+    - auth/04-google-oauth.yaml
+    - auth/05-logout.yaml
+    - onboarding/10-onboarding-sponsee.yaml
+    - onboarding/11-onboarding-sponsor.yaml
+
+  # Sponsee-specific features
+  sponsee:
+    - sponsee-journeys/20-sponsee-complete-journey.yaml
+    - sponsee-journeys/21-sponsee-view-tasks.yaml
+    - sponsee-journeys/22-sponsee-complete-tasks.yaml
+    - sponsee-journeys/23-sponsee-track-progress.yaml
+    - features/tasks/task-list-view.yaml
+    - features/tasks/task-details.yaml
+    - features/tasks/complete-task.yaml
+    - features/tasks/task-notifications.yaml
+    - features/tasks/task-history.yaml
+
+  # Sponsor-specific features
+  sponsor:
+    - sponsor-journeys/30-sponsor-complete-journey.yaml
+    - sponsor-journeys/31-sponsor-create-tasks.yaml
+    - sponsor-journeys/32-sponsor-manage-sponsees.yaml
+    - sponsor-journeys/33-sponsor-track-sponsees.yaml
+    - features/manage-tasks/create-task.yaml
+    - features/manage-tasks/edit-task.yaml
+    - features/manage-tasks/delete-task.yaml
+    - features/manage-tasks/bulk-operations.yaml
+    - features/invite-codes/generate-invite-code.yaml
+
+  # All feature tests
+  features:
+    - features/home/dashboard-overview.yaml
+    - features/home/quick-actions.yaml
+    - features/home/notifications.yaml
+    - features/steps/browse-steps.yaml
+    - features/steps/step-details.yaml
+    - features/steps/reflection-prompts.yaml
+    - features/steps/step-completion.yaml
+    - features/journey/timeline-view.yaml
+    - features/journey/milestones.yaml
+    - features/journey/progress-statistics.yaml
+    - features/journey/relapse-tracking.yaml
+    - features/journey/share-progress.yaml
+    - features/tasks/task-list-view.yaml
+    - features/tasks/task-details.yaml
+    - features/tasks/complete-task.yaml
+    - features/tasks/task-notifications.yaml
+    - features/tasks/task-history.yaml
+    - features/manage-tasks/create-task.yaml
+    - features/manage-tasks/edit-task.yaml
+    - features/manage-tasks/delete-task.yaml
+    - features/manage-tasks/bulk-operations.yaml
+    - features/profile/view-profile.yaml
+    - features/profile/edit-profile.yaml
+    - features/profile/theme-settings.yaml
+    - features/profile/manage-connections.yaml
+    - features/profile/account-settings.yaml
+    - features/profile/delete-account.yaml
+    - features/messages/direct-messaging.yaml
+    - features/messages/message-notifications.yaml
+    - features/messages/sponsor-sponsee-chat.yaml
+    - features/messages/message-history.yaml
+    - features/invite-codes/generate-invite-code.yaml
+    - features/invite-codes/use-invite-code.yaml
+    - features/invite-codes/invite-code-expiry.yaml
+
+  # Edge cases and error scenarios
+  edge-cases:
+    - edge-cases/network-errors.yaml
+    - edge-cases/invalid-data.yaml
+    - edge-cases/permission-denied.yaml
+    - edge-cases/data-conflicts.yaml
+    - edge-cases/session-expiry.yaml
+
+  # Platform-specific tests
+  platform:
+    - platform-specific/ios-specific.yaml
+    - platform-specific/android-specific.yaml
+    - platform-specific/web-specific.yaml
+
+  # Complete test suite - all tests
+  full: '**/*.yaml'
+
+# Environment configuration
+env:
+  # These will be overridden by --env parameter or .env.test file
+  # Never commit actual credentials here
+  TEST_SPONSEE_EMAIL: '${TEST_SPONSEE_EMAIL}'
+  TEST_SPONSEE_PASSWORD: '${TEST_SPONSEE_PASSWORD}'
+  TEST_SPONSOR_EMAIL: '${TEST_SPONSOR_EMAIL}'
+  TEST_SPONSOR_PASSWORD: '${TEST_SPONSOR_PASSWORD}'
+  TEST_BOTH_ROLE_EMAIL: '${TEST_BOTH_ROLE_EMAIL}'
+  TEST_BOTH_ROLE_PASSWORD: '${TEST_BOTH_ROLE_PASSWORD}'
+  SUPABASE_URL: '${EXPO_PUBLIC_SUPABASE_URL}'
+  SUPABASE_ANON_KEY: '${EXPO_PUBLIC_SUPABASE_ANON_KEY}'
+
+# Test execution options
+options:
+  # Take screenshot on test failure
+  screenshotOnFailure: true
+
+  # Retry failed tests once
+  retries: 1
+
+  # Timeout for individual assertions (milliseconds)
+  assertionTimeout: 5000
+
+  # Timeout for entire flow (milliseconds) - 5 minutes default
+  flowTimeout: 300000

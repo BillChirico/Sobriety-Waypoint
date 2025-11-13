@@ -1,0 +1,52 @@
+# Shared Subflow: Login as Sponsee
+#
+# This reusable subflow handles the complete login process for a sponsee test account.
+# Use this subflow in any test that requires an authenticated sponsee user.
+#
+# Prerequisites:
+# - App must be at login screen
+# - TEST_SPONSEE_EMAIL and TEST_SPONSEE_PASSWORD must be set in environment
+#
+# Usage:
+# - runFlow: flows/shared/_login-as-sponsee.yaml
+#
+# Post-conditions:
+# - User is logged in as sponsee
+# - App navigates to home screen (tabs)
+
+appId: com.billchirico.twelvesteptracker
+
+env:
+  TEST_SPONSEE_EMAIL: '${TEST_SPONSEE_EMAIL}'
+  TEST_SPONSEE_PASSWORD: '${TEST_SPONSEE_PASSWORD}'
+
+---
+# Ensure we're on the login screen
+- assertVisible:
+    text: '12-Step Tracker'
+    timeout: 5000
+
+- assertVisible: 'Sign In'
+
+# Enter email
+- tapOn:
+    id: 'email-input'
+- inputText: '${TEST_SPONSEE_EMAIL}'
+
+# Enter password
+- tapOn:
+    id: 'password-input'
+- inputText: '${TEST_SPONSEE_PASSWORD}'
+
+# Submit login form
+- tapOn:
+    id: 'sign-in-button'
+
+# Wait for login to complete and navigate to home
+- assertVisible:
+    text: 'Welcome'
+    timeout: 10000
+
+# Verify we're on the home screen (tab navigation should be visible)
+- assertVisible:
+    id: 'tab-bar'

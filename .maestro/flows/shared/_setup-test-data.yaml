@@ -1,0 +1,39 @@
+# Shared Subflow: Setup Test Data
+#
+# This subflow prepares the test environment with necessary data.
+# Run this before executing test suites that require specific data setup.
+#
+# Prerequisites:
+# - User must be logged in as sponsor (for creating tasks)
+# - Test accounts must exist in database
+#
+# This subflow:
+# - Creates sample tasks for sponsee
+# - Creates sample messages between sponsor and sponsee
+# - Generates invite codes
+# - Sets up relationship data
+#
+# Usage:
+# - runFlow: flows/shared/_setup-test-data.yaml
+#
+# Post-conditions:
+# - Test data is ready for test execution
+
+appId: com.billchirico.twelvesteptracker
+
+---
+# This is a placeholder for future implementation
+# In Phase 1, we're documenting the structure
+# Actual implementation will be done when specific tests require it
+
+# Future implementation will include:
+# 1. Create sample tasks via API or UI
+# 2. Create sample messages
+# 3. Generate invite codes
+# 4. Set up relationships
+# 5. Seed step progress data
+
+# For now, we'll just verify we're logged in
+- assertVisible:
+    id: 'tab-bar'
+    timeout: 5000

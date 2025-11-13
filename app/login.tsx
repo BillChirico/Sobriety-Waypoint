@@ -103,6 +103,7 @@ export default function LoginScreen() {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
             <TextInput
+              testID="email-input"
               style={styles.input}
               placeholder="your@email.com"
               value={email}
@@ -119,6 +120,7 @@ export default function LoginScreen() {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
             <TextInput
+              testID="password-input"
               ref={passwordRef}
               style={styles.input}
               placeholder="••••••••"
@@ -132,6 +134,7 @@ export default function LoginScreen() {
           </View>
 
           <TouchableOpacity
+            testID="sign-in-button"
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleLogin}
             disabled={loading || googleLoading || facebookLoading}
@@ -146,6 +149,7 @@ export default function LoginScreen() {
           </View>
 
           <TouchableOpacity
+            testID="google-sign-in-button"
             style={[styles.googleButton, googleLoading && styles.buttonDisabled]}
             onPress={handleGoogleSignIn}
             disabled={loading || googleLoading || facebookLoading}
@@ -157,6 +161,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            testID="facebook-sign-in-button"
             style={[styles.facebookButton, facebookLoading && styles.buttonDisabled]}
             onPress={handleFacebookSignIn}
             disabled={loading || googleLoading || facebookLoading}
@@ -168,6 +173,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            testID="create-account-button"
             style={styles.secondaryButton}
             onPress={() => router.push('/signup')}
             disabled={loading || googleLoading || facebookLoading}

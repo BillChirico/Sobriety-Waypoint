@@ -1,0 +1,51 @@
+# Shared Subflow: Logout
+#
+# This reusable subflow handles the complete logout process.
+# Use this subflow to sign out a user at the end of a test flow.
+#
+# Prerequisites:
+# - User must be logged in
+# - App can be on any authenticated screen
+#
+# Usage:
+# - runFlow: flows/shared/_logout.yaml
+#
+# Post-conditions:
+# - User is logged out
+# - App navigates to login screen
+
+appId: com.billchirico.twelvesteptracker
+
+---
+# Navigate to Profile tab
+- tapOn:
+    id: 'tab-profile'
+
+# Wait for profile screen to load
+- assertVisible:
+    text: 'Profile'
+    timeout: 5000
+
+# Scroll down to find Sign Out button
+- scrollUntilVisible:
+    element:
+      text: 'Sign Out'
+    direction: DOWN
+    timeout: 10000
+
+# Tap Sign Out button
+- tapOn: 'Sign Out'
+
+# Handle confirmation dialog if present
+- runFlow:
+    when:
+      visible: 'Sign Out'
+    commands:
+      - tapOn: 'Sign Out'
+
+# Verify we're back at login screen
+- assertVisible:
+    text: '12-Step Tracker'
+    timeout: 5000
+
+- assertVisible: 'Sign In'

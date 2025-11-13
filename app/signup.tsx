@@ -148,6 +148,7 @@ export default function SignupScreen() {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>First Name</Text>
             <TextInput
+              testID="first-name-input"
               style={styles.input}
               placeholder="John"
               value={firstName}
@@ -162,6 +163,7 @@ export default function SignupScreen() {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Last Initial</Text>
             <TextInput
+              testID="last-initial-input"
               ref={lastInitialRef}
               style={styles.input}
               placeholder="D"
@@ -179,6 +181,7 @@ export default function SignupScreen() {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
             <TextInput
+              testID="email-input"
               ref={emailRef}
               style={styles.input}
               placeholder="your@email.com"
@@ -196,6 +199,7 @@ export default function SignupScreen() {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
             <TextInput
+              testID="password-input"
               ref={passwordRef}
               style={styles.input}
               placeholder="••••••••"
@@ -212,6 +216,7 @@ export default function SignupScreen() {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Confirm Password</Text>
             <TextInput
+              testID="confirm-password-input"
               ref={confirmPasswordRef}
               style={styles.input}
               placeholder="••••••••"
@@ -225,6 +230,7 @@ export default function SignupScreen() {
           </View>
 
           <TouchableOpacity
+            testID="create-account-button"
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleSignup}
             disabled={loading || googleLoading || facebookLoading}

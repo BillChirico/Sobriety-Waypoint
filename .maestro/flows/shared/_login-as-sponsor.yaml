@@ -1,0 +1,52 @@
+# Shared Subflow: Login as Sponsor
+#
+# This reusable subflow handles the complete login process for a sponsor test account.
+# Use this subflow in any test that requires an authenticated sponsor user.
+#
+# Prerequisites:
+# - App must be at login screen
+# - TEST_SPONSOR_EMAIL and TEST_SPONSOR_PASSWORD must be set in environment
+#
+# Usage:
+# - runFlow: flows/shared/_login-as-sponsor.yaml
+#
+# Post-conditions:
+# - User is logged in as sponsor
+# - App navigates to home screen (tabs)
+
+appId: com.billchirico.twelvesteptracker
+
+env:
+  TEST_SPONSOR_EMAIL: '${TEST_SPONSOR_EMAIL}'
+  TEST_SPONSOR_PASSWORD: '${TEST_SPONSOR_PASSWORD}'
+
+---
+# Ensure we're on the login screen
+- assertVisible:
+    text: '12-Step Tracker'
+    timeout: 5000
+
+- assertVisible: 'Sign In'
+
+# Enter email
+- tapOn:
+    id: 'email-input'
+- inputText: '${TEST_SPONSOR_EMAIL}'
+
+# Enter password
+- tapOn:
+    id: 'password-input'
+- inputText: '${TEST_SPONSOR_PASSWORD}'
+
+# Submit login form
+- tapOn:
+    id: 'sign-in-button'
+
+# Wait for login to complete and navigate to home
+- assertVisible:
+    text: 'Welcome'
+    timeout: 10000
+
+# Verify we're on the home screen (tab navigation should be visible)
+- assertVisible:
+    id: 'tab-bar'
