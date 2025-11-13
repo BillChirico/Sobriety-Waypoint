@@ -100,3 +100,153 @@ describe('privacyBeforeBreadcrumb', () => {
     expect(filtered?.data?.from).toBe('/(tabs)/index');
   });
 });
+
+describe('Edge Cases', () => {
+  it('should handle deeply nested sensitive data', () => {
+    const event: Sentry.Event = {
+      request: {
+        data: {
+          level1: {
+            level2: {
+              level3: {
+                level4: {
+                  level5: {
+                    message: 'Deeply nested sensitive message',
+                    email: 'test@example.com',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const scrubbed = privacyBeforeSend(event);
+
+    expect(scrubbed?.request?.data?.level1?.level2?.level3?.level4?.level5?.message).toBe(
+      '[Filtered]'
+    );
+    expect(scrubbed?.request?.data?.level1?.level2?.level3?.level4?.level5?.email).toBe(
+      '[Filtered]'
+    );
+  });
+
+  it('should handle circular references safely', () => {
+    const circularObj: any = { name: 'test', user_id: '123' };
+    circularObj.self = circularObj;
+
+    const event: Sentry.Event = {
+      request: {
+        data: circularObj,
+      },
+    };
+
+    // Should not throw or hang
+    expect(() => privacyBeforeSend(event)).not.toThrow();
+  });
+
+  it('should preserve non-sensitive data', () => {
+    const event: Sentry.Event = {
+      request: {
+        data: {
+          user_id: '123',
+          step_number: 5,
+          is_completed: true,
+          created_at: '2025-11-13T00:00:00Z',
+        },
+      },
+    };
+
+    const scrubbed = privacyBeforeSend(event);
+
+    expect(scrubbed?.request?.data?.user_id).toBe('123');
+    expect(scrubbed?.request?.data?.step_number).toBe(5);
+    expect(scrubbed?.request?.data?.is_completed).toBe(true);
+    expect(scrubbed?.request?.data?.created_at).toBe('2025-11-13T00:00:00Z');
+  });
+
+  it('should handle null and undefined values', () => {
+    const event: Sentry.Event = {
+      request: {
+        data: {
+          message: null,
+          content: undefined,
+          user_id: '123',
+          nested: {
+            email: null,
+            phone: undefined,
+          },
+        },
+      },
+    };
+
+    const scrubbed = privacyBeforeSend(event);
+
+    // Should not crash, and null/undefined should be preserved for non-sensitive fields
+    expect(scrubbed?.request?.data?.user_id).toBe('123');
+    expect(scrubbed?.request?.data?.message).toBe('[Filtered]');
+  });
+
+  it('should handle very large strings', () => {
+    // Generate a 50KB string
+    const largeString = 'a'.repeat(50000);
+    const event: Sentry.Event = {
+      message: `Error: ${largeString} with email test@example.com`,
+    };
+
+    // Should complete within reasonable time (not hang)
+    const start = Date.now();
+    const scrubbed = privacyBeforeSend(event);
+    const elapsed = Date.now() - start;
+
+    expect(elapsed).toBeLessThan(2000); // Should take less than 2 seconds (Jest overhead considered)
+    expect(scrubbed?.message).toContain('[email]');
+    expect(scrubbed?.message).not.toContain('test@example.com');
+  });
+
+  it('should scrub multiple email addresses in one string', () => {
+    const event: Sentry.Event = {
+      message: 'Error for users test@example.com, admin@test.org, and user123@domain.co.uk',
+    };
+
+    const scrubbed = privacyBeforeSend(event);
+
+    expect(scrubbed?.message).toBe('Error for users [email], [email], and [email]');
+    expect(scrubbed?.message).not.toContain('@');
+  });
+
+  it('should handle breadcrumb filtering edge cases', () => {
+    // Null breadcrumb data
+    const nullDataBreadcrumb: Sentry.Breadcrumb = {
+      category: 'navigation',
+      data: null as any,
+    };
+
+    expect(() => privacyBeforeBreadcrumb(nullDataBreadcrumb)).not.toThrow();
+
+    // Undefined URL in http breadcrumb
+    const undefinedUrlBreadcrumb: Sentry.Breadcrumb = {
+      category: 'http',
+      data: {
+        method: 'GET',
+        url: undefined as any,
+      },
+    };
+
+    expect(() => privacyBeforeBreadcrumb(undefinedUrlBreadcrumb)).not.toThrow();
+
+    // Empty string in navigation
+    const emptyNavBreadcrumb: Sentry.Breadcrumb = {
+      category: 'navigation',
+      data: {
+        from: '',
+        to: '',
+      },
+    };
+
+    const filtered = privacyBeforeBreadcrumb(emptyNavBreadcrumb);
+    expect(filtered?.data?.from).toBe('');
+    expect(filtered?.data?.to).toBe('');
+  });
+});

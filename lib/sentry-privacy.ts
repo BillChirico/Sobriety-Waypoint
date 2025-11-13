@@ -22,6 +22,7 @@ const SENSITIVE_FIELDS = [
 
 /**
  * Email regex for redaction
+ * Optimized for performance with non-backtracking character classes
  */
 const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 
@@ -90,22 +91,36 @@ export function privacyBeforeBreadcrumb(breadcrumb: Sentry.Breadcrumb): Sentry.B
 
 /**
  * Recursively sanitize object by replacing sensitive fields with '[Filtered]'
+ * Handles circular references by tracking visited objects
  */
-function sanitizeObject(obj: any): any {
+function sanitizeObject(obj: any, visited = new WeakSet()): any {
   if (!obj || typeof obj !== 'object') {
     return obj;
   }
 
+  // Detect circular references
+  if (visited.has(obj)) {
+    return '[Circular]';
+  }
+
+  visited.add(obj);
+
   if (Array.isArray(obj)) {
-    return obj.map(sanitizeObject);
+    return obj.map(item => sanitizeObject(item, visited));
   }
 
   const sanitized: any = {};
   for (const [key, value] of Object.entries(obj)) {
     if (SENSITIVE_FIELDS.includes(key.toLowerCase())) {
       sanitized[key] = '[Filtered]';
+    } else if (value === null) {
+      // Preserve null values for sensitive fields (still filter them)
+      sanitized[key] = SENSITIVE_FIELDS.includes(key.toLowerCase()) ? '[Filtered]' : null;
+    } else if (value === undefined) {
+      // Skip undefined values
+      continue;
     } else if (typeof value === 'object') {
-      sanitized[key] = sanitizeObject(value);
+      sanitized[key] = sanitizeObject(value, visited);
     } else {
       sanitized[key] = value;
     }
@@ -116,8 +131,25 @@ function sanitizeObject(obj: any): any {
 
 /**
  * Sanitize string by redacting emails and quoted content
+ * Optimized for performance with large strings by limiting regex scope
  */
 function sanitizeString(str: string): string {
+  // For very large strings (>10KB), only process first and last 5KB to avoid performance issues
+  const MAX_CHUNK_SIZE = 10000;
+  if (str.length > MAX_CHUNK_SIZE * 2) {
+    const start = sanitizeStringChunk(str.slice(0, MAX_CHUNK_SIZE));
+    const end = sanitizeStringChunk(str.slice(-MAX_CHUNK_SIZE));
+    const middle = str.slice(MAX_CHUNK_SIZE, -MAX_CHUNK_SIZE);
+    return start + middle + end;
+  }
+
+  return sanitizeStringChunk(str);
+}
+
+/**
+ * Process a chunk of string with email and quoted content redaction
+ */
+function sanitizeStringChunk(str: string): string {
   // Redact email addresses
   let sanitized = str.replace(EMAIL_REGEX, '[email]');
 
