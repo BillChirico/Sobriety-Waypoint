@@ -36,6 +36,59 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import packageJson from '../../package.json';
 
+// Component for displaying sponsee days sober using the hook
+function SponseeDaysDisplay({
+  relationship,
+  theme,
+  onDisconnect,
+  taskStats,
+}: {
+  relationship: any;
+  theme: any;
+  onDisconnect: () => void;
+  taskStats?: { total: number; completed: number };
+}) {
+  const { daysSober } = useDaysSober(relationship.sponsee_id);
+
+  return (
+    <View style={createStyles(theme).relationshipCard}>
+      <View style={createStyles(theme).relationshipHeader}>
+        <View style={createStyles(theme).avatar}>
+          <Text style={createStyles(theme).avatarText}>
+            {(relationship.sponsee?.first_name || '?')[0].toUpperCase()}
+          </Text>
+        </View>
+        <View style={createStyles(theme).relationshipInfo}>
+          <Text style={createStyles(theme).relationshipName}>
+            {relationship.sponsee?.first_name} {relationship.sponsee?.last_initial}.
+          </Text>
+          <Text style={createStyles(theme).relationshipMeta}>
+            Connected {new Date(relationship.connected_at).toLocaleDateString()}
+          </Text>
+          {relationship.sponsee?.sobriety_date && (
+            <View style={createStyles(theme).sobrietyInfo}>
+              <Heart size={14} color={theme.primary} fill={theme.primary} />
+              <Text style={createStyles(theme).sobrietyText}>{daysSober} days sober</Text>
+            </View>
+          )}
+          {taskStats && (
+            <View style={createStyles(theme).taskStatsInfo}>
+              <CheckCircle size={14} color="#10b981" />
+              <Text style={createStyles(theme).taskStatsText}>
+                {taskStats.completed}/{taskStats.total} tasks completed
+              </Text>
+            </View>
+          )}
+        </View>
+      </View>
+      <TouchableOpacity style={createStyles(theme).disconnectButton} onPress={onDisconnect}>
+        <UserMinus size={18} color="#ef4444" />
+        <Text style={createStyles(theme).disconnectText}>Disconnect</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
 export default function ProfileScreen() {
   const { profile, signOut, refreshProfile } = useAuth();
   const { theme, themeMode, setThemeMode } = useTheme();
@@ -713,61 +766,21 @@ export default function ProfileScreen() {
           </View>
         ) : sponseeRelationships.length > 0 ? (
           <>
-            {sponseeRelationships.map(rel => {
-              const daysSober = rel.sponsee?.sobriety_date
-                ? Math.floor(
-                    (new Date().getTime() - new Date(rel.sponsee.sobriety_date).getTime()) /
-                      (1000 * 60 * 60 * 24)
+            {sponseeRelationships.map(rel => (
+              <SponseeDaysDisplay
+                key={rel.id}
+                relationship={rel}
+                theme={theme}
+                taskStats={sponseeTaskStats[rel.sponsee_id]}
+                onDisconnect={() =>
+                  disconnectRelationship(
+                    rel.id,
+                    true,
+                    `${rel.sponsee?.first_name} ${rel.sponsee?.last_initial}.`
                   )
-                : 0;
-              return (
-                <View key={rel.id} style={styles.relationshipCard}>
-                  <View style={styles.relationshipHeader}>
-                    <View style={styles.avatar}>
-                      <Text style={styles.avatarText}>
-                        {(rel.sponsee?.first_name || '?')[0].toUpperCase()}
-                      </Text>
-                    </View>
-                    <View style={styles.relationshipInfo}>
-                      <Text style={styles.relationshipName}>
-                        {rel.sponsee?.first_name} {rel.sponsee?.last_initial}.
-                      </Text>
-                      <Text style={styles.relationshipMeta}>
-                        Connected {new Date(rel.connected_at).toLocaleDateString()}
-                      </Text>
-                      {rel.sponsee?.sobriety_date && (
-                        <View style={styles.sobrietyInfo}>
-                          <Heart size={14} color={theme.primary} fill={theme.primary} />
-                          <Text style={styles.sobrietyText}>{daysSober} days sober</Text>
-                        </View>
-                      )}
-                      {sponseeTaskStats[rel.sponsee_id] && (
-                        <View style={styles.taskStatsInfo}>
-                          <CheckCircle size={14} color="#10b981" />
-                          <Text style={styles.taskStatsText}>
-                            {sponseeTaskStats[rel.sponsee_id].completed}/
-                            {sponseeTaskStats[rel.sponsee_id].total} tasks completed
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                  </View>
-                  <TouchableOpacity
-                    style={styles.disconnectButton}
-                    onPress={() =>
-                      disconnectRelationship(
-                        rel.id,
-                        true,
-                        `${rel.sponsee?.first_name} ${rel.sponsee?.last_initial}.`
-                      )
-                    }
-                  >
-                    <UserMinus size={18} color="#ef4444" />
-                    <Text style={styles.disconnectText}>Disconnect</Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
+                }
+              />
+            ))}
             <TouchableOpacity style={styles.actionButton} onPress={generateInviteCode}>
               <Share2 size={20} color={theme.primary} />
               <Text style={styles.actionButtonText}>Generate New Invite Code</Text>
