@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
-import type { SlipUp } from '@/types/database';
+import type { SlipUp, Profile } from '@/types/database';
 import type { PostgrestError } from '@supabase/supabase-js';
 
 export interface DaysSoberResult {
@@ -18,12 +18,14 @@ export function useDaysSober(userId?: string): DaysSoberResult {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<PostgrestError | Error | null>(null);
   const [mostRecentSlipUp, setMostRecentSlipUp] = useState<SlipUp | null>(null);
+  const [fetchedProfile, setFetchedProfile] = useState<Profile | null>(null);
 
   const targetUserId = userId || user?.id;
-  const targetProfile = userId ? null : profile;
+  const isCurrentUser = !userId || userId === user?.id;
+  const targetProfile = isCurrentUser ? profile : fetchedProfile;
 
   useEffect(() => {
-    async function fetchSlipUps() {
+    async function fetchData() {
       if (!targetUserId) {
         setLoading(false);
         return;
@@ -33,6 +35,19 @@ export function useDaysSober(userId?: string): DaysSoberResult {
         setLoading(true);
         setError(null);
 
+        // Fetch profile if not current user
+        if (!isCurrentUser) {
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', targetUserId)
+            .single();
+
+          if (profileError) throw profileError;
+          setFetchedProfile(profileData);
+        }
+
+        // Fetch most recent slip-up
         const { data, error: fetchError } = await supabase
           .from('slip_ups')
           .select('*')
@@ -50,8 +65,8 @@ export function useDaysSober(userId?: string): DaysSoberResult {
       }
     }
 
-    fetchSlipUps();
-  }, [targetUserId]);
+    fetchData();
+  }, [targetUserId, isCurrentUser]);
 
   const result = useMemo(() => {
     const sobrietyDate = targetProfile?.sobriety_date;

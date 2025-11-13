@@ -304,3 +304,86 @@ describe('useDaysSober - calculation logic', () => {
     });
   });
 });
+
+describe('useDaysSober - different user IDs', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2024-07-01'));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('should fetch slip-ups for the specified user ID', async () => {
+    const differentUserId = 'different-user-id';
+    const differentUserProfile = {
+      id: differentUserId,
+      sobriety_date: '2024-02-01',
+      first_name: 'Jane',
+      last_initial: 'D',
+    };
+
+    const mockSlipUp = {
+      id: 'slip-up-2',
+      user_id: differentUserId,
+      slip_up_date: '2024-06-20',
+      recovery_restart_date: '2024-06-21',
+      notes: 'Different user slip-up',
+      created_at: '2024-06-20T10:00:00Z',
+    };
+
+    // Mock profile fetch first, then slip-ups fetch
+    const mockFrom = jest.fn((table: string) => {
+      const mockSelect = jest.fn().mockReturnThis();
+
+      if (table === 'profiles') {
+        const mockEq = jest.fn().mockReturnThis();
+        const mockSingle = jest.fn().mockResolvedValue({
+          data: differentUserProfile,
+          error: null,
+        });
+
+        mockSelect.mockReturnValue({ eq: mockEq });
+        mockEq.mockReturnValue({ single: mockSingle });
+      } else if (table === 'slip_ups') {
+        const mockEq = jest.fn().mockReturnThis();
+        const mockOrder = jest.fn().mockReturnThis();
+        const mockLimit = jest.fn().mockResolvedValue({
+          data: [mockSlipUp],
+          error: null,
+        });
+
+        mockSelect.mockReturnValue({ eq: mockEq });
+        mockEq.mockReturnValue({ order: mockOrder });
+        mockOrder.mockReturnValue({ limit: mockLimit });
+      }
+
+      return { select: mockSelect };
+    });
+
+    (supabase.from as jest.Mock).mockImplementation(mockFrom);
+
+    const { result } = renderHook(() => useDaysSober(differentUserId));
+
+    await act(async () => {
+      await jest.runAllTimersAsync();
+    });
+
+    // Verify that profile was fetched
+    expect(supabase.from).toHaveBeenCalledWith('profiles');
+
+    // Verify that slip-ups were fetched for the correct user
+    expect(supabase.from).toHaveBeenCalledWith('slip_ups');
+
+    expect(result.current.loading).toBe(false);
+    expect(result.current.hasSlipUps).toBe(true);
+
+    // recovery_restart_date is 2024-06-21, current date is 2024-07-01
+    // Difference: 10 days
+    expect(result.current.daysSober).toBe(10);
+    expect(result.current.journeyStartDate).toBe('2024-02-01');
+    expect(result.current.currentStreakStartDate).toBe('2024-06-21');
+  });
+});
