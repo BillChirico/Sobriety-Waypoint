@@ -1,0 +1,227 @@
+appId: com.billchirico.twelvesteptracker
+
+env:
+  SPONSOR_EMAIL: e2e.sponsor@twelvesteptracker.app
+  SPONSOR_PASSWORD: TestPassword123!
+
+---
+# Task Management Flow: Create, Edit, Complete, Delete Tasks
+# Tests complete task lifecycle
+
+- launchApp
+
+# ============================================================================
+# LOGIN AS SPONSOR
+# ============================================================================
+
+- assertVisible: 'Login'
+
+- tapOn:
+    id: 'login-email-input'
+- inputText: '${SPONSOR_EMAIL}'
+
+- tapOn:
+    id: 'login-password-input'
+- inputText: '${SPONSOR_PASSWORD}'
+
+- tapOn: 'Sign In'
+
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 10000
+
+# ============================================================================
+# CREATE NEW TASK
+# ============================================================================
+
+- tapOn: 'Tasks'
+- assertVisible: 'Tasks'
+
+- tapOn:
+    id: 'create-task-button'
+
+- assertVisible: 'Create Task'
+
+# Fill task form
+- tapOn:
+    id: 'task-title-input'
+- inputText: 'Test Task for E2E'
+
+- tapOn:
+    id: 'task-description-input'
+- inputText: 'This is a test task for end-to-end testing'
+
+# Select step
+- runFlow:
+    when:
+      visible: 'Select Step'
+    commands:
+      - tapOn: 'Select Step'
+      - tapOn: 'Step 2'
+
+# Select sponsee
+- tapOn:
+    id: 'select-sponsee'
+- tapOn:
+    id: 'sponsee-list-item-0'
+
+# Submit task
+- tapOn: 'Create Task'
+
+# Verify task created
+- assertVisible:
+    text: 'Task created successfully'
+    timeout: 5000
+
+- assertVisible: 'Test Task for E2E'
+
+# ============================================================================
+# EDIT TASK
+# ============================================================================
+
+# Open task details
+- tapOn: 'Test Task for E2E'
+
+- assertVisible: 'Task Details'
+
+# Find and tap edit button
+- tapOn:
+    id: 'edit-task-button'
+
+- assertVisible: 'Edit Task'
+
+# Modify title
+- tapOn:
+    id: 'task-title-input'
+- clearKeychain
+- inputText: 'Updated Test Task'
+
+# Modify description
+- tapOn:
+    id: 'task-description-input'
+- clearKeychain
+- inputText: 'This task has been updated via E2E test'
+
+# Save changes
+- tapOn: 'Save Changes'
+
+# Verify update successful
+- assertVisible:
+    text: 'Task updated successfully'
+    timeout: 5000
+
+- assertVisible: 'Updated Test Task'
+
+# Go back to tasks list
+- tapOn:
+    id: 'back-button'
+
+# Verify updated task in list
+- assertVisible: 'Updated Test Task'
+
+# ============================================================================
+# FILTER TASKS BY STATUS
+# ============================================================================
+
+# Test filter functionality
+- runFlow:
+    when:
+      visible:
+        id: 'filter-button'
+    commands:
+      - tapOn:
+          id: 'filter-button'
+
+      # Filter by pending
+      - tapOn: 'Pending'
+      - assertVisible: 'Updated Test Task'
+
+      # Filter by completed
+      - tapOn:
+          id: 'filter-button'
+      - tapOn: 'Completed'
+
+      # Should not see our pending task
+      - assertNotVisible: 'Updated Test Task'
+
+      # Reset filter
+      - tapOn:
+          id: 'filter-button'
+      - tapOn: 'All'
+
+# ============================================================================
+# MARK TASK AS COMPLETE
+# ============================================================================
+
+- tapOn: 'Updated Test Task'
+
+- assertVisible: 'Task Details'
+
+# Mark as complete
+- tapOn:
+    id: 'mark-complete-button'
+
+# Verify completion
+- assertVisible:
+    text: 'Task completed'
+    timeout: 5000
+
+# Verify status changed
+- assertVisible: 'Completed'
+
+# Go back
+- tapOn:
+    id: 'back-button'
+
+# ============================================================================
+# DELETE TASK
+# ============================================================================
+
+# Open task again
+- tapOn: 'Updated Test Task'
+
+- assertVisible: 'Task Details'
+
+# Find delete button
+- scrollUntilVisible:
+    element:
+      id: 'delete-task-button'
+    direction: DOWN
+    timeout: 5000
+
+- tapOn:
+    id: 'delete-task-button'
+
+# Confirm deletion
+- assertVisible: 'Confirm Delete'
+- tapOn: 'Confirm'
+
+# Verify deletion successful
+- assertVisible:
+    text: 'Task deleted'
+    timeout: 5000
+
+# Verify task no longer in list
+- assertNotVisible: 'Updated Test Task'
+
+# ============================================================================
+# TEST VALIDATION ERRORS
+# ============================================================================
+
+# Try to create task with empty fields
+- tapOn:
+    id: 'create-task-button'
+
+- assertVisible: 'Create Task'
+
+# Submit without filling fields
+- tapOn: 'Create Task'
+
+# Should show validation errors
+- assertVisible:
+    text: 'Title is required'
+    timeout: 3000
+
+# Cancel
+- tapOn:
+    id: 'cancel-button'

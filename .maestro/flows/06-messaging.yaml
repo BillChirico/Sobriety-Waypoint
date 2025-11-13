@@ -1,0 +1,231 @@
+appId: com.billchirico.twelvesteptracker
+
+env:
+  USER1_EMAIL: e2e.user1@twelvesteptracker.app
+  USER1_PASSWORD: TestPassword123!
+  USER2_EMAIL: e2e.user2@twelvesteptracker.app
+  USER2_PASSWORD: TestPassword123!
+
+---
+# Messaging Flow: Send, Receive, View Message History
+# Tests complete messaging functionality
+
+- launchApp
+
+# ============================================================================
+# LOGIN AS FIRST USER
+# ============================================================================
+
+- assertVisible: 'Login'
+
+- tapOn:
+    id: 'login-email-input'
+- inputText: '${USER1_EMAIL}'
+
+- tapOn:
+    id: 'login-password-input'
+- inputText: '${USER1_PASSWORD}'
+
+- tapOn: 'Sign In'
+
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 10000
+
+# ============================================================================
+# NAVIGATE TO MESSAGES
+# ============================================================================
+
+- tapOn: 'Messages'
+- assertVisible: 'Messages'
+
+# ============================================================================
+# START NEW CONVERSATION
+# ============================================================================
+
+# Check if there's an existing conversation or need to start new one
+- runFlow:
+    when:
+      visible:
+        id: 'start-conversation-button'
+    commands:
+      - tapOn:
+          id: 'start-conversation-button'
+
+      # Select recipient from list
+      - assertVisible: 'Select Recipient'
+      - tapOn:
+          id: 'recipient-list-item-0'
+
+# ============================================================================
+# SEND MESSAGE
+# ============================================================================
+
+- assertVisible:
+    id: 'message-input'
+
+# Type message
+- tapOn:
+    id: 'message-input'
+- inputText: 'Hello! This is a test message from E2E testing.'
+
+# Send message
+- tapOn:
+    id: 'send-message-button'
+
+# Verify message appears in conversation
+- assertVisible:
+    text: 'Hello! This is a test message from E2E testing.'
+    timeout: 5000
+
+# ============================================================================
+# SEND MULTIPLE MESSAGES
+# ============================================================================
+
+# Send second message
+- tapOn:
+    id: 'message-input'
+- inputText: 'How are you doing today?'
+
+- tapOn:
+    id: 'send-message-button'
+
+- assertVisible:
+    text: 'How are you doing today?'
+    timeout: 3000
+
+# Send third message
+- tapOn:
+    id: 'message-input'
+- inputText: 'Looking forward to our next meeting!'
+
+- tapOn:
+    id: 'send-message-button'
+
+- assertVisible:
+    text: 'Looking forward to our next meeting!'
+    timeout: 3000
+
+# ============================================================================
+# VIEW MESSAGE HISTORY
+# ============================================================================
+
+# Scroll up to see older messages
+- swipe:
+    direction: DOWN
+    duration: 500
+
+# Verify all messages are visible
+- assertVisible: 'Hello! This is a test message'
+- assertVisible: 'How are you doing today?'
+- assertVisible: 'Looking forward to our next meeting!'
+
+# ============================================================================
+# TEST MESSAGE TIMESTAMP
+# ============================================================================
+
+# Messages should have timestamps
+- assertVisible:
+    id: 'message-timestamp'
+    timeout: 2000
+
+# ============================================================================
+# GO BACK TO MESSAGES LIST
+# ============================================================================
+
+- tapOn:
+    id: 'back-button'
+
+- assertVisible: 'Messages'
+
+# Verify conversation appears in list
+- assertVisible:
+    id: 'conversation-item'
+
+# Verify last message preview is shown
+- assertVisible: 'Looking forward to our next meeting!'
+
+# ============================================================================
+# TEST RECEIVING MESSAGES (SIMULATION)
+# ============================================================================
+
+# In a real scenario, we'd switch users or use push notifications
+# For now, just verify the conversation list updates
+
+# Tap on conversation again
+- tapOn:
+    id: 'conversation-item-0'
+
+# Verify we can still see message history
+- assertVisible: 'Hello! This is a test message'
+
+# ============================================================================
+# TEST EMPTY MESSAGE VALIDATION
+# ============================================================================
+
+# Try to send empty message
+- tapOn:
+    id: 'message-input'
+
+# Don't type anything, just try to send
+- tapOn:
+    id: 'send-message-button'
+
+# Should not send empty message (button should be disabled or show error)
+# This might not show an error if button is properly disabled
+
+# ============================================================================
+# TEST LONG MESSAGE
+# ============================================================================
+
+- tapOn:
+    id: 'message-input'
+- inputText: 'This is a very long message to test how the app handles lengthy text input. It should wrap properly and be fully visible in the message bubble. This helps ensure our UI can handle various message lengths gracefully.'
+
+- tapOn:
+    id: 'send-message-button'
+
+# Verify long message appears correctly
+- assertVisible:
+    text: 'This is a very long message'
+    timeout: 3000
+
+# ============================================================================
+# TEST MESSAGE SEARCH (IF AVAILABLE)
+# ============================================================================
+
+- runFlow:
+    when:
+      visible:
+        id: 'search-messages-button'
+    commands:
+      - tapOn:
+          id: 'search-messages-button'
+
+      - tapOn:
+          id: 'search-input'
+      - inputText: 'test message'
+
+      # Should find our first message
+      - assertVisible: 'Hello! This is a test message'
+
+      # Clear search
+      - tapOn:
+          id: 'clear-search-button'
+
+# ============================================================================
+# VERIFY REAL-TIME UPDATES (IF SUPPORTED)
+# ============================================================================
+
+# Send another message to test real-time functionality
+- tapOn:
+    id: 'message-input'
+- inputText: 'Testing real-time updates'
+
+- tapOn:
+    id: 'send-message-button'
+
+- assertVisible:
+    text: 'Testing real-time updates'
+    timeout: 5000
+# Message should appear immediately without refresh

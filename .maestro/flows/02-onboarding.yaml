@@ -1,0 +1,167 @@
+appId: com.billchirico.twelvesteptracker
+
+env:
+  ONBOARDING_EMAIL: e2e.onboarding@twelvesteptracker.app
+  ONBOARDING_PASSWORD: TestPassword123!
+
+---
+# Onboarding Flow: New User Role Selection
+# Tests the complete onboarding journey for new users
+
+- launchApp
+
+# ============================================================================
+# CREATE NEW USER (prerequisites for onboarding)
+# ============================================================================
+
+- assertVisible: 'Login'
+- tapOn: "Don't have an account? Sign up"
+- assertVisible: 'Create Account'
+
+- tapOn:
+    id: 'signup-email-input'
+- inputText: '${ONBOARDING_EMAIL}'
+
+- tapOn:
+    id: 'signup-password-input'
+- inputText: '${ONBOARDING_PASSWORD}'
+
+- tapOn:
+    id: 'signup-confirm-password-input'
+- inputText: '${ONBOARDING_PASSWORD}'
+
+- tapOn: 'Sign Up'
+
+# ============================================================================
+# ONBOARDING - SPONSEE ROLE
+# ============================================================================
+
+- assertVisible:
+    text: 'Welcome to 12-Step Tracker'
+    timeout: 10000
+
+- assertVisible: 'Select your role to get started'
+
+# Verify all role options are visible
+- assertVisible: 'Sponsee'
+- assertVisible: 'Sponsor'
+- assertVisible: 'Both'
+
+# Select Sponsee role
+- tapOn: 'Sponsee'
+
+# Verify selection is highlighted/active
+- assertVisible:
+    id: 'role-sponsee-selected'
+    timeout: 2000
+
+- tapOn: 'Continue'
+
+# Should show home screen with sponsee-specific content
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 5000
+
+# Verify sponsee sees relevant sections
+- assertVisible: 'My Sponsor'
+- assertVisible: 'My Tasks'
+
+# ============================================================================
+# TEST: SPONSOR ROLE (via new account)
+# ============================================================================
+
+# Sign out
+- tapOn: 'Profile'
+- scrollUntilVisible:
+    element:
+      text: 'Sign Out'
+    direction: DOWN
+- tapOn: 'Sign Out'
+
+# Create another user for sponsor test
+- tapOn: "Don't have an account? Sign up"
+
+- tapOn:
+    id: 'signup-email-input'
+- inputText: 'e2e.sponsor.test@twelvesteptracker.app'
+
+- tapOn:
+    id: 'signup-password-input'
+- inputText: '${ONBOARDING_PASSWORD}'
+
+- tapOn:
+    id: 'signup-confirm-password-input'
+- inputText: '${ONBOARDING_PASSWORD}'
+
+- tapOn: 'Sign Up'
+
+- assertVisible:
+    text: 'Welcome to 12-Step Tracker'
+    timeout: 10000
+
+# Select Sponsor role
+- tapOn: 'Sponsor'
+
+- assertVisible:
+    id: 'role-sponsor-selected'
+    timeout: 2000
+
+- tapOn: 'Continue'
+
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 5000
+
+# Verify sponsor sees relevant sections
+- assertVisible: 'My Sponsees'
+- assertVisible: 'Invite Code'
+
+# ============================================================================
+# TEST: BOTH ROLES
+# ============================================================================
+
+# Sign out
+- tapOn: 'Profile'
+- scrollUntilVisible:
+    element:
+      text: 'Sign Out'
+    direction: DOWN
+- tapOn: 'Sign Out'
+
+# Create user for "both" role test
+- tapOn: "Don't have an account? Sign up"
+
+- tapOn:
+    id: 'signup-email-input'
+- inputText: 'e2e.both.test@twelvesteptracker.app'
+
+- tapOn:
+    id: 'signup-password-input'
+- inputText: '${ONBOARDING_PASSWORD}'
+
+- tapOn:
+    id: 'signup-confirm-password-input'
+- inputText: '${ONBOARDING_PASSWORD}'
+
+- tapOn: 'Sign Up'
+
+- assertVisible:
+    text: 'Welcome to 12-Step Tracker'
+    timeout: 10000
+
+# Select Both role
+- tapOn: 'Both'
+
+- assertVisible:
+    id: 'role-both-selected'
+    timeout: 2000
+
+- tapOn: 'Continue'
+
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 5000
+
+# Verify both role sees all sections
+- assertVisible: 'My Sponsor'
+- assertVisible: 'My Sponsees'

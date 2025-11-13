@@ -1,0 +1,189 @@
+appId: com.billchirico.twelvesteptracker
+
+env:
+  SPONSEE_EMAIL: e2e.sponsee@twelvesteptracker.app
+  SPONSEE_PASSWORD: TestPassword123!
+  INVITE_CODE: TEST123
+
+---
+# Sponsee Flow: Use Invite Code, View Tasks, Send Messages
+# Tests sponsee-specific functionality
+
+- launchApp
+
+# ============================================================================
+# LOGIN AS SPONSEE
+# ============================================================================
+
+- assertVisible: 'Login'
+
+- tapOn:
+    id: 'login-email-input'
+- inputText: '${SPONSEE_EMAIL}'
+
+- tapOn:
+    id: 'login-password-input'
+- inputText: '${SPONSEE_PASSWORD}'
+
+- tapOn: 'Sign In'
+
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 10000
+
+# ============================================================================
+# USE INVITE CODE TO CONNECT WITH SPONSOR
+# ============================================================================
+
+- tapOn: 'Profile'
+- assertVisible: 'Account Settings'
+
+# Find invite code input section
+- scrollUntilVisible:
+    element:
+      text: 'Connect with Sponsor'
+    direction: DOWN
+    timeout: 5000
+
+# Only enter invite code if not already connected
+- runFlow:
+    when:
+      visible:
+        id: 'invite-code-input'
+    commands:
+      - tapOn:
+          id: 'invite-code-input'
+      - inputText: '${INVITE_CODE}'
+
+      - tapOn: 'Connect'
+
+      # Verify connection successful
+      - assertVisible:
+          text: 'Connected with sponsor'
+          timeout: 5000
+
+# ============================================================================
+# VIEW ASSIGNED TASKS
+# ============================================================================
+
+- tapOn: 'Dashboard'
+
+- tapOn: 'Tasks'
+- assertVisible: 'My Tasks'
+
+# Verify tasks are visible
+- assertVisible:
+    id: 'tasks-list'
+
+# Check for task items (may be none if sponsor hasn't assigned)
+- runFlow:
+    when:
+      visible: 'Complete Step 1 Reading'
+    commands:
+      # View task details
+      - tapOn: 'Complete Step 1 Reading'
+
+      - assertVisible: 'Task Details'
+      - assertVisible: 'Step 1'
+
+# ============================================================================
+# COMPLETE A TASK
+# ============================================================================
+
+# If task exists, complete it
+- runFlow:
+    when:
+      visible: 'Complete Step 1 Reading'
+    commands:
+      - tapOn: 'Complete Step 1 Reading'
+
+      - assertVisible: 'Task Details'
+
+      # Mark as complete
+      - tapOn:
+          id: 'mark-complete-button'
+
+      # Verify completion
+      - assertVisible:
+          text: 'Task completed'
+          timeout: 5000
+
+      # Go back to tasks list
+      - tapOn:
+          id: 'back-button'
+
+      # Verify task shows as completed
+      - assertVisible:
+          text: 'Completed'
+          timeout: 3000
+
+# ============================================================================
+# SEND MESSAGE TO SPONSOR
+# ============================================================================
+
+- tapOn: 'Messages'
+- assertVisible: 'Messages'
+
+# Start or continue conversation with sponsor
+- runFlow:
+    when:
+      visible:
+        id: 'sponsor-conversation'
+    commands:
+      - tapOn:
+          id: 'sponsor-conversation'
+    else:
+      # Start new conversation
+      - tapOn:
+          id: 'start-conversation-button'
+      - tapOn: 'My Sponsor'
+
+# Type and send message
+- tapOn:
+    id: 'message-input'
+- inputText: 'I completed the reading assignment!'
+
+- tapOn:
+    id: 'send-message-button'
+
+# Verify message sent
+- assertVisible:
+    text: 'I completed the reading assignment!'
+    timeout: 5000
+
+# ============================================================================
+# VIEW SPONSOR INFORMATION
+# ============================================================================
+
+- tapOn: 'Dashboard'
+
+# Check sponsor section
+- scrollUntilVisible:
+    element:
+      text: 'My Sponsor'
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: 'My Sponsor'
+
+# Verify sponsor details are displayed
+- assertVisible:
+    id: 'sponsor-info'
+
+# ============================================================================
+# CHECK NOTIFICATIONS
+# ============================================================================
+
+# Navigate to profile for notifications
+- tapOn: 'Profile'
+
+# Check for notifications section
+- scrollUntilVisible:
+    element:
+      id: 'notifications-section'
+    direction: DOWN
+    timeout: 5000
+
+# Verify notifications are accessible
+- assertVisible:
+    id: 'notifications-section'

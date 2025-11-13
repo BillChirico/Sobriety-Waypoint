@@ -1,0 +1,188 @@
+appId: com.billchirico.twelvesteptracker
+
+env:
+  SPONSOR_EMAIL: e2e.sponsor@twelvesteptracker.app
+  SPONSOR_PASSWORD: TestPassword123!
+
+---
+# Sponsor Flow: Create Invite, Assign Tasks, Send Messages
+# Tests sponsor-specific functionality
+
+- launchApp
+
+# ============================================================================
+# LOGIN AS SPONSOR
+# ============================================================================
+
+- assertVisible: 'Login'
+
+- tapOn:
+    id: 'login-email-input'
+- inputText: '${SPONSOR_EMAIL}'
+
+- tapOn:
+    id: 'login-password-input'
+- inputText: '${SPONSOR_PASSWORD}'
+
+- tapOn: 'Sign In'
+
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 10000
+
+# ============================================================================
+# CREATE INVITE CODE
+# ============================================================================
+
+- tapOn: 'Profile'
+- assertVisible: 'Account Settings'
+
+# Find invite code section
+- scrollUntilVisible:
+    element:
+      text: 'Invite Code'
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: 'Invite Code'
+
+# Should show either existing code or generate button
+- runFlow:
+    when:
+      visible: 'Generate New Code'
+    commands:
+      - tapOn: 'Generate New Code'
+      - assertVisible:
+          text: 'Invite code generated'
+          timeout: 5000
+
+# Verify invite code is displayed
+- assertVisible:
+    id: 'invite-code-display'
+    timeout: 3000
+
+# ============================================================================
+# VIEW SPONSEES
+# ============================================================================
+
+- tapOn: 'Dashboard'
+- assertVisible: 'My Sponsees'
+
+# Check sponsees list
+- scrollUntilVisible:
+    element:
+      id: 'sponsees-section'
+    direction: DOWN
+    timeout: 5000
+
+# Verify can see sponsee list (may be empty)
+- assertVisible:
+    id: 'sponsees-list'
+
+# ============================================================================
+# ASSIGN TASK TO SPONSEE
+# ============================================================================
+
+# Navigate to tasks tab
+- tapOn: 'Tasks'
+- assertVisible: 'Tasks'
+
+# Create new task
+- tapOn:
+    id: 'create-task-button'
+
+- assertVisible: 'Create Task'
+
+# Fill task details
+- tapOn:
+    id: 'task-title-input'
+- inputText: 'Complete Step 1 Reading'
+
+- tapOn:
+    id: 'task-description-input'
+- inputText: 'Read the first chapter of the Big Book and take notes'
+
+# Select step (if dropdown exists)
+- runFlow:
+    when:
+      visible: 'Select Step'
+    commands:
+      - tapOn: 'Select Step'
+      - tapOn: 'Step 1'
+
+# Select sponsee from list
+- tapOn:
+    id: 'select-sponsee'
+
+# Assuming first sponsee in list
+- tapOn:
+    id: 'sponsee-list-item-0'
+
+# Submit task
+- tapOn: 'Create Task'
+
+# Verify task created
+- assertVisible:
+    text: 'Task created successfully'
+    timeout: 5000
+
+- assertVisible: 'Complete Step 1 Reading'
+
+# ============================================================================
+# SEND MESSAGE TO SPONSEE
+# ============================================================================
+
+- tapOn: 'Messages'
+- assertVisible: 'Messages'
+
+# Start new conversation or select existing
+- runFlow:
+    when:
+      visible:
+        id: 'start-conversation-button'
+    commands:
+      - tapOn:
+          id: 'start-conversation-button'
+      - tapOn:
+          id: 'sponsee-list-item-0'
+    else:
+      # Select existing conversation
+      - tapOn:
+          id: 'conversation-item-0'
+
+# Type and send message
+- tapOn:
+    id: 'message-input'
+- inputText: 'Great job on completing your tasks!'
+
+- tapOn:
+    id: 'send-message-button'
+
+# Verify message sent
+- assertVisible:
+    text: 'Great job on completing your tasks!'
+    timeout: 5000
+
+# ============================================================================
+# VIEW TASK PROGRESS
+# ============================================================================
+
+- tapOn: 'Tasks'
+- assertVisible: 'Tasks'
+
+# View task details
+- tapOn: 'Complete Step 1 Reading'
+
+- assertVisible: 'Task Details'
+
+# Verify task information is displayed
+- assertVisible: 'Step 1'
+- assertVisible: 'Read the first chapter'
+
+# Check status
+- assertVisible:
+    id: 'task-status'
+
+# Go back
+- tapOn:
+    id: 'back-button'

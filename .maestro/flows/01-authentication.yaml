@@ -1,0 +1,133 @@
+appId: com.billchirico.twelvesteptracker
+
+env:
+  TEST_EMAIL: e2e.test@twelvesteptracker.app
+  TEST_PASSWORD: TestPassword123!
+  NEW_USER_EMAIL: e2e.newuser@twelvesteptracker.app
+  NEW_USER_PASSWORD: NewPassword123!
+
+---
+# Authentication Flow: Sign Up, Sign Out, and Sign In
+# Tests the complete user authentication journey
+
+- launchApp
+
+# ============================================================================
+# SIGN UP - New User Registration
+# ============================================================================
+
+- assertVisible: 'Login'
+- tapOn: "Don't have an account? Sign up"
+- assertVisible: 'Create Account'
+
+# Fill registration form
+- tapOn:
+    id: 'signup-email-input'
+- inputText: '${NEW_USER_EMAIL}'
+
+- tapOn:
+    id: 'signup-password-input'
+- inputText: '${NEW_USER_PASSWORD}'
+
+- tapOn:
+    id: 'signup-confirm-password-input'
+- inputText: '${NEW_USER_PASSWORD}'
+
+# Submit registration
+- tapOn: 'Sign Up'
+
+# Wait for onboarding screen (confirms account created)
+- assertVisible:
+    text: 'Welcome to 12-Step Tracker'
+    timeout: 10000
+
+# ============================================================================
+# COMPLETE ONBOARDING (to access app)
+# ============================================================================
+
+- tapOn: 'Sponsee'
+- tapOn: 'Continue'
+
+# Wait for home screen
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 5000
+
+# ============================================================================
+# SIGN OUT
+# ============================================================================
+
+- tapOn: 'Profile'
+- assertVisible: 'Account Settings'
+
+- scrollUntilVisible:
+    element:
+      text: 'Sign Out'
+    direction: DOWN
+    timeout: 5000
+
+- tapOn: 'Sign Out'
+
+# Confirm we're back at login
+- assertVisible:
+    text: 'Login'
+    timeout: 5000
+
+# ============================================================================
+# SIGN IN - Existing User
+# ============================================================================
+
+- tapOn:
+    id: 'login-email-input'
+- inputText: '${TEST_EMAIL}'
+
+- tapOn:
+    id: 'login-password-input'
+- inputText: '${TEST_PASSWORD}'
+
+- tapOn: 'Sign In'
+
+# Verify successful login
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 10000
+
+# ============================================================================
+# TEST VALIDATION ERRORS
+# ============================================================================
+
+# Sign out for clean state
+- tapOn: 'Profile'
+- scrollUntilVisible:
+    element:
+      text: 'Sign Out'
+    direction: DOWN
+- tapOn: 'Sign Out'
+- assertVisible: 'Login'
+
+# Test invalid email format
+- tapOn:
+    id: 'login-email-input'
+- inputText: 'invalid-email'
+
+- tapOn:
+    id: 'login-password-input'
+- inputText: 'password'
+
+- tapOn: 'Sign In'
+
+# Should show validation error
+- assertVisible:
+    text: 'Invalid email'
+    timeout: 3000
+
+# Clear and test empty fields
+- tapOn:
+    id: 'login-email-input'
+- clearKeychain
+
+- tapOn: 'Sign In'
+
+- assertVisible:
+    text: 'Email is required'
+    timeout: 3000

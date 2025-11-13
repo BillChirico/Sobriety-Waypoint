@@ -1,0 +1,263 @@
+appId: com.billchirico.twelvesteptracker
+
+env:
+  SPONSEE_EMAIL: e2e.sponsee@twelvesteptracker.app
+  SPONSEE_PASSWORD: TestPassword123!
+
+---
+# Step Progression Flow: View Steps, Read Content, Track Progress
+# Tests 12-step program progression and tracking
+
+- launchApp
+
+# ============================================================================
+# LOGIN AS SPONSEE
+# ============================================================================
+
+- assertVisible: 'Login'
+
+- tapOn:
+    id: 'login-email-input'
+- inputText: '${SPONSEE_EMAIL}'
+
+- tapOn:
+    id: 'login-password-input'
+- inputText: '${SPONSEE_PASSWORD}'
+
+- tapOn: 'Sign In'
+
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 10000
+
+# ============================================================================
+# NAVIGATE TO STEPS
+# ============================================================================
+
+- tapOn: 'Steps'
+- assertVisible: '12 Steps'
+
+# ============================================================================
+# VIEW STEP LIST
+# ============================================================================
+
+# Verify all 12 steps are listed
+- assertVisible: 'Step 1'
+- assertVisible: 'Step 2'
+
+# Scroll to see more steps
+- scrollUntilVisible:
+    element:
+      text: 'Step 12'
+    direction: DOWN
+    timeout: 10000
+
+- assertVisible: 'Step 12'
+
+# ============================================================================
+# VIEW STEP 1 CONTENT
+# ============================================================================
+
+# Scroll back up to Step 1
+- swipe:
+    direction: UP
+    duration: 500
+
+# Tap on Step 1
+- tapOn: 'Step 1'
+
+- assertVisible: 'Step 1 Details'
+
+# Verify step content is displayed
+- assertVisible:
+    id: 'step-content'
+
+# Check for key components of Step 1
+- assertVisible: 'We admitted we were powerless'
+
+# Verify reflection prompts are available
+- scrollUntilVisible:
+    element:
+      text: 'Reflection'
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: 'Reflection'
+
+# ============================================================================
+# COMPLETE STEP
+# ============================================================================
+
+# Scroll to bottom for complete button
+- scrollUntilVisible:
+    element:
+      id: 'complete-step-button'
+    direction: DOWN
+    timeout: 5000
+
+# Mark step as complete
+- tapOn:
+    id: 'complete-step-button'
+
+# Verify completion
+- assertVisible:
+    text: 'Step completed'
+    timeout: 5000
+
+# Verify progress updated
+- assertVisible: 'Completed'
+
+# ============================================================================
+# UNLOCK NEXT STEP
+# ============================================================================
+
+# Go back to steps list
+- tapOn:
+    id: 'back-button'
+
+- assertVisible: '12 Steps'
+
+# Verify Step 2 is now unlocked
+- assertVisible: 'Step 2'
+
+# Tap on Step 2
+- tapOn: 'Step 2'
+
+- assertVisible: 'Step 2 Details'
+
+# Verify we can access Step 2 content
+- assertVisible:
+    id: 'step-content'
+
+- assertVisible: 'Came to believe'
+
+# Go back
+- tapOn:
+    id: 'back-button'
+
+# ============================================================================
+# VIEW PROGRESS OVERVIEW
+# ============================================================================
+
+# Look for progress indicator
+- assertVisible:
+    id: 'progress-indicator'
+
+# Verify progress shows 1/12 steps completed
+- assertVisible:
+    text: '1/12'
+    regex: true
+    timeout: 3000
+
+# Or check progress percentage
+- runFlow:
+    when:
+      visible:
+        id: 'progress-percentage'
+    commands:
+      - assertVisible: '8%'
+
+# ============================================================================
+# TEST LOCKED STEPS
+# ============================================================================
+
+# Try to access Step 3 (should be locked)
+- scrollUntilVisible:
+    element:
+      text: 'Step 3'
+    direction: DOWN
+    timeout: 5000
+
+- tapOn: 'Step 3'
+
+# Should show message about needing to complete previous steps
+- assertVisible:
+    text: 'Complete previous steps first'
+    timeout: 3000
+
+# Or might not navigate if locked
+# Verify we're still on steps list
+- assertVisible: '12 Steps'
+
+# ============================================================================
+# ADD NOTES TO STEP
+# ============================================================================
+
+# Go back to Step 1
+- swipe:
+    direction: UP
+    duration: 500
+
+- tapOn: 'Step 1'
+
+- assertVisible: 'Step 1 Details'
+
+# Find notes section
+- scrollUntilVisible:
+    element:
+      id: 'step-notes-input'
+    direction: DOWN
+    timeout: 5000
+
+# Add personal notes
+- tapOn:
+    id: 'step-notes-input'
+- inputText: 'This step helped me realize my limitations and the need for help.'
+
+# Save notes
+- tapOn:
+    id: 'save-notes-button'
+
+# Verify notes saved
+- assertVisible:
+    text: 'Notes saved'
+    timeout: 5000
+
+# Go back
+- tapOn:
+    id: 'back-button'
+
+# ============================================================================
+# VIEW PROGRESS FROM DASHBOARD
+# ============================================================================
+
+- tapOn: 'Dashboard'
+
+- assertVisible: 'Dashboard'
+
+# Check for progress widget
+- scrollUntilVisible:
+    element:
+      text: 'My Progress'
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: 'My Progress'
+
+# Verify current step is shown
+- assertVisible: 'Step 1'
+- assertVisible: 'Completed'
+
+# Verify next step is shown
+- assertVisible: 'Step 2'
+
+# ============================================================================
+# TEST STEP SEARCH/FILTER (IF AVAILABLE)
+# ============================================================================
+
+- tapOn: 'Steps'
+
+- runFlow:
+    when:
+      visible:
+        id: 'search-steps-button'
+    commands:
+      - tapOn:
+          id: 'search-steps-button'
+
+      - tapOn:
+          id: 'search-input'
+      - inputText: 'powerless'
+
+      # Should find Step 1
+      - assertVisible: 'Step 1'

@@ -1,0 +1,336 @@
+appId: com.billchirico.twelvesteptracker
+
+env:
+  USER_EMAIL: e2e.profile@twelvesteptracker.app
+  USER_PASSWORD: TestPassword123!
+  NEW_EMAIL: e2e.updated@twelvesteptracker.app
+
+---
+# Profile Management Flow: View, Edit Profile, Change Theme, Settings
+# Tests user profile and settings functionality
+
+- launchApp
+
+# ============================================================================
+# LOGIN
+# ============================================================================
+
+- assertVisible: 'Login'
+
+- tapOn:
+    id: 'login-email-input'
+- inputText: '${USER_EMAIL}'
+
+- tapOn:
+    id: 'login-password-input'
+- inputText: '${USER_PASSWORD}'
+
+- tapOn: 'Sign In'
+
+- assertVisible:
+    text: 'Dashboard'
+    timeout: 10000
+
+# ============================================================================
+# NAVIGATE TO PROFILE
+# ============================================================================
+
+- tapOn: 'Profile'
+- assertVisible: 'Account Settings'
+
+# ============================================================================
+# VIEW PROFILE INFORMATION
+# ============================================================================
+
+# Verify profile fields are displayed
+- assertVisible:
+    id: 'profile-email'
+
+- assertVisible:
+    id: 'profile-role'
+
+# Check sobriety date section
+- scrollUntilVisible:
+    element:
+      text: 'Sobriety Date'
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: 'Sobriety Date'
+
+# ============================================================================
+# EDIT PROFILE NAME
+# ============================================================================
+
+# Find edit profile button
+- scrollUntilVisible:
+    element:
+      id: 'edit-profile-button'
+    direction: DOWN
+    timeout: 5000
+
+- tapOn:
+    id: 'edit-profile-button'
+
+- assertVisible: 'Edit Profile'
+
+# Update name
+- tapOn:
+    id: 'profile-name-input'
+- clearKeychain
+- inputText: 'E2E Test User'
+
+# Save changes
+- tapOn: 'Save'
+
+# Verify update successful
+- assertVisible:
+    text: 'Profile updated'
+    timeout: 5000
+
+# Verify new name is displayed
+- assertVisible: 'E2E Test User'
+
+# ============================================================================
+# UPDATE SOBRIETY DATE
+# ============================================================================
+
+- scrollUntilVisible:
+    element:
+      id: 'sobriety-date-input'
+    direction: DOWN
+    timeout: 5000
+
+# Open date picker
+- tapOn:
+    id: 'sobriety-date-input'
+
+# Select a date (this will vary by platform)
+- assertVisible: 'Select Date'
+
+# For now, just confirm or cancel
+- tapOn: 'Confirm'
+
+# Verify date updated
+- assertVisible:
+    text: 'Sobriety date updated'
+    timeout: 5000
+
+# ============================================================================
+# CHANGE THEME
+# ============================================================================
+
+# Find theme settings
+- scrollUntilVisible:
+    element:
+      text: 'Appearance'
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: 'Appearance'
+
+# Test theme options
+- tapOn: 'Dark'
+
+# Visual verification (screen should change to dark mode)
+# Verify dark theme is applied
+- assertVisible:
+    id: 'dark-theme-indicator'
+    timeout: 3000
+
+# Switch to light theme
+- tapOn: 'Light'
+
+- assertVisible:
+    id: 'light-theme-indicator'
+    timeout: 3000
+
+# Test system theme
+- tapOn: 'System'
+
+# ============================================================================
+# NOTIFICATION SETTINGS
+# ============================================================================
+
+# Find notification settings
+- scrollUntilVisible:
+    element:
+      text: 'Notifications'
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: 'Notifications'
+
+# Toggle notification settings
+- runFlow:
+    when:
+      visible:
+        id: 'task-notifications-toggle'
+    commands:
+      - tapOn:
+          id: 'task-notifications-toggle'
+
+      # Verify setting changed
+      - assertVisible:
+          text: 'Settings updated'
+          timeout: 3000
+
+      # Toggle back
+      - tapOn:
+          id: 'task-notifications-toggle'
+
+# ============================================================================
+# VIEW STATISTICS
+# ============================================================================
+
+# Find statistics section
+- scrollUntilVisible:
+    element:
+      text: 'Statistics'
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: 'Statistics'
+
+# Verify stats are displayed
+- assertVisible:
+    id: 'days-sober'
+
+- assertVisible:
+    id: 'completed-tasks'
+
+- assertVisible:
+    id: 'current-step'
+
+# ============================================================================
+# VIEW PRIVACY SETTINGS
+# ============================================================================
+
+- scrollUntilVisible:
+    element:
+      text: 'Privacy'
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: 'Privacy'
+
+# Check privacy options
+- assertVisible:
+    id: 'profile-visibility'
+
+# ============================================================================
+# CHANGE PASSWORD (IF AVAILABLE)
+# ============================================================================
+
+- runFlow:
+    when:
+      visible:
+        text: 'Change Password'
+    commands:
+      - tapOn: 'Change Password'
+
+      - assertVisible: 'Update Password'
+
+      # Enter current password
+      - tapOn:
+          id: 'current-password-input'
+      - inputText: '${USER_PASSWORD}'
+
+      # Enter new password
+      - tapOn:
+          id: 'new-password-input'
+      - inputText: 'NewTestPassword123!'
+
+      # Confirm new password
+      - tapOn:
+          id: 'confirm-password-input'
+      - inputText: 'NewTestPassword123!'
+
+      # Save new password
+      - tapOn: 'Update Password'
+
+      # Verify success
+      - assertVisible:
+          text: 'Password updated'
+          timeout: 5000
+
+      # Go back
+      - tapOn:
+          id: 'back-button'
+
+# ============================================================================
+# VIEW HELP/SUPPORT
+# ============================================================================
+
+- scrollUntilVisible:
+    element:
+      text: 'Help'
+    direction: DOWN
+    timeout: 5000
+
+- runFlow:
+    when:
+      visible: 'Help'
+    commands:
+      - tapOn: 'Help'
+
+      - assertVisible: 'Help & Support'
+
+      # Check for common help sections
+      - assertVisible: 'FAQ'
+
+      # Go back
+      - tapOn:
+          id: 'back-button'
+
+# ============================================================================
+# TEST SIGN OUT
+# ============================================================================
+
+# Scroll to bottom for sign out
+- scrollUntilVisible:
+    element:
+      text: 'Sign Out'
+    direction: DOWN
+    timeout: 10000
+
+- assertVisible: 'Sign Out'
+
+# Tap sign out
+- tapOn: 'Sign Out'
+
+# Confirm sign out if needed
+- runFlow:
+    when:
+      visible: 'Confirm Sign Out'
+    commands:
+      - tapOn: 'Confirm'
+
+# Verify returned to login screen
+- assertVisible:
+    text: 'Login'
+    timeout: 5000
+
+# ============================================================================
+# TEST LOGIN WITH UPDATED CREDENTIALS (IF PASSWORD CHANGED)
+# ============================================================================
+
+- runFlow:
+    when:
+      visible: 'Change Password'
+    commands:
+      # Try logging in with new password
+      - tapOn:
+          id: 'login-email-input'
+      - inputText: '${USER_EMAIL}'
+
+      - tapOn:
+          id: 'login-password-input'
+      - inputText: 'NewTestPassword123!'
+
+      - tapOn: 'Sign In'
+
+      # Verify successful login
+      - assertVisible:
+          text: 'Dashboard'
+          timeout: 10000
