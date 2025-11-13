@@ -35,6 +35,7 @@ import {
 } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import packageJson from '../../package.json';
+import type { SponsorSponseeRelationship } from '@/types/database';
 
 // Component for displaying sponsee days sober using the hook
 function SponseeDaysDisplay({
@@ -43,8 +44,8 @@ function SponseeDaysDisplay({
   onDisconnect,
   taskStats,
 }: {
-  relationship: any;
-  theme: any;
+  relationship: SponsorSponseeRelationship;
+  theme: ReturnType<typeof useTheme>['theme'];
   onDisconnect: () => void;
   taskStats?: { total: number; completed: number };
 }) {
@@ -95,8 +96,8 @@ function SponsorDaysDisplay({
   theme,
   onDisconnect,
 }: {
-  relationship: any;
-  theme: any;
+  relationship: SponsorSponseeRelationship;
+  theme: ReturnType<typeof useTheme>['theme'];
   onDisconnect: () => void;
 }) {
   const { daysSober } = useDaysSober(relationship.sponsor_id);
@@ -138,8 +139,12 @@ export default function ProfileScreen() {
   const [inviteCode, setInviteCode] = useState('');
   const [showInviteInput, setShowInviteInput] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [sponsorRelationships, setSponsorRelationships] = useState<any[]>([]);
-  const [sponseeRelationships, setSponseeRelationships] = useState<any[]>([]);
+  const [sponsorRelationships, setSponsorRelationships] = useState<SponsorSponseeRelationship[]>(
+    []
+  );
+  const [sponseeRelationships, setSponseeRelationships] = useState<SponsorSponseeRelationship[]>(
+    []
+  );
   const [loadingRelationships, setLoadingRelationships] = useState(true);
   const [notificationSettings, setNotificationSettings] = useState({
     tasks: profile?.notification_preferences?.tasks ?? true,
@@ -1278,7 +1283,7 @@ export default function ProfileScreen() {
   );
 }
 
-const createStyles = (theme: any) =>
+const createStyles = (theme: ReturnType<typeof useTheme>['theme']) =>
   StyleSheet.create({
     container: {
       flex: 1,
