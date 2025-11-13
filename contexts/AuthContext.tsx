@@ -6,6 +6,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri } from 'expo-auth-session';
 import * as Facebook from 'expo-facebook';
 import { Platform } from 'react-native';
+import { setSentryUser, clearSentryUser, setSentryContext } from '@/lib/sentry';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -133,6 +134,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Update Sentry context when profile changes
+  useEffect(() => {
+    if (profile) {
+      setSentryUser(profile.id, profile.role);
+      setSentryContext('profile', {
+        role: profile.role,
+      });
+    }
+  }, [profile]);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -276,6 +287,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
+    clearSentryUser();
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     setProfile(null);
