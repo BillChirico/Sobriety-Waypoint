@@ -9,15 +9,31 @@
       "distribution": "internal",
       "ios": {
         "simulator": true
+      },
+      "env": {
+        "EXPO_PUBLIC_SENTRY_DSN": "",
+        "SENTRY_ORG": "",
+        "SENTRY_PROJECT": "",
+        "SENTRY_AUTH_TOKEN": ""
       }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SENTRY_DSN": "",
+        "SENTRY_ORG": "",
+        "SENTRY_PROJECT": "",
+        "SENTRY_AUTH_TOKEN": ""
+      }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "APP_ENV": "production"
+        "APP_ENV": "production",
+        "EXPO_PUBLIC_SENTRY_DSN": "",
+        "SENTRY_ORG": "",
+        "SENTRY_PROJECT": "",
+        "SENTRY_AUTH_TOKEN": ""
       },
       "channel": "production"
     }

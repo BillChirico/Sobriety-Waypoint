@@ -96,6 +96,7 @@
     "lint-staged": "^16.2.6",
     "msw": "^2.12.1",
     "prettier": "^3.6.2",
+    "sentry-expo": "^7.2.0",
     "typescript": "~5.9.2"
   },
   "lint-staged": {
