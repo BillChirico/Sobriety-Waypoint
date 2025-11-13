@@ -77,6 +77,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  /**
+   * Creates a profile for a new OAuth user if one doesn't exist
+   * Extracts first name and last initial from user metadata
+   */
+  const createOAuthProfileIfNeeded = async (user: User): Promise<void> => {
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (!existingProfile) {
+      const nameParts = user.user_metadata?.full_name?.split(' ') || ['User', 'U'];
+      const firstName = nameParts[0] || 'User';
+      const lastInitial = nameParts[nameParts.length - 1]?.[0] || 'U';
+
+      const { error: profileError } = await supabase.from('profiles').insert({
+        id: user.id,
+        email: user.email || '',
+        first_name: firstName,
+        last_initial: lastInitial.toUpperCase(),
+      });
+
+      if (profileError) throw profileError;
+    }
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -95,22 +122,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        const existingProfile = await fetchProfile(session.user.id);
-
-        if (!existingProfile) {
-          const nameParts = session.user.user_metadata?.full_name?.split(' ') || ['User', 'U'];
-          const firstName = nameParts[0] || 'User';
-          const lastInitial = nameParts[nameParts.length - 1]?.[0] || 'U';
-
-          await supabase.from('profiles').insert({
-            id: session.user.id,
-            email: session.user.email || '',
-            first_name: firstName,
-            last_initial: lastInitial.toUpperCase(),
-          });
-
-          await fetchProfile(session.user.id);
-        }
+        await createOAuthProfileIfNeeded(session.user);
+        await fetchProfile(session.user.id);
       } else {
         setProfile(null);
       }
@@ -171,29 +184,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (sessionError) throw sessionError;
 
             if (sessionData.user) {
-              const { data: existingProfile } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', sessionData.user.id)
-                .maybeSingle();
-
-              if (!existingProfile) {
-                const nameParts = sessionData.user.user_metadata?.full_name?.split(' ') || [
-                  'User',
-                  'U',
-                ];
-                const firstName = nameParts[0] || 'User';
-                const lastInitial = nameParts[nameParts.length - 1]?.[0] || 'U';
-
-                const { error: profileError } = await supabase.from('profiles').insert({
-                  id: sessionData.user.id,
-                  email: sessionData.user.email || '',
-                  first_name: firstName,
-                  last_initial: lastInitial.toUpperCase(),
-                });
-
-                if (profileError) throw profileError;
-              }
+              await createOAuthProfileIfNeeded(sessionData.user);
             }
           }
         }
@@ -252,29 +243,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // Create profile if needed
         if (sessionData.user) {
-          const { data: existingProfile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', sessionData.user.id)
-            .maybeSingle();
-
-          if (!existingProfile) {
-            const nameParts = sessionData.user.user_metadata?.full_name?.split(' ') || [
-              'User',
-              'U',
-            ];
-            const firstName = nameParts[0] || 'User';
-            const lastInitial = nameParts[nameParts.length - 1]?.[0] || 'U';
-
-            const { error: profileError } = await supabase.from('profiles').insert({
-              id: sessionData.user.id,
-              email: sessionData.user.email || '',
-              first_name: firstName,
-              last_initial: lastInitial.toUpperCase(),
-            });
-
-            if (profileError) throw profileError;
-          }
+          await createOAuthProfileIfNeeded(sessionData.user);
         }
       }
     } catch (error) {
