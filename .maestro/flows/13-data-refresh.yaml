@@ -1,4 +1,4 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '13 - Data Refresh and Synchronization'
 ---
 # Test pull-to-refresh functionality across all screens
@@ -10,49 +10,49 @@ name: '13 - Data Refresh and Synchronization'
 # Test refresh on Home screen
 - tapOn: 'Home'
 - assertVisible: 'Home'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
-- waitForAnimationToEnd
+- wait: 2000
 - assertVisible: 'Home'
 
 # Test refresh on Tasks screen
 - tapOn: 'Tasks'
 - assertVisible: 'Tasks'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
-- waitForAnimationToEnd
+- wait: 2000
 - assertVisible: 'Tasks'
 
 # Test refresh on Steps screen
 - tapOn: 'Steps'
 - assertVisible: 'Steps'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
-- waitForAnimationToEnd
+- wait: 2000
 - assertVisible: 'Steps'
 
 # Test refresh on Journey screen
 - tapOn: 'Journey'
 - assertVisible: 'Journey'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
-- waitForAnimationToEnd
+- wait: 2000
 - assertVisible: 'Your Recovery Timeline'
 
 # Test rapid refresh (stress test)
-- swipe:
+- scroll:
     direction: DOWN
     duration: 500
-- waitForAnimationToEnd
-- swipe:
+- wait: 500
+- scroll:
     direction: DOWN
     duration: 500
-- waitForAnimationToEnd
-- swipe:
+- wait: 500
+- scroll:
     direction: DOWN
     duration: 500
 
@@ -62,10 +62,10 @@ name: '13 - Data Refresh and Synchronization'
 # Test refresh on Profile screen
 - tapOn: 'Profile'
 - assertVisible: 'Profile'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
-- waitForAnimationToEnd
+- wait: 2000
 
 # Verify profile data loaded
 - assertVisible:

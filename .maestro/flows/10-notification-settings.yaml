@@ -1,4 +1,4 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '10 - Notification Settings Configuration'
 ---
 # Test notification preferences configuration and persistence

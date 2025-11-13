@@ -77,6 +77,7 @@ You will:
 # Project-Specific Guidelines
 
 This project uses:
+
 - **Expo 54** with React Native 0.81.5 and React 19
 - **Expo Router v6** for file-based routing
 - **Supabase** for backend (PostgreSQL with RLS)
@@ -86,6 +87,7 @@ This project uses:
 - **CI/CD**: GitHub Actions with automated builds and testing
 
 Key patterns:
+
 - Use `renderWithProviders` from `test-utils/render` for component tests
 - Mock Supabase with MSW handlers in `__mocks__/handlers/`
 - Use fixtures from `test-utils/fixtures/` for test data
@@ -126,6 +128,7 @@ Before considering any task complete:
 # Communication Style
 
 When presenting work:
+
 - Explain your reasoning for architectural decisions
 - Highlight potential issues or trade-offs
 - Suggest improvements beyond the immediate task

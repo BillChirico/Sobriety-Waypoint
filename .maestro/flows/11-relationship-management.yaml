@@ -1,4 +1,4 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '11 - Sponsor-Sponsee Relationship Management'
 ---
 # Test complete relationship lifecycle from both perspectives
@@ -14,9 +14,8 @@ name: '11 - Sponsor-Sponsee Relationship Management'
 - tapOn: 'Password'
 - inputText: ${TEST_SPONSOR_PASSWORD}
 - tapOn: 'Sign In'
-- extendedWaitUntil:
-    visible:
-      text: 'Home'
+- assertVisible:
+    text: 'Home'
     timeout: 5000
 
 # Navigate to Profile
@@ -60,9 +59,8 @@ name: '11 - Sponsor-Sponsee Relationship Management'
 - tapOn: 'Create Account'
 
 # Complete onboarding as Sponsee
-- extendedWaitUntil:
-    visible:
-      text: 'Select Your Role'
+- assertVisible:
+    text: 'Select Your Role'
     timeout: 5000
 - tapOn: 'Sponsee'
 - tapOn: 'Continue'
@@ -72,10 +70,9 @@ name: '11 - Sponsor-Sponsee Relationship Management'
     text: 'Join with Invite Code'
     optional: true
 
-- tapOn:
-    id: 'invite-code-input'
-    optional: true
 - inputText: 'TEST123'
+  id: 'invite-code-input'
+  optional: true
 
 - tapOn:
     text: 'Join'

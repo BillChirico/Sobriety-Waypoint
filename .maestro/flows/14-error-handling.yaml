@@ -1,40 +1,11 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '14 - Error Handling and Edge Cases'
-
-env:
-  USER_EMAIL: e2e.test@twelvesteptracker.app
-  USER_PASSWORD: TestPassword123!
-
 ---
 # Test error scenarios and edge case handling
 # Prerequisites: User must be logged in
 
-- launchApp
-
-# ============================================================================
-# LOGIN
-# ============================================================================
-
-- assertVisible: 'Login'
-
-- tapOn:
-    id: 'login-email-input'
-- inputText: '${USER_EMAIL}'
-
-- tapOn:
-    id: 'login-password-input'
-- inputText: '${USER_PASSWORD}'
-
-- tapOn: 'Sign In'
-
-- extendedWaitUntil:
-    visible:
-      text: 'Dashboard'
-    timeout: 10000
-
-# ============================================================================
-# ERROR HANDLING TESTS
-# ============================================================================
+- launchApp:
+    clearState: false
 
 # Test 1: Invalid email format validation
 - tapOn: 'Profile'
@@ -56,22 +27,19 @@ env:
     optional: true
 
 # Clear and try valid credentials
-- tapOn:
+- clearText:
     id: 'email-input'
     optional: true
-- eraseText
 - inputText: ${TEST_USER_EMAIL}
-- tapOn:
+- clearText:
     id: 'password-input'
     optional: true
-- eraseText
 - inputText: ${TEST_USER_PASSWORD}
 - tapOn: 'Sign In'
 
 # Test 2: Network timeout handling (rapid navigation)
-- extendedWaitUntil:
-    visible:
-      text: 'Home'
+- assertVisible:
+    text: 'Home'
     timeout: 5000
 
 - tapOn: 'Tasks'
@@ -103,9 +71,8 @@ env:
     text: 'Add Note'
     optional: true
 
-- inputText:
-    text: 'This is a very long note that tests the character limit and text wrapping behavior. It should handle multiple lines gracefully and not cause any layout issues or crashes in the application. Testing edge cases is important for robust mobile applications.'
-    optional: true
+- inputText: 'This is a very long note that tests the character limit and text wrapping behavior. It should handle multiple lines gracefully and not cause any layout issues or crashes in the application. Testing edge cases is important for robust mobile applications.'
+  optional: true
 
 - tapOn:
     text: 'Save'
@@ -118,7 +85,7 @@ env:
 
 # Background the app
 - pressKey: Home
-- waitForAnimationToEnd
+- wait: 2000
 
 # Reopen the app
 - launchApp:

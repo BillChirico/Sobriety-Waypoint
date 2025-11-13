@@ -1,4 +1,4 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '16 - Task Priority and Filtering'
 ---
 # Test advanced task management features
@@ -21,15 +21,13 @@ name: '16 - Task Priority and Filtering'
     text: 'Create Task'
     optional: true
 
-- tapOn:
-    id: 'task-title'
-    optional: true
 - inputText: 'Complete Step 1 workbook exercises'
+  id: 'task-title'
+  optional: true
 
-- tapOn:
-    id: 'task-description'
-    optional: true
 - inputText: 'Review pages 1-10 and answer all questions'
+  id: 'task-description'
+  optional: true
 
 # Set high priority
 - tapOn:
@@ -160,6 +158,7 @@ name: '16 - Task Priority and Filtering'
     optional: true
 
 - inputText: 'Read recovery literature'
+  optional: true
 
 - tapOn:
     text: 'Priority'

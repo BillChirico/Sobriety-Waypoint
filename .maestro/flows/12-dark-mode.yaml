@@ -1,40 +1,11 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '12 - Dark Mode and Theme Persistence'
-
-env:
-  USER_EMAIL: e2e.test@twelvesteptracker.app
-  USER_PASSWORD: TestPassword123!
-
 ---
 # Test theme switching across all screens with persistence
 # Prerequisites: User must be logged in
 
-- launchApp
-
-# ============================================================================
-# LOGIN
-# ============================================================================
-
-- assertVisible: 'Login'
-
-- tapOn:
-    id: 'login-email-input'
-- inputText: '${USER_EMAIL}'
-
-- tapOn:
-    id: 'login-password-input'
-- inputText: '${USER_PASSWORD}'
-
-- tapOn: 'Sign In'
-
-- extendedWaitUntil:
-    visible:
-      text: 'Dashboard'
-    timeout: 10000
-
-# ============================================================================
-# THEME SWITCHING TESTS
-# ============================================================================
+- launchApp:
+    clearState: false
 
 # Navigate to Profile
 - tapOn: 'Profile'
@@ -53,7 +24,7 @@ env:
     optional: true
 
 # Wait for theme to apply
-- waitForAnimationToEnd
+- wait: 1000
 
 # Verify dark mode applied (check for dark background)
 - takeScreenshot: dark-mode-profile
@@ -88,7 +59,7 @@ env:
     text: 'Light'
     optional: true
 
-- waitForAnimationToEnd
+- wait: 1000
 - takeScreenshot: light-mode-profile
 
 # Switch to system mode
@@ -96,7 +67,7 @@ env:
     text: 'System'
     optional: true
 
-- waitForAnimationToEnd
+- wait: 1000
 
 # Restart app to verify theme persistence
 - back

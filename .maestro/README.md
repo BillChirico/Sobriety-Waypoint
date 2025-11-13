@@ -58,6 +58,7 @@ maestro record
 ### Total Coverage: 21 E2E Flows
 
 **Test Categories:**
+
 - ✅ Authentication & Security (3 flows)
 - ✅ User Onboarding (1 flow)
 - ✅ Task Management (3 flows)
@@ -144,23 +145,23 @@ For optimal test coverage, ensure each test user has:
 
 ## Test Coverage Matrix
 
-| Feature Area | Flows | Coverage |
-|-------------|-------|----------|
-| Authentication | 01, 14 | Sign up, sign in, sign out, OAuth, validation |
-| Onboarding | 02 | Role selection, profile creation |
-| Task Management | 05, 16 | CRUD, priority, filtering, sorting, due dates |
-| Messaging | 06, 17 | Send/receive, history, search, long messages |
-| Step Progression | 07, 15 | View, complete, notes, filtering, locking |
-| Journey/Timeline | 18 | Events, milestones, statistics, filtering |
-| Profile Management | 08, 10 | Edit, themes, notifications, settings |
-| Sponsor Workflows | 03, 11 | Invite codes, task assignment, relationships |
-| Sponsee Workflows | 04, 11 | Join, task completion, communication |
-| Relapse Tracking | 09 | Record slip-ups, restart recovery |
-| Theme/Appearance | 12 | Light/dark/system, persistence |
-| Data Operations | 13 | Refresh, sync, consistency |
-| Error Handling | 14 | Validation, edge cases, network issues |
-| Accessibility | 19 | Screen readers, labels, keyboard nav |
-| Performance | 20 | Stress testing, memory, concurrency |
+| Feature Area       | Flows  | Coverage                                      |
+| ------------------ | ------ | --------------------------------------------- |
+| Authentication     | 01, 14 | Sign up, sign in, sign out, OAuth, validation |
+| Onboarding         | 02     | Role selection, profile creation              |
+| Task Management    | 05, 16 | CRUD, priority, filtering, sorting, due dates |
+| Messaging          | 06, 17 | Send/receive, history, search, long messages  |
+| Step Progression   | 07, 15 | View, complete, notes, filtering, locking     |
+| Journey/Timeline   | 18     | Events, milestones, statistics, filtering     |
+| Profile Management | 08, 10 | Edit, themes, notifications, settings         |
+| Sponsor Workflows  | 03, 11 | Invite codes, task assignment, relationships  |
+| Sponsee Workflows  | 04, 11 | Join, task completion, communication          |
+| Relapse Tracking   | 09     | Record slip-ups, restart recovery             |
+| Theme/Appearance   | 12     | Light/dark/system, persistence                |
+| Data Operations    | 13     | Refresh, sync, consistency                    |
+| Error Handling     | 14     | Validation, edge cases, network issues        |
+| Accessibility      | 19     | Screen readers, labels, keyboard nav          |
+| Performance        | 20     | Stress testing, memory, concurrency           |
 
 **Total: 21 flows providing 100% coverage of critical user journeys**
 

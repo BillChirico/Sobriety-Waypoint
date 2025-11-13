@@ -1,40 +1,11 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '09 - Relapse Tracking and Recovery Restart'
-
-env:
-  USER_EMAIL: e2e.test@twelvesteptracker.app
-  USER_PASSWORD: TestPassword123!
-
 ---
 # Test relapse/slip-up tracking functionality
 # Prerequisites: User must be logged in with a sobriety start date set
 
-- launchApp
-
-# ============================================================================
-# LOGIN
-# ============================================================================
-
-- assertVisible: 'Login'
-
-- tapOn:
-    id: 'login-email-input'
-- inputText: '${USER_EMAIL}'
-
-- tapOn:
-    id: 'login-password-input'
-- inputText: '${USER_PASSWORD}'
-
-- tapOn: 'Sign In'
-
-- extendedWaitUntil:
-    visible:
-      text: 'Dashboard'
-    timeout: 10000
-
-# ============================================================================
-# RELAPSE TRACKING TESTS
-# ============================================================================
+- launchApp:
+    clearState: false
 
 # Navigate to Journey tab
 - tapOn: 'Journey'
@@ -49,10 +20,9 @@ env:
     optional: true
 
 # If modal opened, fill in slip-up details
-- inputText:
-    text: 'Had a difficult day and made a mistake'
-    id: 'slip-up-notes'
-    optional: true
+- inputText: 'Had a difficult day and made a mistake'
+  id: 'slip-up-notes'
+  optional: true
 
 - tapOn:
     text: 'Record'
