@@ -490,6 +490,144 @@ describe('AuthContext', () => {
     });
   });
 
+  describe('signInWithApple', () => {
+    describe('web platform', () => {
+      beforeEach(() => {
+        (Platform as any).OS = 'web';
+      });
+
+      it('calls signInWithOAuth with apple provider for web', async () => {
+        const mockSignInWithOAuth = jest.fn().mockResolvedValue({ error: null });
+        (supabase.auth.signInWithOAuth as jest.Mock) = mockSignInWithOAuth;
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: ({ children }) => <AuthProvider>{children}</AuthProvider>,
+        });
+
+        await act(async () => {
+          await result.current.signInWithApple();
+        });
+
+        expect(mockSignInWithOAuth).toHaveBeenCalledWith({
+          provider: 'apple',
+          options: {
+            redirectTo: window.location.origin,
+          },
+        });
+      });
+
+      it('throws error when signInWithOAuth fails on web', async () => {
+        const mockError = new Error('Apple sign in failed');
+        (supabase.auth.signInWithOAuth as jest.Mock).mockResolvedValue({ error: mockError });
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: ({ children }) => <AuthProvider>{children}</AuthProvider>,
+        });
+
+        await expect(result.current.signInWithApple()).rejects.toThrow('Apple sign in failed');
+      });
+    });
+
+    describe('native platform', () => {
+      beforeEach(() => {
+        (Platform as any).OS = 'ios';
+      });
+
+      it('opens browser and sets session with tokens on success', async () => {
+        const mockUrl = 'https://apple.com/auth?code=123';
+        const mockRedirectUrl = 'https://example.com/auth/callback';
+        const mockCallbackUrl = `${mockRedirectUrl}?access_token=test_access&refresh_token=test_refresh`;
+        const mockUser = { id: 'apple-user-123', email: 'test@privaterelay.appleid.com' };
+
+        (makeRedirectUri as jest.Mock).mockReturnValue(mockRedirectUrl);
+        (supabase.auth.signInWithOAuth as jest.Mock).mockResolvedValue({
+          data: { url: mockUrl },
+          error: null,
+        });
+        (WebBrowser.openAuthSessionAsync as jest.Mock).mockResolvedValue({
+          type: 'success',
+          url: mockCallbackUrl,
+        });
+        (supabase.auth.setSession as jest.Mock).mockResolvedValue({
+          data: { user: mockUser },
+          error: null,
+        });
+
+        mockSupabaseFrom(mockProfile);
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: ({ children }) => <AuthProvider>{children}</AuthProvider>,
+        });
+
+        await act(async () => {
+          await result.current.signInWithApple();
+        });
+
+        expect(makeRedirectUri).toHaveBeenCalledWith({
+          scheme: '12stepstracker',
+          path: 'auth/callback',
+        });
+        expect(WebBrowser.openAuthSessionAsync).toHaveBeenCalledWith(mockUrl, mockRedirectUrl);
+        expect(supabase.auth.setSession).toHaveBeenCalledWith({
+          access_token: 'test_access',
+          refresh_token: 'test_refresh',
+        });
+      });
+
+      it('returns gracefully when user cancels', async () => {
+        const mockUrl = 'https://apple.com/auth?code=123';
+        const mockRedirectUrl = 'https://example.com/auth/callback';
+
+        (makeRedirectUri as jest.Mock).mockReturnValue(mockRedirectUrl);
+        (supabase.auth.signInWithOAuth as jest.Mock).mockResolvedValue({
+          data: { url: mockUrl },
+          error: null,
+        });
+        (WebBrowser.openAuthSessionAsync as jest.Mock).mockResolvedValue({
+          type: 'cancel',
+        });
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: ({ children }) => <AuthProvider>{children}</AuthProvider>,
+        });
+
+        // Should not throw
+        await act(async () => {
+          await result.current.signInWithApple();
+        });
+
+        expect(supabase.auth.setSession).not.toHaveBeenCalled();
+      });
+
+      it('throws error when tokens are missing', async () => {
+        const mockUrl = 'https://apple.com/auth?code=123';
+        const mockRedirectUrl = 'https://example.com/auth/callback';
+        const mockCallbackUrl = `${mockRedirectUrl}?error=access_denied`;
+
+        (makeRedirectUri as jest.Mock).mockReturnValue(mockRedirectUrl);
+        (supabase.auth.signInWithOAuth as jest.Mock).mockResolvedValue({
+          data: { url: mockUrl },
+          error: null,
+        });
+        (WebBrowser.openAuthSessionAsync as jest.Mock).mockResolvedValue({
+          type: 'success',
+          url: mockCallbackUrl,
+        });
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: ({ children }) => <AuthProvider>{children}</AuthProvider>,
+        });
+
+        // Should return gracefully when tokens missing (similar to cancel)
+        await act(async () => {
+          await result.current.signInWithApple();
+        });
+
+        expect(supabase.auth.setSession).not.toHaveBeenCalled();
+      });
+    });
+  });
+
   describe('signUp', () => {
     it('should successfully sign up and create profile', async () => {
       (supabase.auth.signUp as jest.Mock).mockResolvedValue({

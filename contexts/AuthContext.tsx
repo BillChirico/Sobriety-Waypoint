@@ -17,6 +17,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signInWithFacebook: () => Promise<void>;
+  signInWithApple: () => Promise<void>;
   signUp: (
     email: string,
     password: string,
@@ -35,6 +36,7 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => {},
   signInWithGoogle: async () => {},
   signInWithFacebook: async () => {},
+  signInWithApple: async () => {},
   signUp: async () => {},
   signOut: async () => {},
   refreshProfile: async () => {},
@@ -252,6 +254,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const signInWithApple = async () => {
+    if (Platform.OS === 'web') {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+      if (error) throw error;
+    } else {
+      const redirectUrl = makeRedirectUri({
+        scheme: '12stepstracker',
+        path: 'auth/callback',
+      });
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: redirectUrl,
+          skipBrowserRedirect: true,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+
+        if (result.type === 'success' && result.url) {
+          const url = new URL(result.url);
+          const access_token = url.searchParams.get('access_token');
+          const refresh_token = url.searchParams.get('refresh_token');
+
+          if (access_token && refresh_token) {
+            const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+              access_token,
+              refresh_token,
+            });
+
+            if (sessionError) throw sessionError;
+
+            if (sessionData.user) {
+              await createOAuthProfileIfNeeded(sessionData.user);
+            }
+          }
+        }
+      }
+    }
+  };
+
   const signUp = async (
     email: string,
     password: string,
@@ -291,6 +343,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signIn,
         signInWithGoogle,
         signInWithFacebook,
+        signInWithApple,
         signUp,
         signOut,
         refreshProfile,
