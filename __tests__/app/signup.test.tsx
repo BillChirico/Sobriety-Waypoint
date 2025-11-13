@@ -109,6 +109,8 @@ describe('SignupScreen', () => {
     (useAuth as jest.Mock).mockReturnValue({
       signUp: mockSignUp,
       signInWithGoogle: mockSignInWithGoogle,
+      signInWithFacebook: jest.fn().mockResolvedValue(undefined),
+      signInWithApple: jest.fn().mockResolvedValue(undefined),
     });
 
     (useRouter as jest.Mock).mockReturnValue({
@@ -525,6 +527,74 @@ describe('SignupScreen', () => {
       });
 
       alertSpy.mockRestore();
+    });
+  });
+
+  describe('Apple Sign In', () => {
+    it('renders Apple Sign In button', () => {
+      const { getByText } = render(<SignupScreen />);
+      expect(getByText('Continue with Apple')).toBeTruthy();
+    });
+
+    it('calls signInWithApple when button is pressed', async () => {
+      const mockSignInWithApple = jest.fn().mockResolvedValue(undefined);
+      (useAuth as jest.Mock).mockReturnValue({
+        signUp: jest.fn(),
+        signInWithGoogle: jest.fn(),
+        signInWithFacebook: jest.fn(),
+        signInWithApple: mockSignInWithApple,
+      });
+
+      const { getByText } = render(<SignupScreen />);
+      const appleButton = getByText('Continue with Apple');
+
+      fireEvent.press(appleButton);
+
+      await waitFor(() => {
+        expect(mockSignInWithApple).toHaveBeenCalled();
+      });
+    });
+
+    it('shows loading state during Apple sign in', async () => {
+      const mockSignInWithApple = jest.fn(() => new Promise(() => {})); // Never resolves
+      (useAuth as jest.Mock).mockReturnValue({
+        signUp: jest.fn(),
+        signInWithGoogle: jest.fn(),
+        signInWithFacebook: jest.fn(),
+        signInWithApple: mockSignInWithApple,
+      });
+
+      const { getByText, queryByText } = render(<SignupScreen />);
+      const appleButton = getByText('Continue with Apple');
+
+      fireEvent.press(appleButton);
+
+      await waitFor(() => {
+        expect(getByText('Signing in with Apple...')).toBeTruthy();
+        expect(queryByText('Continue with Apple')).toBeNull();
+      });
+    });
+
+    it('shows error alert when Apple sign in fails', async () => {
+      Platform.OS = 'ios';
+      const mockSignInWithApple = jest.fn().mockRejectedValue(new Error('Apple auth failed'));
+      (useAuth as jest.Mock).mockReturnValue({
+        signUp: jest.fn(),
+        signInWithGoogle: jest.fn(),
+        signInWithFacebook: jest.fn(),
+        signInWithApple: mockSignInWithApple,
+      });
+
+      const alertSpy = jest.spyOn(Alert, 'alert');
+
+      const { getByText } = render(<SignupScreen />);
+      const appleButton = getByText('Continue with Apple');
+
+      fireEvent.press(appleButton);
+
+      await waitFor(() => {
+        expect(alertSpy).toHaveBeenCalledWith('Error', 'Apple auth failed');
+      });
     });
   });
 

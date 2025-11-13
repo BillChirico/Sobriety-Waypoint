@@ -14,10 +14,10 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Heart, ArrowLeft } from 'lucide-react-native';
-import { GoogleLogo, FacebookLogo } from '@/components/auth/SocialLogos';
+import { GoogleLogo, FacebookLogo, AppleLogo } from '@/components/auth/SocialLogos';
 
 export default function SignupScreen() {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const [firstName, setFirstName] = useState('');
   const [lastInitial, setLastInitial] = useState('');
   const [email, setEmail] = useState('');
@@ -26,7 +26,8 @@ export default function SignupScreen() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [facebookLoading, setFacebookLoading] = useState(false);
-  const { signUp, signInWithGoogle, signInWithFacebook } = useAuth();
+  const [appleLoading, setAppleLoading] = useState(false);
+  const { signUp, signInWithGoogle, signInWithFacebook, signInWithApple } = useAuth();
   const router = useRouter();
 
   // Refs for field navigation
@@ -121,6 +122,21 @@ export default function SignupScreen() {
       }
     } finally {
       setFacebookLoading(false);
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    setAppleLoading(true);
+    try {
+      await signInWithApple();
+    } catch (error: any) {
+      if (Platform.OS === 'web') {
+        window.alert('Error: ' + (error.message || 'Failed to sign in with Apple'));
+      } else {
+        Alert.alert('Error', error.message || 'Failed to sign in with Apple');
+      }
+    } finally {
+      setAppleLoading(false);
     }
   };
 
@@ -259,6 +275,17 @@ export default function SignupScreen() {
             {!facebookLoading && <FacebookLogo size={20} />}
             <Text style={styles.facebookButtonText}>
               {facebookLoading ? 'Signing in with Facebook...' : 'Continue with Facebook'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.appleButton, appleLoading && styles.buttonDisabled]}
+            onPress={handleAppleSignIn}
+            disabled={loading || googleLoading || facebookLoading || appleLoading}
+          >
+            {!appleLoading && <AppleLogo size={20} color={isDark ? '#ffffff' : '#000000'} />}
+            <Text style={styles.appleButtonText}>
+              {appleLoading ? 'Signing in with Apple...' : 'Continue with Apple'}
             </Text>
           </TouchableOpacity>
 
@@ -402,6 +429,21 @@ const createStyles = (theme: any) =>
     },
     facebookButtonText: {
       color: '#374151',
+      fontSize: 16,
+      fontFamily: theme.fontRegular,
+      fontWeight: '600',
+    },
+    appleButton: {
+      backgroundColor: '#000000',
+      borderRadius: 12,
+      padding: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 12,
+    },
+    appleButtonText: {
+      color: '#ffffff',
       fontSize: 16,
       fontFamily: theme.fontRegular,
       fontWeight: '600',
