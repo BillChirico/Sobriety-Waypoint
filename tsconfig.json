@@ -7,5 +7,5 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "nativewind-env.d.ts"],
-  "exclude": ["docs/templates/**/*"]
+  "exclude": ["node_modules", "docs/templates/**/*"]
 }

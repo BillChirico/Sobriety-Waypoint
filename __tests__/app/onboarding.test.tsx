@@ -5,12 +5,27 @@ import OnboardingScreen from '@/app/onboarding';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Mock dependencies
 jest.mock('expo-router');
 jest.mock('@/contexts/AuthContext');
 jest.mock('@/lib/supabase');
-jest.mock('@react-native-community/datetimepicker', () => 'DateTimePicker');
+jest.mock('@react-native-community/datetimepicker', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { View } = require('react-native');
+
+  const DateTimePicker = (props: any) =>
+    React.createElement(View, { ...props, testID: 'DateTimePicker' });
+  DateTimePicker.displayName = 'DateTimePicker';
+
+  return {
+    __esModule: true,
+    default: DateTimePicker,
+  };
+});
 
 const mockReplace = jest.fn();
 const mockRefreshProfile = jest.fn();
@@ -455,7 +470,7 @@ describe('OnboardingScreen', () => {
       fireEvent.press(getByText(today));
 
       // DateTimePicker should be rendered (on iOS, it's always visible when showDatePicker is true)
-      expect(UNSAFE_getByType('DateTimePicker')).toBeTruthy();
+      expect(UNSAFE_getByType(DateTimePicker)).toBeTruthy();
     });
   });
 });

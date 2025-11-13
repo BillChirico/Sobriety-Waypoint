@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { render, waitFor, act } from '@testing-library/react-native';
-import { Text , useColorScheme } from 'react-native';
+import { Text, useColorScheme } from 'react-native';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

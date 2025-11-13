@@ -28,23 +28,6 @@ jest.mock('@/lib/supabase', () => ({
   },
 }));
 
-// Mock expo-web-browser
-jest.mock('expo-web-browser', () => ({
-  openAuthSessionAsync: jest.fn(),
-  maybeCompleteAuthSession: jest.fn(),
-}));
-
-// Mock expo-auth-session
-jest.mock('expo-auth-session', () => ({
-  makeRedirectUri: jest.fn(),
-}));
-
-// Mock Platform
-jest.mock('react-native', () => {
-  const RN = jest.requireActual('../../__mocks__/react-native.js');
-  return RN;
-});
-
 describe('AuthContext', () => {
   const mockSession = {
     access_token: 'test-token',
@@ -307,6 +290,203 @@ describe('AuthContext', () => {
           await result.current.signInWithGoogle();
         })
       ).rejects.toThrow('OAuth failed');
+    });
+  });
+
+  describe('signInWithFacebook', () => {
+    describe('web platform', () => {
+      beforeEach(() => {
+        (Platform.OS as any) = 'web';
+        global.window = { location: { origin: 'http://localhost:3000' } } as any;
+      });
+
+      it('should call supabase.auth.signInWithOAuth with facebook provider', async () => {
+        const mockSignInWithOAuth = jest.fn().mockResolvedValue({
+          data: { user: null, session: null },
+          error: null,
+        });
+        (supabase.auth.signInWithOAuth as jest.Mock) = mockSignInWithOAuth;
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        await act(async () => {
+          await result.current.signInWithFacebook();
+        });
+
+        expect(mockSignInWithOAuth).toHaveBeenCalledWith({
+          provider: 'facebook',
+          options: {
+            redirectTo: 'http://localhost:3000',
+            scopes: 'email public_profile',
+          },
+        });
+      });
+
+      it('should handle OAuth errors on web', async () => {
+        const mockError = new Error('OAuth failed');
+        const mockSignInWithOAuth = jest.fn().mockResolvedValue({
+          data: { user: null, session: null },
+          error: mockError,
+        });
+        (supabase.auth.signInWithOAuth as jest.Mock) = mockSignInWithOAuth;
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        await expect(
+          act(async () => {
+            await result.current.signInWithFacebook();
+          })
+        ).rejects.toThrow('OAuth failed');
+      });
+    });
+
+    describe('native platform', () => {
+      beforeEach(() => {
+        (Platform.OS as any) = 'ios';
+        process.env.EXPO_PUBLIC_FACEBOOK_APP_ID = 'test-facebook-app-id';
+        jest.clearAllMocks();
+      });
+
+      it('should initialize Facebook SDK with app ID', async () => {
+        const Facebook = require('expo-facebook');
+        const mockSignInWithIdToken = jest.fn().mockResolvedValue({
+          data: {
+            user: {
+              id: 'user-123',
+              user_metadata: { full_name: 'John Doe' },
+            },
+            session: { access_token: 'token' },
+          },
+          error: null,
+        });
+        (supabase.auth.signInWithIdToken as jest.Mock) = mockSignInWithIdToken;
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        await act(async () => {
+          await result.current.signInWithFacebook();
+        });
+
+        expect(Facebook.initializeAsync).toHaveBeenCalledWith({
+          appId: process.env.EXPO_PUBLIC_FACEBOOK_APP_ID,
+        });
+      });
+
+      it('should request correct permissions', async () => {
+        const Facebook = require('expo-facebook');
+        const mockSignInWithIdToken = jest.fn().mockResolvedValue({
+          data: {
+            user: {
+              id: 'user-123',
+              user_metadata: { full_name: 'John Doe' },
+            },
+            session: { access_token: 'token' },
+          },
+          error: null,
+        });
+        (supabase.auth.signInWithIdToken as jest.Mock) = mockSignInWithIdToken;
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        await act(async () => {
+          await result.current.signInWithFacebook();
+        });
+
+        expect(Facebook.logInWithReadPermissionsAsync).toHaveBeenCalledWith({
+          permissions: ['public_profile', 'email'],
+        });
+      });
+
+      it('should exchange Facebook token with Supabase', async () => {
+        const Facebook = require('expo-facebook');
+        const mockSignInWithIdToken = jest.fn().mockResolvedValue({
+          data: {
+            user: {
+              id: 'user-123',
+              user_metadata: { full_name: 'John Doe' },
+            },
+            session: { access_token: 'token' },
+          },
+          error: null,
+        });
+        (supabase.auth.signInWithIdToken as jest.Mock) = mockSignInWithIdToken;
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        await act(async () => {
+          await result.current.signInWithFacebook();
+        });
+
+        expect(mockSignInWithIdToken).toHaveBeenCalledWith({
+          provider: 'facebook',
+          token: 'mock-facebook-access-token',
+        });
+      });
+
+      it('should handle user cancellation gracefully', async () => {
+        const Facebook = require('expo-facebook');
+        Facebook.logInWithReadPermissionsAsync.mockResolvedValueOnce({
+          type: 'cancel',
+        });
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        // Should not throw
+        await act(async () => {
+          await result.current.signInWithFacebook();
+        });
+
+        // Should not call Supabase
+        expect(supabase.auth.signInWithIdToken).not.toHaveBeenCalled();
+      });
+
+      it('should handle permission denial', async () => {
+        const Facebook = require('expo-facebook');
+        Facebook.logInWithReadPermissionsAsync.mockResolvedValueOnce({
+          type: 'error',
+        });
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        await expect(
+          act(async () => {
+            await result.current.signInWithFacebook();
+          })
+        ).rejects.toThrow('Facebook sign in failed');
+      });
+
+      it('should handle token exchange errors', async () => {
+        const mockError = new Error('Token exchange failed');
+        const mockSignInWithIdToken = jest.fn().mockResolvedValue({
+          data: { user: null, session: null },
+          error: mockError,
+        });
+        (supabase.auth.signInWithIdToken as jest.Mock) = mockSignInWithIdToken;
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        await expect(
+          act(async () => {
+            await result.current.signInWithFacebook();
+          })
+        ).rejects.toThrow('Token exchange failed');
+      });
     });
   });
 

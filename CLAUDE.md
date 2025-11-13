@@ -105,7 +105,8 @@ The root layout (`app/_layout.tsx`) enforces a strict navigation flow:
 - Manages Supabase session and user state
 - Handles sign in/up/out operations
 - Provides Google OAuth integration (see GOOGLE_OAUTH_SETUP.md)
-- Auto-creates profiles for new users
+- Provides Facebook Sign In integration (see FACEBOOK_SIGNIN_SETUP.md)
+- Auto-creates profiles for new OAuth users
 - Exposes: `session`, `user`, `profile`, `loading`, auth methods
 
 **ThemeContext** (`contexts/ThemeContext.tsx`):
@@ -166,6 +167,22 @@ Key details:
 - Bundle ID (iOS): `com.billchirico.12steptracker`
 - Package name (Android): `com.billchirico.twelvesteptracker`
 - OAuth implementation in `AuthContext.tsx` handles both web and native flows
+
+## Facebook Sign In Setup
+
+Facebook Sign In is integrated and requires configuration. See `FACEBOOK_SIGNIN_SETUP.md` for:
+- Facebook App creation and configuration
+- Supabase provider setup
+- OAuth redirect URI configuration
+- Native app configuration (iOS/Android)
+- Environment variable setup
+
+Key details:
+- Bundle ID (iOS): `com.billchirico.12steptracker`
+- Package name (Android): `com.billchirico.twelvesteptracker`
+- Required environment variable: `EXPO_PUBLIC_FACEBOOK_APP_ID`
+- Implementation in `AuthContext.tsx` handles both web (OAuth) and native (expo-facebook SDK) flows
+- Auto-creates user profiles on first sign-in with name extracted from Facebook profile
 
 ## EAS Build Configuration
 
@@ -234,6 +251,7 @@ Required environment variables (not committed):
 ```
 EXPO_PUBLIC_SUPABASE_URL=<your-supabase-url>
 EXPO_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+EXPO_PUBLIC_FACEBOOK_APP_ID=<your-facebook-app-id>
 ```
 
 ## Development Workflow

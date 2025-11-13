@@ -47,3 +47,6 @@ supabase/migrations/**/*.sql
 
 # Documentation (preserve intentional formatting)
 CLAUDE.md
+
+# Template files (contain placeholder syntax)
+docs/templates/

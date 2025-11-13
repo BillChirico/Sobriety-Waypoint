@@ -60,8 +60,36 @@ describe('TaskCreationModal', () => {
   const mockOnClose = jest.fn();
   const mockOnTaskCreated = jest.fn();
   const mockSponsees = [
-    { id: '1', first_name: 'John', last_initial: 'D' },
-    { id: '2', first_name: 'Jane', last_initial: 'S' },
+    {
+      id: '1',
+      first_name: 'John',
+      last_initial: 'D',
+      email: 'john@example.com',
+      timezone: 'America/New_York',
+      notification_preferences: {
+        tasks: true,
+        messages: true,
+        milestones: true,
+        daily: true,
+      },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: '2',
+      first_name: 'Jane',
+      last_initial: 'S',
+      email: 'jane@example.com',
+      timezone: 'America/New_York',
+      notification_preferences: {
+        tasks: true,
+        messages: true,
+        milestones: true,
+        daily: true,
+      },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
   ];
   const mockTheme = {
     background: '#f9fafb',

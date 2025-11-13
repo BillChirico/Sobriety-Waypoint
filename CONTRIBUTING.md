@@ -34,24 +34,28 @@ Before contributing, ensure you have:
 - Expo CLI (installed via npx)
 
 For mobile development:
+
 - **iOS**: macOS, Xcode, and iOS Simulator
 - **Android**: Android Studio and Android SDK
 
 ### Setup
 
 1. **Fork and Clone**:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/12-Step-Tracker.git
    cd 12-Step-Tracker
    ```
 
 2. **Install Dependencies**:
+
    ```bash
    pnpm install
    ```
 
 3. **Environment Variables**:
    Create a `.env` file:
+
    ```env
    EXPO_PUBLIC_SUPABASE_URL=<your-supabase-url>
    EXPO_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
@@ -75,6 +79,7 @@ Use descriptive branch names following this pattern:
 - `test/description` - For adding or updating tests
 
 Examples:
+
 - `feature/task-notifications`
 - `fix/login-validation-error`
 - `docs/update-testing-guide`
@@ -82,6 +87,7 @@ Examples:
 ### Making Changes
 
 1. **Create a Branch**:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -92,6 +98,7 @@ Examples:
    - Update documentation as needed
 
 3. **Run Tests Locally**:
+
    ```bash
    pnpm typecheck
    pnpm lint
@@ -134,6 +141,7 @@ All PRs must:
 - **Pass all E2E tests** in CI (when applicable)
 
 Run coverage locally:
+
 ```bash
 pnpm test -- --coverage
 ```
@@ -187,6 +195,7 @@ These run automatically on commit. Ensure they pass before pushing.
 ### Before Creating a PR
 
 1. ✅ **Run all checks locally**:
+
    ```bash
    pnpm typecheck
    pnpm lint
@@ -206,6 +215,7 @@ These run automatically on commit. Ensure they pass before pushing.
 ### Creating the PR
 
 1. **Push to Your Fork**:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -227,15 +237,19 @@ These run automatically on commit. Ensure they pass before pushing.
 
 ```markdown
 ## Description
+
 [Brief description of changes]
 
 ## Related Issues
+
 Fixes #[issue number]
 
 ## Changes Made
+
 - [List of changes]
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added (if applicable)
 - [ ] E2E tests added (if applicable)
@@ -243,6 +257,7 @@ Fixes #[issue number]
 - [ ] Coverage maintained/improved
 
 ## Checklist
+
 - [ ] Code follows project style guidelines
 - [ ] TypeScript strict mode passes
 - [ ] Tests pass locally

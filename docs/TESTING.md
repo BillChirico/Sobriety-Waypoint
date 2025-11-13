@@ -490,9 +490,9 @@ appId: com.billchirico.twelvesteptracker
 ---
 # Flow steps
 - launchApp
-- tapOn: "Sign In"
-- inputText: "test@example.com"
-- assertVisible: "Welcome"
+- tapOn: 'Sign In'
+- inputText: 'test@example.com'
+- assertVisible: 'Welcome'
 ```
 
 ### Best Practices for E2E Tests

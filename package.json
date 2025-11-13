@@ -38,6 +38,7 @@
     "expo-camera": "~17.0.9",
     "expo-constants": "~18.0.9",
     "expo-dev-client": "~6.0.17",
+    "expo-facebook": "^12.2.0",
     "expo-font": "~14.0.8",
     "expo-haptics": "~15.0.7",
     "expo-linear-gradient": "~15.0.7",

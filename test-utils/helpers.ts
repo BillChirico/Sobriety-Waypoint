@@ -45,14 +45,25 @@ export function createDeferred<T = void>() {
 /**
  * Mock implementation of AsyncStorage for tests
  */
-export const mockAsyncStorage = {
+export const mockAsyncStorage: {
+  store: Map<string, string>;
+  getItem: jest.Mock<Promise<string | null>, [string]>;
+  setItem: jest.Mock<Promise<void>, [string, string]>;
+  removeItem: jest.Mock<Promise<void>, [string]>;
+  clear: jest.Mock<Promise<void>, []>;
+  getAllKeys: jest.Mock<Promise<string[]>, []>;
+  multiGet: jest.Mock<Promise<[string, string | null][]>, [string[]]>;
+  multiSet: jest.Mock<Promise<void>, [[string, string][]]>;
+  multiRemove: jest.Mock<Promise<void>, [string[]]>;
+  reset: () => void;
+} = {
   store: new Map<string, string>(),
 
-  getItem: jest.fn((key: string) => {
+  getItem: jest.fn((key: string): Promise<string | null> => {
     return Promise.resolve(mockAsyncStorage.store.get(key) || null);
   }),
 
-  setItem: jest.fn((key: string, value: string) => {
+  setItem: jest.fn((key: string, value: string): Promise<void> => {
     mockAsyncStorage.store.set(key, value);
     return Promise.resolve();
   }),

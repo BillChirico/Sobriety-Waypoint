@@ -32,12 +32,12 @@ describe('Integration: Sponsor-Sponsee Relationship Flow', () => {
       const sponsor = createSponsor({
         id: 'sponsor-123',
         first_name: 'John',
-        last_name: 'Sponsor',
+        last_initial: 'S',
       });
       const sponsee = createSponsee({
         id: 'sponsee-456',
         first_name: 'Jane',
-        last_name: 'Sponsee',
+        last_initial: 'S',
       });
 
       // Act: Step 1 - Sponsor creates invite code
