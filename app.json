@@ -9,6 +9,7 @@
     "owner": "volvox-llc",
     "slug": "twelve-step-tracker",
     "scheme": "twelvesteptracker",
+    "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
     "ios": {
       "bundleIdentifier": "com.volvoxllc.twelvesteptracker",

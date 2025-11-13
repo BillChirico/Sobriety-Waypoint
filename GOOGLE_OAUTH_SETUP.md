@@ -40,12 +40,19 @@ Add the following redirect URIs to your Google OAuth client:
 
 ### 4. Configure Site URL in Supabase
 
-**Important:** You must also configure the Site URL in Supabase:
+**Important:** You must also configure the Site URL and Redirect URLs in Supabase:
 
 1. Go to your [Supabase Dashboard](https://app.supabase.com/project/vzwdsjphpabtxhmffous)
 2. Navigate to **Authentication** → **URL Configuration**
-3. Set the **Site URL** to your app's URL (e.g., `http://localhost:8081` for development or your production URL)
-4. Add redirect URLs under **Redirect URLs** section to allow OAuth callbacks
+3. Set the **Site URL** to your production app's URL
+4. Add the following **Redirect URLs** to allow OAuth callbacks:
+   - `http://localhost:8081/**` (local development)
+   - `http://localhost:19006/**` (Expo web local)
+   - `https://**--*.expo.app/**` (Expo web preview deployments - uses wildcard to match all preview URLs)
+   - Your production web URL (if different from Expo)
+
+**For Expo Web Deployments:**
+Expo web preview deployments use URLs like `https://twelve-step-tracker--805co021u2.expo.app`. The wildcard pattern `https://**--*.expo.app/**` will match all your Expo preview deployments.
 
 ### 5. Test the Integration
 
