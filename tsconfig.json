@@ -7,5 +7,15 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "nativewind-env.d.ts"],
-  "exclude": ["node_modules", "docs/templates/**/*"]
+  "exclude": [
+    "node_modules",
+    "docs/templates/**/*",
+    "__tests__/**/*",
+    "__mocks__/**/*",
+    "test-utils/**/*",
+    "mocks/**/*",
+    "**/__tests__/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }
