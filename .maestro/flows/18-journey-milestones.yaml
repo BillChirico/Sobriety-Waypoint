@@ -1,4 +1,4 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '18 - Journey Timeline and Milestones'
 ---
 # Test journey timeline, milestones, and achievement tracking
@@ -22,7 +22,7 @@ name: '18 - Journey Timeline and Milestones'
     optional: true
 
 # Scroll through timeline
-- swipe:
+- scroll:
     direction: DOWN
     duration: 2000
 
@@ -147,11 +147,11 @@ name: '18 - Journey Timeline and Milestones'
 - back
 
 # Test refreshing timeline
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
 
-- waitForAnimationToEnd
+- wait: 2000
 
 # Verify timeline refreshed
 - assertVisible: 'Your Recovery Timeline'

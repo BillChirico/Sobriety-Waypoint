@@ -81,6 +81,11 @@ This is NOT optional - MCP tools provide significant benefits in efficiency, acc
 - **Storage**: expo-secure-store (native) / localStorage (web)
 - **Language**: TypeScript with strict mode
 - **Icons**: lucide-react-native
+- **Error Tracking**: Sentry for production error monitoring
+  - Production-only initialization (disabled in development)
+  - Privacy-first data scrubbing
+  - Automatic source map uploads via EAS
+  - User context tracking
 - **App Icon**: ./assets/images/logo.png
 
 ## Development Commands
@@ -283,6 +288,18 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 EXPO_PUBLIC_FACEBOOK_APP_ID=<your-facebook-app-id>
 ```
 
+### Sentry Configuration (Production Only)
+
+Required for production builds and EAS:
+```
+EXPO_PUBLIC_SENTRY_DSN=<your-sentry-dsn>
+SENTRY_ORG=<your-sentry-org>
+SENTRY_PROJECT=<your-sentry-project>
+SENTRY_AUTH_TOKEN=<your-sentry-auth-token>
+```
+
+See [docs/SENTRY_SETUP.md](docs/SENTRY_SETUP.md) for complete setup instructions.
+
 ## Development Workflow
 
 ### Before Committing
@@ -363,6 +380,12 @@ See [docs/TESTING.md](docs/TESTING.md) for comprehensive testing guide.
 4. **Cross-platform Storage**: Use the adapter pattern (see `lib/supabase.ts`) for platform-specific storage
 5. **Row Level Security**: All database operations respect RLS policies - no additional auth checks needed in client code
 6. **Testing Changes**: Use EAS local builds for native testing: `eas build --platform [ios|android] --profile development --local`
+7. **Error Tracking**: All errors are automatically captured by Sentry in production
+   - ErrorBoundary wraps the entire app for crash reporting
+   - User context automatically set on authentication
+   - Privacy scrubbing removes sensitive recovery data (messages, sobriety dates, etc.)
+   - Source maps uploaded automatically via sentry-expo plugin
+   - See [docs/SENTRY_SETUP.md](docs/SENTRY_SETUP.md) for configuration
 
 ## Testing Guidelines
 

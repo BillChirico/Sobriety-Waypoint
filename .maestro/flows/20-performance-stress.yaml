@@ -1,4 +1,4 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '20 - Performance and Stress Testing'
 ---
 # Test app performance under various stress conditions
@@ -9,15 +9,15 @@ name: '20 - Performance and Stress Testing'
 
 # Test 1: Rapid tab switching (navigation stress test)
 - tapOn: 'Home'
-- waitForAnimationToEnd
+- wait: 200
 - tapOn: 'Tasks'
-- waitForAnimationToEnd
+- wait: 200
 - tapOn: 'Steps'
-- waitForAnimationToEnd
+- wait: 200
 - tapOn: 'Journey'
-- waitForAnimationToEnd
+- wait: 200
 - tapOn: 'Profile'
-- waitForAnimationToEnd
+- wait: 200
 - tapOn: 'Home'
 
 # Verify app remains responsive
@@ -25,16 +25,16 @@ name: '20 - Performance and Stress Testing'
 
 # Test 2: Rapid scrolling (render performance)
 - tapOn: 'Steps'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 500
-- swipe:
+- scroll:
     direction: UP
     duration: 500
-- swipe:
+- scroll:
     direction: DOWN
     duration: 500
-- swipe:
+- scroll:
     direction: UP
     duration: 500
 
@@ -67,13 +67,13 @@ name: '20 - Performance and Stress Testing'
 
 # Test 4: Memory stress - load heavy screens repeatedly
 - tapOn: 'Journey'
-- waitForAnimationToEnd
+- wait: 1000
 - tapOn: 'Home'
-- waitForAnimationToEnd
+- wait: 1000
 - tapOn: 'Journey'
-- waitForAnimationToEnd
+- wait: 1000
 - tapOn: 'Home'
-- waitForAnimationToEnd
+- wait: 1000
 - tapOn: 'Journey'
 
 # Verify timeline still loads
@@ -81,15 +81,15 @@ name: '20 - Performance and Stress Testing'
 
 # Test 5: Concurrent data operations
 - tapOn: 'Tasks'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
 - tapOn: 'Steps'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
 - tapOn: 'Journey'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
 
@@ -98,13 +98,13 @@ name: '20 - Performance and Stress Testing'
 
 # Test 6: App backgrounding during operations
 - tapOn: 'Profile'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
 
 # Background app mid-operation
 - pressKey: Home
-- waitForAnimationToEnd
+- wait: 1000
 
 # Restore app
 - launchApp:
@@ -119,11 +119,11 @@ name: '20 - Performance and Stress Testing'
     optional: true
 
 - inputText: 'a'
-- waitForAnimationToEnd
+- wait: 100
 - inputText: 'ab'
-- waitForAnimationToEnd
+- wait: 100
 - inputText: 'abc'
-- waitForAnimationToEnd
+- wait: 100
 - inputText: 'abcd'
 
 # Clear search
@@ -131,15 +131,15 @@ name: '20 - Performance and Stress Testing'
 
 # Test 8: Network condition simulation (rapid refresh)
 - tapOn: 'Home'
-- swipe:
+- scroll:
     direction: DOWN
     duration: 500
-- waitForAnimationToEnd
-- swipe:
+- wait: 200
+- scroll:
     direction: DOWN
     duration: 500
-- waitForAnimationToEnd
-- swipe:
+- wait: 200
+- scroll:
     direction: DOWN
     duration: 500
 
@@ -166,19 +166,19 @@ name: '20 - Performance and Stress Testing'
 
 # Test 10: Long session test (extended navigation)
 - tapOn: 'Home'
-- waitForAnimationToEnd
+- wait: 500
 - tapOn: 'Tasks'
-- swipe: { direction: DOWN, duration: 1000 }
-- waitForAnimationToEnd
+- scroll: { direction: DOWN, duration: 1000 }
+- wait: 500
 - tapOn: 'Steps'
-- swipe: { direction: DOWN, duration: 1000 }
-- waitForAnimationToEnd
+- scroll: { direction: DOWN, duration: 1000 }
+- wait: 500
 - tapOn: 'Journey'
-- swipe: { direction: DOWN, duration: 1000 }
-- waitForAnimationToEnd
+- scroll: { direction: DOWN, duration: 1000 }
+- wait: 500
 - tapOn: 'Profile'
-- swipe: { direction: DOWN, duration: 1000 }
-- waitForAnimationToEnd
+- scroll: { direction: DOWN, duration: 1000 }
+- wait: 500
 - tapOn: 'Home'
 
 # Final verification - app still responsive after stress

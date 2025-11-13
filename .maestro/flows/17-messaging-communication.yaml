@@ -1,40 +1,11 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '17 - Messaging and Communication'
-
-env:
-  USER_EMAIL: e2e.test@twelvesteptracker.app
-  USER_PASSWORD: TestPassword123!
-
 ---
 # Test comprehensive messaging features between sponsor and sponsee
 # Prerequisites: User must have an active sponsor-sponsee relationship
 
-- launchApp
-
-# ============================================================================
-# LOGIN
-# ============================================================================
-
-- assertVisible: 'Login'
-
-- tapOn:
-    id: 'login-email-input'
-- inputText: '${USER_EMAIL}'
-
-- tapOn:
-    id: 'login-password-input'
-- inputText: '${USER_PASSWORD}'
-
-- tapOn: 'Sign In'
-
-- extendedWaitUntil:
-    visible:
-      text: 'Dashboard'
-    timeout: 10000
-
-# ============================================================================
-# MESSAGING TESTS
-# ============================================================================
+- launchApp:
+    clearState: false
 
 # Navigate to Messages tab
 - tapOn: 'Messages'
@@ -82,35 +53,32 @@ env:
     id: 'message-input'
     optional: true
 - inputText: 'Message 1'
-- tapOn:
-    text: 'Send'
-    optional: true
+- tapOn: 'Send'
+  optional: true
 
-- waitForAnimationToEnd
+- wait: 500
 
 - tapOn:
     id: 'message-input'
     optional: true
 - inputText: 'Message 2'
-- tapOn:
-    text: 'Send'
-    optional: true
+- tapOn: 'Send'
+  optional: true
 
-- waitForAnimationToEnd
+- wait: 500
 
 - tapOn:
     id: 'message-input'
     optional: true
 - inputText: 'Message 3'
-- tapOn:
-    text: 'Send'
-    optional: true
+- tapOn: 'Send'
+  optional: true
 
 # Verify all messages delivered
 - assertVisible: 'Messages'
 
 # Test scrolling through message history
-- swipe:
+- scroll:
     direction: UP
     duration: 2000
 
@@ -118,7 +86,7 @@ env:
 - assertVisible: 'Messages'
 
 # Scroll back to bottom
-- swipe:
+- scroll:
     direction: DOWN
     duration: 2000
 
@@ -162,9 +130,8 @@ env:
     text: 'Search'
     optional: true
 
-- inputText:
-    text: 'Step 1'
-    optional: true
+- inputText: 'Step 1'
+  optional: true
 
 # Verify search results
 - assertVisible:

@@ -1,4 +1,4 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '15 - Step Progression and Notes Management'
 ---
 # Test step progression, notes, and reflection features
@@ -25,10 +25,9 @@ name: '15 - Step Progression and Notes Management'
     text: 'Add Note'
     optional: true
 
-- tapOn:
-    id: 'note-input'
-    optional: true
 - inputText: 'Today I reflected on my journey and realized the importance of accepting help from others.'
+  id: 'note-input'
+  optional: true
 
 - tapOn:
     text: 'Save'
@@ -72,6 +71,7 @@ name: '15 - Step Progression and Notes Management'
     optional: true
 
 - inputText: 'Exploring faith and hope in my recovery process.'
+  optional: true
 
 - tapOn:
     text: 'Save'

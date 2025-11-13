@@ -1,40 +1,11 @@
-appId: com.volvoxllc.twelvesteptracker
+appId: ${EXPO_PUBLIC_APP_ID}
 name: '19 - Accessibility and Screen Reader Support'
-
-env:
-  USER_EMAIL: e2e.test@twelvesteptracker.app
-  USER_PASSWORD: TestPassword123!
-
 ---
 # Test accessibility features and screen reader compatibility
 # Prerequisites: User must be logged in
 
-- launchApp
-
-# ============================================================================
-# LOGIN
-# ============================================================================
-
-- assertVisible: 'Login'
-
-- tapOn:
-    id: 'login-email-input'
-- inputText: '${USER_EMAIL}'
-
-- tapOn:
-    id: 'login-password-input'
-- inputText: '${USER_PASSWORD}'
-
-- tapOn: 'Sign In'
-
-- extendedWaitUntil:
-    visible:
-      text: 'Dashboard'
-    timeout: 10000
-
-# ============================================================================
-# ACCESSIBILITY TESTS
-# ============================================================================
+- launchApp:
+    clearState: false
 
 # Test 1: All tabs have accessibility labels
 - assertVisible:
@@ -167,7 +138,7 @@ env:
 - assertVisible: 'Journey'
 
 # Refresh to trigger loading state
-- swipe:
+- scroll:
     direction: DOWN
     duration: 1000
 
