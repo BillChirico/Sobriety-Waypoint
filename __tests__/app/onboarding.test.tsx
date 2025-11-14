@@ -77,7 +77,7 @@ describe('OnboardingScreen', () => {
     it('should render name entry step when profile needs name', () => {
       const { getByText, getByPlaceholderText } = render(<OnboardingScreen />);
 
-      expect(getByText('Welcome to 12-Step Tracker')).toBeTruthy();
+      expect(getByText('Welcome to Sobriety Waypoint')).toBeTruthy();
       expect(getByText("Let's get to know you")).toBeTruthy();
       expect(getByText("What's your name?")).toBeTruthy();
       expect(getByPlaceholderText('John')).toBeTruthy();

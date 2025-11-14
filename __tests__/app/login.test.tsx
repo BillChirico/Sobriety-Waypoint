@@ -107,7 +107,7 @@ describe('LoginScreen', () => {
     it('should render login form with all elements', () => {
       const { getByText, getByPlaceholderText } = render(<LoginScreen />);
 
-      expect(getByText('12-Step Tracker')).toBeTruthy();
+      expect(getByText('Sobriety Waypoint')).toBeTruthy();
       expect(getByText('Your journey to recovery')).toBeTruthy();
       expect(getByPlaceholderText('your@email.com')).toBeTruthy();
       expect(getByPlaceholderText('••••••••')).toBeTruthy();
