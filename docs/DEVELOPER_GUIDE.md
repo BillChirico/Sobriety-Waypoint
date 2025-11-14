@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide will help you set up the 12-Step Tracker application for local development. The app is built with Expo/React Native, TypeScript, and Supabase.
+This guide will help you set up the Sobriety Waypoint application for local development. The app is built with Expo/React Native, TypeScript, and Supabase.
 
 ## Table of Contents
 
@@ -66,7 +66,7 @@ For Android development:
 
 ```bash
 git clone <repository-url>
-cd 12-Step-Tracker
+cd Sobriety-Waypoint
 ```
 
 ### 2. Install Dependencies
@@ -127,7 +127,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 2. Sign up or log in
 3. Click "New Project"
 4. Fill in project details:
-   - **Name**: 12-Step Tracker (or your choice)
+   - **Name**: Sobriety Waypoint (or your choice)
    - **Database Password**: Create a strong password (save this!)
    - **Region**: Choose closest to your location
 5. Wait for project to initialize (~2 minutes)
@@ -289,7 +289,7 @@ Requires Android Studio and emulator set up.
 ### Project Structure
 
 ```
-12-Step-Tracker/
+Sobriety-Waypoint/
 ├── app/                      # Expo Router screens
 │   ├── (tabs)/              # Tab-based navigation
 │   │   ├── index.tsx        # Home screen

@@ -1,6 +1,6 @@
 # Testing Guide
 
-This document describes the testing infrastructure and patterns for the 12-Step Tracker application.
+This document describes the testing infrastructure and patterns for the Sobriety Waypoint application.
 
 ## Table of Contents
 
