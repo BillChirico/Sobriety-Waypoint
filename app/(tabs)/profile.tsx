@@ -262,7 +262,7 @@ export default function ProfileScreen() {
               text: 'Share',
               onPress: () =>
                 Share.share({
-                  message: `Join me on 12-Step Tracker! Use invite code: ${code}`,
+                  message: `Join me on Sobriety Waypoint! Use invite code: ${code}`,
                 }),
             },
             { text: 'OK' },
