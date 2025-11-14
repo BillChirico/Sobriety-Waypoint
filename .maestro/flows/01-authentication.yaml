@@ -39,7 +39,7 @@ env:
 # Wait for onboarding screen (confirms account created)
 - extendedWaitUntil:
     visible:
-      text: 'Welcome to 12-Step Tracker'
+      text: 'Welcome to Sobriety Waypoint'
     timeout: 10000
 
 # ============================================================================

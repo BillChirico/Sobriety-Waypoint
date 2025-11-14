@@ -6,7 +6,7 @@ env:
 
 ---
 # Step Progression Flow: View Steps, Read Content, Track Progress
-# Tests 12-step program progression and tracking
+# Tests recovery program progression and tracking
 
 - launchApp
 

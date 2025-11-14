@@ -38,7 +38,7 @@ env:
 
 - extendedWaitUntil:
     visible:
-      text: 'Welcome to 12-Step Tracker'
+      text: 'Welcome to Sobriety Waypoint'
     timeout: 10000
 
 - assertVisible: 'Select your role to get started'
@@ -100,7 +100,7 @@ env:
 
 - extendedWaitUntil:
     visible:
-      text: 'Welcome to 12-Step Tracker'
+      text: 'Welcome to Sobriety Waypoint'
     timeout: 10000
 
 # Select Sponsor role
@@ -153,7 +153,7 @@ env:
 
 - extendedWaitUntil:
     visible:
-      text: 'Welcome to 12-Step Tracker'
+      text: 'Welcome to Sobriety Waypoint'
     timeout: 10000
 
 # Select Both role
