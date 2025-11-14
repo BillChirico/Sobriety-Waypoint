@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Integrate Sentry for full observability (error tracking, performance monitoring, session replay, user feedback) in the 12-Step Tracker app with production-only monitoring and privacy-first data handling.
+**Goal:** Integrate Sentry for full observability (error tracking, performance monitoring, session replay, user feedback) in the Sobriety Waypoint app with production-only monitoring and privacy-first data handling.
 
 **Architecture:** Initialize Sentry at app root before providers, implement privacy scrubbing hooks, add strategic error boundaries, integrate with EAS builds for automatic source map uploads, and configure platform-specific native crash reporting for iOS/Android.
 

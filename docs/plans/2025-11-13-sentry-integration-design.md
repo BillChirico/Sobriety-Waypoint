@@ -6,7 +6,7 @@
 
 ## Overview
 
-This document outlines the comprehensive Sentry integration for the 12-Step Tracker application. The integration provides full observability with error tracking, performance monitoring, session replay, and user feedback across iOS, Android, and Web platforms.
+This document outlines the comprehensive Sentry integration for the Sobriety Waypoint application. The integration provides full observability with error tracking, performance monitoring, session replay, and user feedback across iOS, Android, and Web platforms.
 
 ## Design Decisions
 

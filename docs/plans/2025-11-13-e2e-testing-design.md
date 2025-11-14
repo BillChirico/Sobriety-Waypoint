@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-This design document outlines a comprehensive end-to-end (e2e) testing strategy for the 12-Step Tracker app using Maestro. The implementation will provide complete test coverage across all user journeys, features, and platforms (iOS, Android, Web) with proper CI/CD integration.
+This design document outlines a comprehensive end-to-end (e2e) testing strategy for the Sobriety Waypoint app using Maestro. The implementation will provide complete test coverage across all user journeys, features, and platforms (iOS, Android, Web) with proper CI/CD integration.
 
 ## Background
 
@@ -152,7 +152,7 @@ tags:
 
 **Database Seeding**:
 
-- Pre-populate required reference data (12 steps content, notification types)
+- Pre-populate required reference data (recovery steps content, notification types)
 - Use test-specific database or dedicated test schema
 
 ### Reusable Subflows

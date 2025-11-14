@@ -7,7 +7,7 @@
 
 ## Overview
 
-This design document outlines the complete implementation of GitHub Issue #29: a comprehensive end-to-end (E2E) test suite using Maestro for the 12-Step Tracker app. The goal is to achieve 100% feature coverage with 36+ well-designed test flows covering all user journeys, features, and edge cases.
+This design document outlines the complete implementation of GitHub Issue #29: a comprehensive end-to-end (E2E) test suite using Maestro for the Sobriety Waypoint app. The goal is to achieve 100% feature coverage with 36+ well-designed test flows covering all user journeys, features, and edge cases.
 
 ## Background
 

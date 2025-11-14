@@ -7,7 +7,7 @@
 
 ## Overview
 
-This design implements comprehensive testing infrastructure for the 12-Step Tracker application using a vertical slice approach. We'll first validate the entire testing stack works (1-2 days), then systematically expand coverage across all phases (12-16 days).
+This design implements comprehensive testing infrastructure for the Sobriety Waypoint application using a vertical slice approach. We'll first validate the entire testing stack works (1-2 days), then systematically expand coverage across all phases (12-16 days).
 
 ## Strategy Rationale
 
@@ -281,7 +281,7 @@ module.exports = {
      - Sends messages
      - Real-time updates (mocked)
    - `steps.test.tsx`
-     - Displays 12 steps
+     - Displays recovery steps
      - Shows step content
      - Tracks progress
    - `profile.test.tsx`
