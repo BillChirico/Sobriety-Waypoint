@@ -1,6 +1,6 @@
-# 12-Step Tracker Documentation
+# Sobriety Waypoint Documentation
 
-Welcome to the comprehensive documentation for the 12-Step Tracker application. This directory contains all the guides and references you need to use, develop, and maintain the application.
+Welcome to the comprehensive documentation for the Sobriety Waypoint application. This directory contains all the guides and references you need to use, develop, and maintain the application.
 
 ## Documentation Overview
 
@@ -15,13 +15,13 @@ Complete guide for sponsees using the app to work through their recovery journey
 - Getting started and account creation
 - Connecting with a sponsor
 - Working with tasks
-- Exploring the 12 steps
+- Exploring the recovery steps
 - Tracking your journey
 - Communicating with your sponsor
 - Managing your profile
 - Understanding notifications
 
-**Audience**: Individuals working through the 12-step program with a sponsor
+**Audience**: Individuals working through the recovery program with a sponsor
 
 ---
 
@@ -40,7 +40,7 @@ Complete guide for sponsors using the app to support their sponsees.
 - Managing multiple sponsees
 - Handling crisis situations
 
-**Audience**: Individuals sponsoring others through the 12-step program
+**Audience**: Individuals sponsoring others through the recovery program
 
 ---
 
@@ -172,14 +172,14 @@ docs/
 
 **Roles**:
 
-- **Sponsee**: Someone working through the 12 steps with guidance from a sponsor
+- **Sponsee**: Someone working through the recovery steps with guidance from a sponsor
 - **Sponsor**: Someone who has completed the steps and guides others
 - **Both**: Can be both a sponsor and sponsee simultaneously
 
 **Core Features**:
 
 - **Task System**: Sponsors assign tasks to guide sponsees through each step
-- **Progress Tracking**: Visual representation of progress through the 12 steps
+- **Progress Tracking**: Visual representation of progress through the recovery steps
 - **Direct Messaging**: Secure communication between sponsors and sponsees
 - **Sobriety Tracking**: Count days sober and celebrate milestones
 - **Slip-Up Support**: Private tracking for recovery restarts (visible only to user)
@@ -325,7 +325,7 @@ Or submit a pull request with corrections!
 
 ---
 
-**Thank you for using 12-Step Tracker!**
+**Thank you for using Sobriety Waypoint!**
 
 Whether you're here to support your recovery journey or to contribute to the codebase, we're glad you're here. Remember: recovery is possible, and every step forward matters.
 
@@ -333,4 +333,4 @@ _One day at a time._
 
 ---
 
-_This documentation is maintained by the 12-Step Tracker development team._
+_This documentation is maintained by the Sobriety Waypoint development team._
