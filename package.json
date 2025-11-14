@@ -1,17 +1,17 @@
 {
-  "name": "12-step-tracker",
+  "name": "sobriety-waypoint",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "private": true,
   "author": "Volvox",
   "license": "MIT",
-  "homepage": "https://github.com/billchirico/12-step-tracker",
+  "homepage": "https://github.com/billchirico/sobriety-waypoint",
   "repository": {
     "type": "git",
-    "url": "https://github.com/billchirico/12-step-tracker.git"
+    "url": "https://github.com/billchirico/sobriety-waypoint.git"
   },
   "bugs": {
-    "url": "https://github.com/billchirico/12-step-tracker/issues"
+    "url": "https://github.com/billchirico/sobriety-waypoint/issues"
   },
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
@@ -96,6 +96,7 @@
     "lint-staged": "^16.2.6",
     "msw": "^2.12.1",
     "prettier": "^3.6.2",
+    "react-test-renderer": "19.2.0",
     "typescript": "~5.9.2"
   },
   "lint-staged": {
