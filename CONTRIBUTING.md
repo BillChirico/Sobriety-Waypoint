@@ -1,6 +1,6 @@
-# Contributing to 12-Step Tracker
+# Contributing to Sobriety Waypoint
 
-Thank you for your interest in contributing to 12-Step Tracker! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to Sobriety Waypoint! This document provides guidelines and instructions for contributing to the project.
 
 ## Table of Contents
 
@@ -43,8 +43,8 @@ For mobile development:
 1. **Fork and Clone**:
 
    ```bash
-   git clone https://github.com/YOUR_USERNAME/12-Step-Tracker.git
-   cd 12-Step-Tracker
+   git clone https://github.com/YOUR_USERNAME/Sobriety-Waypoint.git
+   cd Sobriety-Waypoint
    ```
 
 2. **Install Dependencies**:
@@ -316,7 +316,7 @@ The scope specifies what part of the codebase is affected:
 - `tasks` - Task management
 - `messages` - Messaging
 - `profile` - User profile
-- `steps` - 12-step content
+- `steps` - Recovery program content
 - `ui` - UI components
 - `api` - API/Supabase
 - `tests` - Testing infrastructure
@@ -381,4 +381,4 @@ If you have questions or need help:
 
 ## License
 
-By contributing to 12-Step Tracker, you agree that your contributions will be licensed under the same license as the project.
+By contributing to Sobriety Waypoint, you agree that your contributions will be licensed under the same license as the project.
