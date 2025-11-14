@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for Claude Code when contributing to 12-Step Tracker. Keep this doc handy—most review feedback happens when one of these requirements gets skipped.
+Guidance for Claude Code when contributing to Sobriety Waypoint. Keep this doc handy—most review feedback happens when one of these requirements gets skipped.
 
 ---
 
@@ -31,7 +31,7 @@ Guidance for Claude Code when contributing to 12-Step Tracker. Keep this doc han
 
 ## 2. Project Snapshot
 
-- **App**: Expo 54 · React Native 0.81.5 · React 19 companion app for AA sponsors/sponsees.
+- **App**: Expo 54 · React Native 0.81.5 · React 19 companion app for AA sponsors/sponsees using Sobriety Waypoint.
 - **Backend**: Supabase (Postgres + Row Level Security) with typed client in `lib/supabase.ts`.
 - **Routing**: Expo Router v6 (`app/_layout.tsx` enforces login → onboarding → authenticated tabs).
 - **Auth Providers**: Email/password, Google OAuth, Facebook Sign In (live). Apple Sign In design lives in `docs/plans/2025-11-12-apple-signin-design.md`.
@@ -45,7 +45,7 @@ Guidance for Claude Code when contributing to 12-Step Tracker. Keep this doc han
 ## 3. Architecture Cheat Sheet
 
 ```
-12-Step-Tracker/
+Sobriety-Waypoint/
 ├── app/                Expo Router entry; `(tabs)` gated behind auth
 ├── contexts/           AuthContext (Supabase session + OAuth), ThemeContext
 ├── components/         Shared UI
@@ -105,7 +105,7 @@ Guidance for Claude Code when contributing to 12-Step Tracker. Keep this doc han
 2. **Claude Code Review**: sticky PR comment updating as checks complete; flags types/lint/format/TODO issues.
 3. **Build visibility**: GitHub Actions tab for logs + web artifacts (7 days). Expo dashboard for Android/iOS build logs + downloads.
 4. **Sentry**: prod-only DSN; ensure `EXPO_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` are set before releases.
-5. **EAS profiles** (`eas.json`): `development` (dev client), `preview` (CI/QA, OTA `preview`), `production` (auto version bump, OTA `production`). Project ID: `4652ad8b-2e44-4270-8612-64c4587219d8`.
+5. **EAS profiles** (`eas.json`): `development` (dev client), `preview` (CI/QA, OTA `preview`), `production` (auto version bump, OTA `production`). Note: Sentry project reference will be updated when manual Task 3 completes.
 
 ---
 
