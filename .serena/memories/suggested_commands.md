@@ -10,6 +10,26 @@ pnpm dev
 
 Starts the Expo development server with telemetry disabled.
 
+### Platform-Specific Development
+
+```bash
+pnpm ios
+```
+
+Runs the app on iOS simulator (requires Xcode on macOS).
+
+```bash
+pnpm android
+```
+
+Runs the app on Android emulator/device (requires Android Studio).
+
+```bash
+pnpm web
+```
+
+Runs the app in a web browser.
+
 ### Type Checking
 
 ```bash
@@ -55,13 +75,73 @@ pnpm format:check
 
 Checks if code is properly formatted without making changes.
 
+## Testing Commands
+
+### Unit Tests
+
+```bash
+pnpm test
+```
+
+Runs all Jest tests once.
+
+```bash
+pnpm test:watch
+```
+
+Runs Jest in watch mode for active development.
+
+```bash
+pnpm test:ci
+```
+
+Runs tests in CI mode with limited workers (used by GitHub Actions).
+
+```bash
+pnpm test:coverage
+```
+
+Runs tests and generates coverage report (requires ≥80% coverage).
+
+### End-to-End Tests
+
+```bash
+pnpm maestro
+```
+
+Runs all Maestro E2E test flows from `.maestro/flows/` directory.
+
+```bash
+pnpm maestro:record
+```
+
+Opens Maestro Studio to record new E2E test flows.
+
+## Build Commands
+
 ### Build for Web
 
 ```bash
 pnpm build:web
 ```
 
-Creates a production web build.
+Creates a production web build (static export).
+
+### Platform Exports
+
+```bash
+pnpm build:android
+```
+
+Exports the app for Android platform.
+
+```bash
+pnpm build:ios
+```
+
+Exports the app for iOS platform.
+
+**Note**: For native builds, use EAS Build (`eas build --platform ios/android`) instead of these export commands.
 
 ## Git Usage with GitButler
 

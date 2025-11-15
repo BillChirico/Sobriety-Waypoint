@@ -9,19 +9,29 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   name: 'Sobriety Waypoint',
   owner: 'volvox-llc',
-  slug: 'twelve-step-tracker',
-  scheme: 'twelvesteptracker',
+  slug: 'sobriety-waypoint',
+  scheme: 'sobrietywaypoint',
   userInterfaceStyle: 'automatic',
   icon: './assets/images/logo.png',
   ios: {
-    bundleIdentifier: 'com.volvoxllc.twelvesteptracker',
+    bundleIdentifier: 'com.volvoxllc.sobrietywaypoint',
     icon: './assets/images/logo.png',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
   },
   android: {
-    package: 'com.volvoxllc.twelvesteptracker',
+    package: 'com.volvoxllc.sobrietywaypoint',
     icon: './assets/images/logo.png',
   },
+  plugins: [
+    [
+      '@sentry/react-native/expo',
+      {
+        url: 'https://sentry.io/',
+        project: 'sobriety-waypoint',
+        organization: 'volvox',
+      },
+    ],
+  ],
 });

@@ -71,3 +71,27 @@ Key documentation files updated:
 
 - CLAUDE.md - Project overview and MCP server documentation
 - Memories (mcp_usage_guidelines, tech_stack) - Updated with new capabilities
+
+## Onboarding Refresh (Current Session)
+
+Complete Serena onboarding refresh performed:
+
+1. **Updated Memories**:
+   - `suggested_commands` - Added missing test commands (pnpm test, test:watch, test:coverage), platform commands (ios, android, web), E2E testing (maestro), and build exports
+2. **New Memories Created**:
+   - `system_utilities` - Darwin/macOS specific system commands, file operations, Git restrictions, process management, Xcode/Android tools, and troubleshooting
+   - `ci_cd_info` - Complete GitHub Actions workflow, EAS build profiles, Sentry integration, deployment checklist, and troubleshooting guide
+
+3. **Memory Count**: Now 11 total memories (was 9)
+
+All onboarding requirements now documented including:
+
+- ✅ Project purpose and features
+- ✅ Tech stack and versions
+- ✅ Code style and conventions
+- ✅ Development, testing, and build commands
+- ✅ Codebase architecture
+- ✅ Darwin/macOS system utilities
+- ✅ CI/CD pipeline and deployment
+- ✅ Guidelines and design patterns
+- ✅ Completion checklist

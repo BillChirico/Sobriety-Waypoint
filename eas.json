@@ -26,7 +26,7 @@
     "production": {
       "ios": {
         "ascAppId": "6755243828",
-        "bundleIdentifier": "com.volvoxllc.twelvesteptracker"
+        "bundleIdentifier": "com.volvoxllc.sobrietywaypoint"
       }
     }
   }
